@@ -24,13 +24,15 @@ if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 endif()
 
 # CHECK ALL SUBMODULES
-if (NOT EXISTS "${PROJECT_SOURCE_DIR}/lib/googletest/CMakeLists.txt")
-	message(FATAL_ERROR "The glfw submodules was not downloaded!"
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/external/googletest/CMakeLists.txt")
+	message(FATAL_ERROR "The googletest submodules was not downloaded!"
 		" GIT_SUBMODULE was turned off or failed.")
 endif()
 
-add_subdirectory(lib/googletest)
+add_subdirectory(external/googletest)
+add_subdirectory(src)
+# add_subdirectory(tst) # TODO complete this later
 
-include_directories(src)
-include_directories(tst)
-include_directories(lib/googletest)
+# include_directories(src)
+# include_directories(tst)
+include_directories(external/googletest)
