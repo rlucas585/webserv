@@ -2,10 +2,12 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(WebServ VERSION 1.0)
 
+enable_testing()
+
 # Set Project Scoped definitions
 
 set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 # DOWNLOAD ALL GIT SUBMODULES
 find_package(Git QUIET)
@@ -30,6 +32,7 @@ if (NOT EXISTS "${PROJECT_SOURCE_DIR}/external/googletest/CMakeLists.txt")
 endif()
 
 add_subdirectory(external/googletest)
+
 add_subdirectory(src)
 # add_subdirectory(tst) # TODO complete this later
 
