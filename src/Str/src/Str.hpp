@@ -2,7 +2,7 @@
 #define STR_HPP
 
 #include <iostream>
-#include <stdexcept>
+#include <exception>
 #include <string>
 
 class Str {

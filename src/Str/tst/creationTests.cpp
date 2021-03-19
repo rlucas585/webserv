@@ -1,25 +1,25 @@
 #include <gtest/gtest.h>
 
 #include "../src/Str.hpp"
+#include "../../Utils/src/Utils.hpp"
 
 #include <iostream>
 #include <sstream>
+
+#define TEST_THROW(FUNC,ERRMSG) EXPECT_THROW({ \
+            try { \
+            FUNC \
+            } catch (Utils::runtime_error const& err) { \
+            EXPECT_STREQ(ERRMSG, err.what()); \
+            throw ; \
+            } \
+            }, Utils::runtime_error);
 
 TEST(StrCreation, default_construction) {
     Str str;
 
     ASSERT_FALSE(str.isInitialized());
-    ASSERT_THROW(str.length(), std::exception);
-}
-
-TEST(StrCreation, construction_from_null) {
-    Str str = NULL;
-    Str str2(NULL);
-
-    ASSERT_FALSE(str.isInitialized());
-    ASSERT_THROW(str.length(), std::exception);
-    ASSERT_FALSE(str2.isInitialized());
-    ASSERT_THROW(str2.length(), std::exception);
+    TEST_THROW(str.length();, "Operation called using Uninitialized Str");
 }
 
 TEST(StrCreation, construction_of_empty_str) {

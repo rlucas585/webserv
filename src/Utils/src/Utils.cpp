@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/19 11:35:54 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/19 18:23:36 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,4 +91,28 @@ const char* strpbrk(const char* s, const char* accept) {
     }
     return 0;
 }
+
+runtime_error::runtime_error(void) : _msg("Undefined error") {
+}
+
+runtime_error::~runtime_error(void) throw() {
+}
+
+runtime_error::runtime_error(const char *msg) : _msg(msg) {
+}
+
+runtime_error::runtime_error(runtime_error const& other) {
+    *this = other;
+}
+
+runtime_error &runtime_error::operator=(runtime_error const& rhs) {
+    if (this == &rhs) { return *this; }
+    _msg = rhs._msg;
+    return *this;
+}
+
+const char*         runtime_error::what(void) const throw() {
+    return (_msg);
+}
+
 } // namespace Utils

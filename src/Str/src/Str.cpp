@@ -76,7 +76,7 @@ Str::iterator Str::iterator::operator++(int) {
 
 Str::iterator& Str::iterator::operator--() {
     if (_len == _maxLen) {
-        throw std::runtime_error("Decrementing iterator at start of Str slice");
+        throw Utils::runtime_error("Decrementing iterator at start of Str slice");
     }
     if (_len != 0)
         --_p;
@@ -98,7 +98,7 @@ bool Str::iterator::operator!=(const iterator& rhs) const { return !(*this == rh
 
 const char& Str::iterator::operator*(void)const {
     if (_len == 0) {
-        throw std::runtime_error("Dereferencing iterator past end of Str");
+        throw Utils::runtime_error("Dereferencing iterator past end of Str");
     }
     return *_p;
 }
@@ -163,33 +163,33 @@ Str Str::newSlice(const char* data) { return Str(data); }
 
 Str Str::newSliceWithLength(const char* data, size_t len) {
     if (!data)
-        throw std::runtime_error("Initializing Str with length, but null pointer");
+        throw Utils::runtime_error("Initializing Str with length, but null pointer");
     if (len > Utils::strlen(data))
-        throw std::runtime_error("Initializing Str with length greater than data");
+        throw Utils::runtime_error("Initializing Str with length greater than data");
     return Str(data, len);
 }
 
 Str Str::newSliceWithOffset(const char* data, size_t offset) {
     size_t len;
     if (!data)
-        throw std::runtime_error("Initializing Str with offset, but null pointer");
+        throw Utils::runtime_error("Initializing Str with offset, but null pointer");
     if (offset > Utils::strlen(data))
-        throw std::runtime_error("Initializing Str with offset greater than length of data");
+        throw Utils::runtime_error("Initializing Str with offset greater than length of data");
     len = Utils::strlen(data) - offset;
     return Str(data, offset, len);
 }
 
 Str Str::newSliceWithOffset(Str const& src, size_t offset) {
     if (offset > src._len)
-        throw std::runtime_error("Initializing Str with offset greater than length of source Str");
+        throw Utils::runtime_error("Initializing Str with offset greater than length of source Str");
     return Str(src._data + offset, src._len - offset);
 }
 
 Str Str::newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset) {
     if (!data)
-        throw std::runtime_error("Initializing Str with offset + length, but null pointer");
+        throw Utils::runtime_error("Initializing Str with offset + length, but null pointer");
     if (offset + len > Utils::strlen(data))
-        throw std::runtime_error("Initializing Str with offset + length greater than length of data");
+        throw Utils::runtime_error("Initializing Str with offset + length greater than length of data");
     return Str(data, len, offset);
 }
 
@@ -237,7 +237,7 @@ Str::operator bool() const { return this->isInitialized(); }
 
 bool Str::_throwIfUninitialized(void) const {
     if (!this->isInitialized())
-        throw std::runtime_error("Str is null");
+        throw Utils::runtime_error("Operation called using Uninitialized Str");
     return false;
 }
 
