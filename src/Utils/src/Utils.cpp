@@ -22,30 +22,39 @@ namespace Utils {
 //  (void)arr;
 // }
 
-size_t      strlen(const char *s) {
-    size_t  i = 0;
-    for (; s[i]; i++) {}
+size_t strlen(const char* s) {
+    size_t i = 0;
+    for (; s[i]; i++) {
+    }
     return i;
 }
 
-const char  *strchr(const char *s, int c) {
-    size_t  i = 0;
+const char* strchr(const char* s, int c) {
+    size_t i = 0;
 
-    for (; s[i] != c && s[i]; i++) {}
-    if (s[i] == c) { return s + i; }
-    else { return 0; }
+    for (; s[i] != c && s[i]; i++) {
+    }
+    if (s[i] == c) {
+        return s + i;
+    } else {
+        return 0;
+    }
 }
 
-char        *strchr(char *s, int c) {
-    size_t  i = 0;
+char* strchr(char* s, int c) {
+    size_t i = 0;
 
-    for (; s[i] != c && s[i]; i++) {}
-    if (s[i] && s[i] == c) { return s + i; }
-    else { return 0; }
+    for (; s[i] != c && s[i]; i++) {
+    }
+    if (s[i] && s[i] == c) {
+        return s + i;
+    } else {
+        return 0;
+    }
 }
 
-int         strcmp(const char *str1, const char *str2) {
-    size_t      i = 0;
+int strcmp(const char* str1, const char* str2) {
+    size_t i = 0;
     for (; str1[i] && str2[i]; i++) {
         if (str1[i] != str2[i])
             return str1[i] - str2[i];
@@ -53,18 +62,20 @@ int         strcmp(const char *str1, const char *str2) {
     return str1[i] - str2[i];
 }
 
-int         strncmp(const char *s1, const char *s2, size_t n) {
-    size_t      i = 0;
+int strncmp(const char* s1, const char* s2, size_t n) {
+    size_t i = 0;
     for (; s1[i] && s2[i] && n > 0; i++, n--) {
         if (s1[i] != s2[i])
             return s1[i] - s2[i];
     }
-    if (n == 0) { return 0; }
+    if (n == 0) {
+        return 0;
+    }
     return s1[i] - s2[i];
 }
 
-char        *strpbrk(char *s, const char *accept) {
-    size_t      i = 0;
+char* strpbrk(char* s, const char* accept) {
+    size_t i = 0;
     for (; s[i]; i++) {
         if (strchr(accept, s[i]))
             return (s + i);
@@ -72,12 +83,12 @@ char        *strpbrk(char *s, const char *accept) {
     return 0;
 }
 
-const char  *strpbrk(const char *s, const char *accept) {
-    size_t      i = 0;
+const char* strpbrk(const char* s, const char* accept) {
+    size_t i = 0;
     for (; s[i]; i++) {
         if (strchr(accept, s[i]))
             return (s + i);
     }
     return 0;
 }
-}
+} // namespace Utils

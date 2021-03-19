@@ -16,13 +16,13 @@
 #include <cstddef>
 
 namespace Utils {
-size_t      strlen(const char *s);
-const char  *strchr(const char *s, int c);
-char        *strchr(char *s, int c);
-int         strcmp(const char *str1, const char *str2);
-int         strncmp(const char *s1, const char *s2, size_t n);
-char        *strpbrk(char *s, const char *accept);
-const char  *strpbrk(const char *s, const char *accept);
-}
+size_t strlen(const char* s);
+const char* strchr(const char* s, int c);
+char* strchr(char* s, int c);
+int strcmp(const char* str1, const char* str2);
+int strncmp(const char* s1, const char* s2, size_t n);
+char* strpbrk(char* s, const char* accept);
+const char* strpbrk(const char* s, const char* accept);
+} // namespace Utils
 
 #endif

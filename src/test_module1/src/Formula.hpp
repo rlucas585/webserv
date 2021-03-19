@@ -2,8 +2,8 @@
 #define FORMULA_HPP
 
 class Formula {
-	public:
-		static int bla(int arg1);
+  public:
+    static int bla(int arg1);
 };
 
 #endif
