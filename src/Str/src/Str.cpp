@@ -1,5 +1,7 @@
 #include "Str.hpp"
 
+#include "../../Utils/src/Utils.hpp"
+
 char Str::emptyBuffer[1] = "";
 
 Str::Split::Split(const char *start)
@@ -28,7 +30,7 @@ Str				Str::Split::next(void) {
 
 	if (_remainder == NULL)
 		return slice;
-	const char *	nextDelim = strpbrk(_remainder, _delimiter);
+	const char *	nextDelim = Utils::strpbrk(_remainder, _delimiter);
 	if (nextDelim == NULL)
 		slice = Str::newSlice(_remainder);
 	else
@@ -39,7 +41,7 @@ Str				Str::Split::next(void) {
 
 const char*		Str::Split::_findFirstNotOf(const char *s, const char *reject) const {
 	for (; s != NULL; s++) {
-		if (!strchr(reject, *s))
+		if (!Utils::strchr(reject, *s))
 			break ;
 	}
 	return s;
@@ -113,7 +115,7 @@ Str::Str(void) : _data(0), _len(0) {
 }
 
 Str::Str(const char *data) : _data(data) {
-	_len = (_data) ? strlen(_data) : 0;
+	_len = (_data) ? Utils::strlen(_data) : 0;
 }
 
 Str::Str(const char *data, size_t len) : _data(data), _len(len) {
@@ -188,7 +190,7 @@ Str		&Str::operator=(Str const& rhs) {
 
 Str		&Str::operator=(const char *data) {
 	_data = data;
-	_len = (_data) ? strlen(_data) : 0;
+	_len = (_data) ? Utils::strlen(_data) : 0;
 	return *this;
 }
 
@@ -199,7 +201,7 @@ Str		Str::newSlice(const char *data) {
 Str		Str::newSliceWithLength(const char *data, size_t len) {
 	if (!data)
 		throw std::runtime_error("Initializing Str with length, but null pointer");
-	if (len > strlen(data))
+	if (len > Utils::strlen(data))
 		throw std::runtime_error("Initializing Str with length greater than data");
 	return Str(data, len);
 }
@@ -208,9 +210,9 @@ Str		Str::newSliceWithOffset(const char *data, size_t offset) {
 	size_t		len;
 	if (!data)
 		throw std::runtime_error("Initializing Str with offset, but null pointer");
-	if (offset > strlen(data))
+	if (offset > Utils::strlen(data))
 		throw std::runtime_error("Initializing Str with offset greater than length of data");
-	len = strlen(data) - offset;
+	len = Utils::strlen(data) - offset;
 	return Str(data, offset, len);
 }
 
@@ -223,7 +225,7 @@ Str		Str::newSliceWithOffset(Str const& src, size_t offset) {
 Str		Str::newSliceWithLengthAndOffset(const char *data, size_t len, size_t offset) {
 	if (!data)
 		throw std::runtime_error("Initializing Str with offset + length, but null pointer");
-	if (offset + len > strlen(data))
+	if (offset + len > Utils::strlen(data))
 		throw std::runtime_error("Initializing Str with offset + length greater than length of data");
 	return Str(data, len, offset);
 }
@@ -259,7 +261,7 @@ Str::Split		Str::split(const char *delim) {
 }
 
 bool		Str::operator==(Str const& rhs) const {
-	return strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0;
+	return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0;
 }
 
 bool		Str::operator!=(Str const& rhs) const {
@@ -267,7 +269,7 @@ bool		Str::operator!=(Str const& rhs) const {
 }
 
 bool		Str::operator<(Str const& rhs) const {
-	return strncmp(_data, rhs._data, std::max(_len, rhs._len)) < 0;
+	return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) < 0;
 }
 
 bool		Str::operator<=(Str const& rhs) const {

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:08:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/18 17:39:26 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/19 11:36:03 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,17 @@ TEST(Utils_tests, strncmp) {
 	const char	str2[] = "Vim Good ; Visual Studio Code Bad";
 	const char	str3[] = "not that long";
 	const char	str4[] = "not that longer";
+    const char  str5[] = "hello goodbye hello";
+    const char  str6[] = "helloa goodbye hello";
 
-	EXPECT_EQ(Utils::strncmp(str, str2, 5) > 0, strncmp(str, str2, 5) > 0);
-	EXPECT_EQ(Utils::strncmp(str, str, 14) > 0, strncmp(str, str, 14) > 0);
-	EXPECT_EQ(Utils::strncmp(str, str4, 7) > 0, strncmp(str, str4, 7) > 0);
-	EXPECT_EQ(Utils::strncmp(str4, str, 0) > 0, strncmp(str4, str, 0) > 0);
-	EXPECT_EQ(Utils::strncmp(str4, str3, 3) > 0, strncmp(str4, str3, 3) > 0);
-	EXPECT_EQ(Utils::strncmp(str3, str4, 9) > 0, strncmp(str3, str4, 9) > 0);
+	EXPECT_EQ(Utils::strncmp(str, str2, 5) == 0, strncmp(str, str2, 5) == 0);
+	EXPECT_EQ(Utils::strncmp(str, str, 14) == 0, strncmp(str, str, 14) == 0);
+	EXPECT_EQ(Utils::strncmp(str, str4, 7) == 0, strncmp(str, str4, 7) == 0);
+	EXPECT_EQ(Utils::strncmp(str4, str, 0) == 0, strncmp(str4, str, 0) == 0);
+	EXPECT_EQ(Utils::strncmp(str4, str3, 3) == 0, strncmp(str4, str3, 3) == 0);
+	EXPECT_EQ(Utils::strncmp(str3, str4, 9) == 0, strncmp(str3, str4, 9) == 0);
+
+    EXPECT_EQ(Utils::strncmp(str5, str6, 5) == 0, strncmp(str5, str6, 5) == 0);
 }
 
 TEST(Utils_tests, strpbrk) {

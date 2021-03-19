@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 
-#include "Str.hpp"
+#include "../src/Str.hpp"
+#include "../../Utils/src/Utils.hpp"
 
 #include <iostream>
+#include <cstring>
 
 TEST(StrComparisons, equality_with_Str) {
 	Str			str("hello there");

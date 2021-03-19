@@ -100,7 +100,7 @@ class Str {
 
 	private:
 		const char *		_data;
-		size_t					_len;
+		size_t			    _len;
 
 		bool		_throwIfUninitialized(void) const;
 

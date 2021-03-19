@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "Str.hpp"
+#include "../src/Str.hpp"
 
 #include <iostream>
 #include <sstream>

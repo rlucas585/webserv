@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "Str.hpp"
+#include "../src/Str.hpp"
 
 TEST(StrIteration, basic_iteration) {
 	const char *	staticStr = "hello there";

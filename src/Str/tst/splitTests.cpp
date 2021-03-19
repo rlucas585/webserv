@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "Str.hpp"
+#include "../src/Str.hpp"
 
 #include <iostream>
 #include <vector>
@@ -22,6 +22,20 @@ TEST(StrSplit, split_test_period_delim) {
 	ASSERT_EQ("168", iter.next());
 	ASSERT_EQ("0", iter.next());
 	ASSERT_EQ("1", iter.next());
+}
+
+TEST(StrSplit, split_with_c_string) {
+  const char  *stack_str = "I am a stack string, on the stack.";
+  Str::Split  iter(stack_str);
+
+  ASSERT_EQ("I", iter.next());
+  ASSERT_EQ("am", iter.next());
+  ASSERT_EQ("a", iter.next());
+  ASSERT_EQ("stack", iter.next());
+  ASSERT_EQ("string,", iter.next());
+  ASSERT_EQ("on", iter.next());
+  ASSERT_EQ("the", iter.next());
+  ASSERT_EQ("stack.", iter.next());
 }
 
 TEST(StrSplit, split_test_string_delim) {
