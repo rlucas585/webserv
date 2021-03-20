@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:08:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/19 11:36:03 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/20 16:48:55 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,30 @@ TEST(Utils_tests, strpbrk) {
         test = Utils::strpbrk(test + 1, key);
         real = strpbrk(real + 1, key);
     }
+}
+
+TEST(Utils_tests, min) {
+    char str[] = "Test";
+    char str2[] = "Rest";
+    int x = 15;
+    int y = 20;
+    std::string s1("Hello");
+    std::string s2("Henlo");
+
+    EXPECT_EQ(Utils::min(str, str2), std::min(str, str2));
+    EXPECT_EQ(Utils::min(x, y), std::min(x, y));
+    EXPECT_EQ(Utils::min(s1, s2), std::min(s1, s2));
+}
+
+TEST(Utils_tests, max) {
+    char str[] = "Test";
+    char str2[] = "Rest";
+    int x = 15;
+    int y = 20;
+    std::string s1("Hello");
+    std::string s2("Henlo");
+
+    EXPECT_EQ(Utils::max(str, str2), std::max(str, str2));
+    EXPECT_EQ(Utils::max(x, y), std::max(x, y));
+    EXPECT_EQ(Utils::max(s1, s2), std::max(s1, s2));
 }

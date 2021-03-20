@@ -6,13 +6,18 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/19 22:58:45 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/20 16:51:02 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <limits>
 #include <sys/types.h>
+#include <bits/posix1_lim.h>
 #include <string>
+
+#ifndef _POSIX_SSIZE_MAX
+#define _POSIX_SSIZE_MAX 32767
+#endif
 
 class FileDesc {
     public:
@@ -36,5 +41,5 @@ class FileDesc {
         FileDesc(void);
         FileDesc(int new_fd);
 
-        static const unsigned int READ_LIMIT = std::numeric_limits<unsigned int>::max();
+        static const ssize_t READ_LIMIT = _POSIX_SSIZE_MAX;
 };

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/19 18:23:36 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/20 17:10:22 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,9 @@ runtime_error::~runtime_error(void) throw() {
 runtime_error::runtime_error(const char *msg) : _msg(msg) {
 }
 
+runtime_error::runtime_error(std::string s) : _msg(s) {
+}
+
 runtime_error::runtime_error(runtime_error const& other) {
     *this = other;
 }
@@ -112,7 +115,7 @@ runtime_error &runtime_error::operator=(runtime_error const& rhs) {
 }
 
 const char*         runtime_error::what(void) const throw() {
-    return (_msg);
+    return (_msg.c_str());
 }
 
 } // namespace Utils
