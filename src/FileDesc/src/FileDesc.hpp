@@ -6,9 +6,12 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/20 16:51:02 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/20 19:34:11 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef FILEDESC_HPP
+#define FILEDESC_HPP
 
 #include <limits>
 #include <sys/types.h>
@@ -43,3 +46,5 @@ class FileDesc {
 
         static const ssize_t READ_LIMIT = _POSIX_SSIZE_MAX;
 };
+
+#endif

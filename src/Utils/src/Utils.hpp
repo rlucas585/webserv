@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/20 17:10:25 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/23 18:21:28 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,58 @@ class runtime_error : public std::exception {
 
         runtime_error(void);
 };
+
+template <typename T>
+class unique_ptr {
+    public:
+        typedef T*                  pointer;
+        typedef T&                  reference;
+
+        unique_ptr(void) : _p(0) {}
+        ~unique_ptr(void) { if (_p != 0) {delete _p; }}
+        unique_ptr(pointer p) : _p(p) {}
+        unique_ptr(unique_ptr& other) : _p(other._p) { other._p = 0; }
+        unique_ptr &operator=(unique_ptr& rhs) {
+            if (_p != 0) { delete _p; }
+            _p = rhs._p;
+            rhs._p = 0;
+            return *this;
+        }
+
+        pointer         release(void) {
+            pointer     ret = _p;
+            _p = 0;
+            return ret;
+        }
+
+        pointer         get(void) const {
+            return _p;
+        }
+
+        void            reset(pointer p = pointer()) {
+            if (_p != 0) { delete _p; }
+            _p = p;
+        }
+
+        void            swap(unique_ptr& other) {
+            pointer     tmp = _p;
+
+            _p = other._p;
+            other._p = tmp;
+        }
+
+        reference       operator*() {
+            return *_p;
+        }
+
+        pointer         operator->() {
+            return _p;
+        }
+
+    private:
+        pointer         _p;
+};
+
 } // namespace Utils
 
 #endif
