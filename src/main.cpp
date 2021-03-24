@@ -1,9 +1,12 @@
 #include <iostream>
-#include "test_module1/src/Formula.hpp"
+#include "Str/src/Str.hpp"
 
-int		main(void) {
-	std::cout << "Project Compilation successful: " << std::endl;
-	std::cout << "Bla: " << Formula::bla(2) << std::endl;
+int main(void) {
+    Str::Split  iter("Project Compilation Successful");
 
-	return 0;
+    for (Str slice = iter.next(); slice.isInitialized(); slice = iter.next()) {
+        std::cout << slice << std::endl;
+    }
+
+    return 0;
 }

@@ -1,0 +1,12 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+
+# Use const char* str instead of const char *str
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+ColumnLimit: 120
+---

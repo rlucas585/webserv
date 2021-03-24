@@ -1,0 +1,120 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   Utils.cpp                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rlucas <marvin@codam.nl>                     +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
+/*   Updated: 2021/03/23 18:03:06 by rlucas        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "Utils.hpp"
+
+// Uncomment to show src files are compiled with std=c++98
+// #include <array>
+
+namespace Utils {
+// Uncomment to show src files are compiled with std=c++98
+// void failMe(void) {
+//  std::array<int, 5>      arr = {1, 2, 3, 4, 5};
+//  (void)arr;
+// }
+
+size_t strlen(const char* s) {
+    size_t i = 0;
+    for (; s[i]; i++) {
+    }
+    return i;
+}
+
+const char* strchr(const char* s, int c) {
+    size_t i = 0;
+
+    for (; s[i] != c && s[i]; i++) {
+    }
+    if (s[i] == c) {
+        return s + i;
+    } else {
+        return 0;
+    }
+}
+
+char* strchr(char* s, int c) {
+    size_t i = 0;
+
+    for (; s[i] != c && s[i]; i++) {
+    }
+    if (s[i] && s[i] == c) {
+        return s + i;
+    } else {
+        return 0;
+    }
+}
+
+int strcmp(const char* str1, const char* str2) {
+    size_t i = 0;
+    for (; str1[i] && str2[i]; i++) {
+        if (str1[i] != str2[i])
+            return str1[i] - str2[i];
+    }
+    return str1[i] - str2[i];
+}
+
+int strncmp(const char* s1, const char* s2, size_t n) {
+    size_t i = 0;
+    for (; s1[i] && s2[i] && n > 0; i++, n--) {
+        if (s1[i] != s2[i])
+            return s1[i] - s2[i];
+    }
+    if (n == 0) {
+        return 0;
+    }
+    return s1[i] - s2[i];
+}
+
+char* strpbrk(char* s, const char* accept) {
+    size_t i = 0;
+    for (; s[i]; i++) {
+        if (strchr(accept, s[i]))
+            return (s + i);
+    }
+    return 0;
+}
+
+const char* strpbrk(const char* s, const char* accept) {
+    size_t i = 0;
+    for (; s[i]; i++) {
+        if (strchr(accept, s[i]))
+            return (s + i);
+    }
+    return 0;
+}
+
+runtime_error::runtime_error(void) : _msg("Undefined error") {
+}
+
+runtime_error::~runtime_error(void) throw() {
+}
+
+runtime_error::runtime_error(const char *msg) : _msg(msg) {
+}
+
+runtime_error::runtime_error(std::string s) : _msg(s) {
+}
+
+runtime_error::runtime_error(runtime_error const& other) {
+    *this = other;
+}
+
+runtime_error &runtime_error::operator=(runtime_error const& rhs) {
+    if (this == &rhs) { return *this; }
+    _msg = rhs._msg;
+    return *this;
+}
+
+const char*         runtime_error::what(void) const throw() {
+    return (_msg.c_str());
+}
+} // namespace Utils
