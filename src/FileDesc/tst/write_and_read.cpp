@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/20 16:02:15 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/20 17:12:14 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/24 18:34:50 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "../src/FileDesc.hpp"
 #include "../../Utils/src/Utils.hpp"
 
-TEST(FileDesc_tests, read_and_write) {
+TEST(FileDesc_tests, read_and_write_strings) {
     // Writing to a file
     {
         int         fd = open("output.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
@@ -45,6 +45,25 @@ TEST(FileDesc_tests, read_and_write) {
 
     // Remove the temporary file
     EXPECT_EQ(remove("output.txt"), 0);
+}
+
+TEST(FileDesc_tests, read_and_write_buffers) {
+    char        write_buffer[] = "All your base are belong to us";
+    char        read_buffer[35];
+    {
+        int     fd = open("output.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        FileDesc    file = FileDesc::init(fd);
+
+        file.writeToFile(write_buffer, 30);
+    }
+    {
+        int         fd = open("output.txt", O_RDONLY, 0644);
+        FileDesc    file = FileDesc::init(fd);
+
+        file.readFromFile(read_buffer, 30);
+        EXPECT_STREQ(read_buffer, "All your base are belong to us");
+    }
+
 }
 
 TEST(FileDesc_tests, error_tests) {
