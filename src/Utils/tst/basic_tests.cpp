@@ -6,14 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:08:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/20 16:48:55 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/24 16:18:37 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../src/Utils.hpp"
 #include <cstring>
 #include <gtest/gtest.h>
-#include <iostream>
 
 TEST(Utils_tests, strlen) {
     EXPECT_EQ(Utils::strlen(""), strlen(""));
