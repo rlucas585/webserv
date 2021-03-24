@@ -11,7 +11,7 @@ on:
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
-    name: Linux compatibility checks.
+    name: Compatibility checks.
 
     steps:
     - name: Checkout repository and submodules
