@@ -19,7 +19,7 @@ class Str {
             Container c;
             Str item;
 
-            while (item = this->next()) {
+            while ((item = this->next())) {
                 c.push_back(item);
             }
             return c;
