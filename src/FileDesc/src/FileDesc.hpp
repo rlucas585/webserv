@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/20 19:34:11 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/25 10:40:47 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <limits>
 #include <sys/types.h>
-#include <bits/posix1_lim.h>
 #include <string>
 
 #ifndef _POSIX_SSIZE_MAX

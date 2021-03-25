@@ -6,11 +6,11 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/24 17:46:03 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/24 18:39:40 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../src/Socket.hpp"
+#include "../src/IpAddr.hpp"
 #include <gtest/gtest.h>
 #include <arpa/inet.h>
 #include <cstdio>

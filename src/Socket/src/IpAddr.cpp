@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Socket.cpp                                         :+:    :+:            */
+/*   IpAddr.cpp                                         :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/03/23 23:20:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/24 17:45:37 by rlucas        ########   odam.nl         */
+/*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
+/*   Updated: 2021/03/25 10:48:38 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Socket.hpp"
+#include "IpAddr.hpp"
 #include <arpa/inet.h>
 #include "../../Utils/src/Utils.hpp"
 
@@ -45,6 +45,36 @@ u_int32_t       IpAddr::network_to_host_long(u_int32_t netlong) {
     bytes[2] = netlong >> 16;
     bytes[3] = netlong >> 24;
     return convert_to_little_endian(bytes);
+}
+
+u_int16_t       IpAddr::network_to_host_short(u_int16_t netshort) {
+    u_int8_t            bytes[2];
+
+    if (host_is_big_endian()) {
+        return netshort;
+    }
+    bytes[0] = netshort;
+    bytes[1] = netshort >> 8;
+    return convert_to_little_endian(bytes); // TODO this is incorrect
+}
+
+u_int32_t       IpAddr::host_to_network_long(u_int32_t hostlong) {
+    u_int8_t            bytes[4];
+    u_int32_t           networklong;
+
+    if (host_is_big_endian()) {
+        return hostlong;
+    }
+    bytes[0] = hostlong
+    bytes[0] = netlong;
+    bytes[1] = netlong >> 8;
+    bytes[2] = netlong >> 16;
+    bytes[3] = netlong >> 24;
+    networklong = convert_to_big_endian()
+}
+
+u_int16_t       IpAddr::host_to_network_short(u_int16_t hostshort) {
+
 }
 
 bool            IpAddr::host_is_little_endian(void) {
