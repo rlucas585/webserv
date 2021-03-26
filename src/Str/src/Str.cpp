@@ -96,7 +96,7 @@ bool Str::iterator::operator==(const iterator& rhs) const {
 
 bool Str::iterator::operator!=(const iterator& rhs) const { return !(*this == rhs); }
 
-const char& Str::iterator::operator*(void)const {
+const char& Str::iterator::operator*(void) {
     if (_len == 0) {
         throw Utils::runtime_error("Dereferencing iterator past end of Str");
     }

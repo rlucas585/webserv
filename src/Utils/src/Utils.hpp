@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/23 18:21:28 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 14:09:26 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int strcmp(const char* str1, const char* str2);
 int strncmp(const char* s1, const char* s2, size_t n);
 char* strpbrk(char* s, const char* accept);
 const char* strpbrk(const char* s, const char* accept);
+void* memset(void* b, int c, size_t len);
 template <typename T> T const& min(T const& lhs, T const& rhs) { return (rhs < lhs) ? rhs : lhs; }
 template <typename T> T const& max(T const& lhs, T const& rhs) { return (lhs < rhs) ? rhs : lhs; }
 
