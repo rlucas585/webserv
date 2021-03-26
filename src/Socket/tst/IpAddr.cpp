@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 12:37:25 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 12:42:56 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,6 @@
 #include <gtest/gtest.h>
 #include <arpa/inet.h>
 #include <cstdio>
-
-#ifdef __APPLE__
-#ifndef ntohl
-#define ntohl(x)        __DARWIN_OSSwapInt32(x)
-#endif
-#ifndef ntohs
-#define ntohs(x)        __DARWIN_OSSwapInt16(x)
-#endif
-#ifndef htonl
-#define htonl(x)        __DARWIN_OSSwapInt32(x)
-#endif
-#ifndef htons
-#define htons(x)        __DARWIN_OSSwapInt16(x)
-#endif
-#endif
 
 template <typename T, size_t size>
 ::testing::AssertionResult ArraysMatch(const T(&expected)[size],
@@ -67,7 +52,7 @@ TEST(IpAddr_tests, htons_test) {
     struct sockaddr_in      actual_addr;
     struct sockaddr_in      expected_addr;
 
-    actual_addr.sin_port = IpAddr::htons(port);
+    actual_addr.sin_port = IpAddr::host_to_network_short(port);
     expected_addr.sin_port = htons(port);
 
     EXPECT_EQ(actual_addr.sin_port, expected_addr.sin_port);
@@ -78,7 +63,7 @@ TEST(IpAddr_tests, htonl_test) {
     u_int32_t               actual;
     u_int32_t               expected;
 
-    actual = IpAddr::htonl(num);
+    actual = IpAddr::host_to_network_long(num);
     expected = htonl(num);
 
     EXPECT_EQ(actual, expected);
@@ -89,7 +74,7 @@ TEST(IpAddr_tests, ntohl_test) {
     u_int32_t               actual;
     u_int32_t               expected;
 
-    actual = IpAddr::ntohl(num);
+    actual = IpAddr::network_to_host_long(num);
     expected = ntohl(num);
 
     EXPECT_EQ(actual, expected);
@@ -100,7 +85,7 @@ TEST(IpAddr_tests, ntohs_test) {
     u_int16_t               actual;
     u_int16_t               expected;
 
-    actual = IpAddr::ntohs(num);
+    actual = IpAddr::network_to_host_short(num);
     expected = ntohs(num);
 
     EXPECT_EQ(actual, expected);

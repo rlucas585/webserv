@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 11:00:52 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 12:42:53 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ u_int16_t    IpAddr::u16_convert_to_little_endian(u_int8_t bytes[2]) {
     return output;
 }
 
-u_int32_t       IpAddr::ntohl(u_int32_t netlong) {
+u_int32_t       IpAddr::network_to_host_long(u_int32_t netlong) {
     u_int8_t              bytes[4];
 
     if (host_is_big_endian()) {
@@ -63,7 +63,7 @@ u_int32_t       IpAddr::ntohl(u_int32_t netlong) {
     return u32_convert_to_little_endian(bytes);
 }
 
-u_int16_t       IpAddr::ntohs(u_int16_t netshort) {
+u_int16_t       IpAddr::network_to_host_short(u_int16_t netshort) {
     u_int8_t            bytes[2];
 
     if (host_is_big_endian()) {
@@ -74,7 +74,7 @@ u_int16_t       IpAddr::ntohs(u_int16_t netshort) {
     return u16_convert_to_little_endian(bytes);
 }
 
-u_int32_t       IpAddr::htonl(u_int32_t hostlong) {
+u_int32_t       IpAddr::host_to_network_long(u_int32_t hostlong) {
     u_int8_t            bytes[4];
 
     if (host_is_big_endian()) {
@@ -87,7 +87,7 @@ u_int32_t       IpAddr::htonl(u_int32_t hostlong) {
     return u32_convert_to_big_endian(bytes);
 }
 
-u_int16_t       IpAddr::htons(u_int16_t hostshort) {
+u_int16_t       IpAddr::host_to_network_short(u_int16_t hostshort) {
     u_int8_t            bytes[2];
 
     if (host_is_big_endian()) {
