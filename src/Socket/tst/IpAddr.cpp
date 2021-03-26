@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 12:29:27 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 12:37:25 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,17 @@
 #include <cstdio>
 
 #ifdef __APPLE__
+#ifndef ntohl
+#define ntohl(x)        __DARWIN_OSSwapInt32(x)
+#endif
 #ifndef ntohs
-#include <arpa/inet.h>
+#define ntohs(x)        __DARWIN_OSSwapInt16(x)
+#endif
+#ifndef htonl
+#define htonl(x)        __DARWIN_OSSwapInt32(x)
+#endif
+#ifndef htons
+#define htons(x)        __DARWIN_OSSwapInt16(x)
 #endif
 #endif
 
