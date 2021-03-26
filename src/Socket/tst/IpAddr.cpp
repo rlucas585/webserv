@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 11:01:12 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 12:29:27 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,12 @@
 #include <gtest/gtest.h>
 #include <arpa/inet.h>
 #include <cstdio>
+
+#ifdef __APPLE__
+#ifndef ntohs
+#include <arpa/inet.h>
+#endif
+#endif
 
 template <typename T, size_t size>
 ::testing::AssertionResult ArraysMatch(const T(&expected)[size],
