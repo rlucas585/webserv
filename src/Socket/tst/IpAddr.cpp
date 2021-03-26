@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/24 18:39:40 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 11:01:12 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,51 @@ TEST(IpAddr_tests, big_endian_test) {
     
     real_addr.s_addr = inet_addr("127.2.1.1");
 
-    EXPECT_EQ(real_addr.s_addr, IpAddr::convert_to_big_endian(bytes));
+    EXPECT_EQ(real_addr.s_addr, IpAddr::u32_convert_to_big_endian(bytes));
+}
+
+TEST(IpAddr_tests, htons_test) {
+    u_int16_t               port = 1500;
+    struct sockaddr_in      actual_addr;
+    struct sockaddr_in      expected_addr;
+
+    actual_addr.sin_port = IpAddr::htons(port);
+    expected_addr.sin_port = htons(port);
+
+    EXPECT_EQ(actual_addr.sin_port, expected_addr.sin_port);
+}
+
+TEST(IpAddr_tests, htonl_test) {
+    u_int32_t               num = 1872938;
+    u_int32_t               actual;
+    u_int32_t               expected;
+
+    actual = IpAddr::htonl(num);
+    expected = htonl(num);
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(IpAddr_tests, ntohl_test) {
+    u_int32_t               num = 1872938;
+    u_int32_t               actual;
+    u_int32_t               expected;
+
+    actual = IpAddr::ntohl(num);
+    expected = ntohl(num);
+
+    EXPECT_EQ(actual, expected);
+}
+
+TEST(IpAddr_tests, ntohs_test) {
+    u_int16_t               num = 1500;
+    u_int16_t               actual;
+    u_int16_t               expected;
+
+    actual = IpAddr::ntohs(num);
+    expected = ntohs(num);
+
+    EXPECT_EQ(actual, expected);
 }
 
 TEST(IpAddr_tests, creation_with_string_test) {
