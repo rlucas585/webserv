@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 12:42:56 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 17:32:02 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,17 @@ TEST(IpAddr_tests, creation_with_bytes_test) {
     EXPECT_TRUE(ArraysMatch(expected_bytes, actual_bytes));
 }
 
+TEST(IpAddr_tests, into_inner_test) {
+    const char* str = "127.2.1.1";
+    Ipv4Addr addr = Ipv4Addr::init_from_string(str);
+    in_addr actual;
+    in_addr inner = addr.into_inner();
+
+    actual.s_addr = inet_addr(str);
+
+    EXPECT_EQ(inner.s_addr, actual.s_addr);
+}
+
 TEST(IpAddr_tests, is_unspecified_test) {
     Ipv4Addr addr1 = Ipv4Addr::init_from_string("0.0.0.0");
     Ipv4Addr addr2 = Ipv4Addr::init_from_string("127.0.0.1");
@@ -136,4 +147,10 @@ TEST(IpAddr_tests, comparison_test) {
 
     EXPECT_NE(addr1, addr2);
     EXPECT_EQ(addr3, addr4);
+
+    in_addr actual;
+    actual.s_addr = inet_addr("127.0.0.1");
+
+    EXPECT_EQ(addr2, actual);
+    EXPECT_EQ(actual, addr2);
 }

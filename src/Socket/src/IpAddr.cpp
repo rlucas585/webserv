@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 12:42:53 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 17:52:47 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,16 @@ bool Ipv4Addr::is_loopback(void) const {
     return bytes[0] == 127;
 }
 
+in_addr Ipv4Addr::into_inner(void) const { return inner; }
+
 bool Ipv4Addr::operator==(Ipv4Addr const& other) const { return inner.s_addr == other.inner.s_addr; }
 
 bool Ipv4Addr::operator!=(Ipv4Addr const& other) const { return !(*this == other); }
+
+bool Ipv4Addr::operator==(in_addr const& other) const { return inner.s_addr == other.s_addr; }
+
+bool Ipv4Addr::operator!=(in_addr const& other) const { return !(*this == other); }
+
+bool operator==(in_addr const& lhs, Ipv4Addr const& rhs) { return rhs == lhs; }
+
+bool operator!=(in_addr const& lhs, Ipv4Addr const& rhs) { return rhs != lhs; }

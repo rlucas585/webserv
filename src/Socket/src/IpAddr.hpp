@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:38:46 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 12:41:44 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 17:52:55 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,12 @@ class Ipv4Addr : public IpAddr {
     bool is_unspecified(void) const;
     bool is_loopback(void) const;
 
+    in_addr into_inner(void) const;
+
     bool operator==(Ipv4Addr const& other) const;
     bool operator!=(Ipv4Addr const& other) const;
+    bool operator==(in_addr const& other) const;
+    bool operator!=(in_addr const& other) const;
 
   private:
     in_addr inner;
@@ -54,5 +58,8 @@ class Ipv4Addr : public IpAddr {
     Ipv4Addr(u_int8_t bytes[4]);
     Ipv4Addr(const char* str);
 };
+
+bool operator==(in_addr const& lhs, Ipv4Addr const& rhs);
+bool operator!=(in_addr const& lhs, Ipv4Addr const& rhs);
 
 #endif

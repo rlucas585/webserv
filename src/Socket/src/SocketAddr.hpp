@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:57:14 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/24 19:02:05 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 18:19:14 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,23 @@ class SocketAddr {};
 
 class SocketAddrV4 : public SocketAddr {
   public:
+    ~SocketAddrV4(void);
+    SocketAddrV4(SocketAddrV4 const& other);
+    SocketAddrV4 operator=(SocketAddrV4 const& rhs);
+
     static SocketAddrV4 init(Ipv4Addr ip, u_int16_t port);
+
+    Ipv4Addr const& ip(void) const;
+    void set_ip(Ipv4Addr new_ip);
+    u_int16_t port(void) const;
+    void set_port(u_int16_t new_port);
+
+    sockaddr_in into_inner(void) const;
+
+    bool operator==(SocketAddrV4 const& other) const;
+    bool operator!=(SocketAddrV4 const& other) const;
+    bool operator==(sockaddr_in const& other) const;
+    bool operator!=(sockaddr_in const& other) const;
 
   private:
     sockaddr_in inner;
@@ -28,5 +44,10 @@ class SocketAddrV4 : public SocketAddr {
     SocketAddrV4(void);
     SocketAddrV4(Ipv4Addr ip, u_int16_t port);
 };
+
+bool operator==(sockaddr_in const& lhs, SocketAddrV4 const& rhs);
+bool operator!=(sockaddr_in const& lhs, SocketAddrV4 const& rhs);
+bool operator==(sockaddr_in const& lhs, sockaddr_in const& rhs);
+bool operator!=(sockaddr_in const& lhs, sockaddr_in const& rhs);
 
 #endif
