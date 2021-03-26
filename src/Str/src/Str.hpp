@@ -1,8 +1,8 @@
 #ifndef STR_HPP
 #define STR_HPP
 
-#include <iostream>
 #include <exception>
+#include <iostream>
 #include <string>
 
 class Str {

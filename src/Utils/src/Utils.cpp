@@ -92,29 +92,23 @@ const char* strpbrk(const char* s, const char* accept) {
     return 0;
 }
 
-runtime_error::runtime_error(void) : _msg("Undefined error") {
-}
+runtime_error::runtime_error(void) : _msg("Undefined error") {}
 
-runtime_error::~runtime_error(void) throw() {
-}
+runtime_error::~runtime_error(void) throw() {}
 
-runtime_error::runtime_error(const char *msg) : _msg(msg) {
-}
+runtime_error::runtime_error(const char* msg) : _msg(msg) {}
 
-runtime_error::runtime_error(std::string s) : _msg(s) {
-}
+runtime_error::runtime_error(std::string s) : _msg(s) {}
 
-runtime_error::runtime_error(runtime_error const& other) {
-    *this = other;
-}
+runtime_error::runtime_error(runtime_error const& other) { *this = other; }
 
-runtime_error &runtime_error::operator=(runtime_error const& rhs) {
-    if (this == &rhs) { return *this; }
+runtime_error& runtime_error::operator=(runtime_error const& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
     _msg = rhs._msg;
     return *this;
 }
 
-const char*         runtime_error::what(void) const throw() {
-    return (_msg.c_str());
-}
+const char* runtime_error::what(void) const throw() { return (_msg.c_str()); }
 } // namespace Utils

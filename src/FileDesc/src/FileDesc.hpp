@@ -14,36 +14,36 @@
 #define FILEDESC_HPP
 
 #include <limits>
-#include <sys/types.h>
 #include <string>
+#include <sys/types.h>
 
 #ifndef _POSIX_SSIZE_MAX
 #define _POSIX_SSIZE_MAX 32767
 #endif
 
 class FileDesc {
-    public:
-        ~FileDesc(void);
-        FileDesc(FileDesc const& other);
-        FileDesc &operator=(FileDesc const& rhs);
+  public:
+    ~FileDesc(void);
+    FileDesc(FileDesc const& other);
+    FileDesc& operator=(FileDesc const& rhs);
 
-        static FileDesc        init(int new_fd);
-        
-        int     raw(void) const;
+    static FileDesc init(int new_fd);
 
-        void    writeToFile(const char* str) const;
-        void    writeToFile(const void* buf, size_t count) const;
+    int raw(void) const;
 
-        void    readFromFile(void *buf, size_t len) const;
-        void    readFromFile(std::string& str, size_t len) const;
+    void writeToFile(const char* str) const;
+    void writeToFile(const void* buf, size_t count) const;
 
-    private:
-        int     fd;
+    void readFromFile(void* buf, size_t len) const;
+    void readFromFile(std::string& str, size_t len) const;
 
-        FileDesc(void);
-        FileDesc(int new_fd);
+  private:
+    int fd;
 
-        static const ssize_t READ_LIMIT = _POSIX_SSIZE_MAX;
+    FileDesc(void);
+    FileDesc(int new_fd);
+
+    static const ssize_t READ_LIMIT = _POSIX_SSIZE_MAX;
 };
 
 #endif

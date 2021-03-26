@@ -1,19 +1,22 @@
 #include <gtest/gtest.h>
 
-#include "../src/Str.hpp"
 #include "../../Utils/src/Utils.hpp"
+#include "../src/Str.hpp"
 
 #include <iostream>
 #include <sstream>
 
-#define TEST_THROW(FUNC,ERRMSG) EXPECT_THROW({ \
-            try { \
-            FUNC \
-            } catch (Utils::runtime_error const& err) { \
-            EXPECT_STREQ(ERRMSG, err.what()); \
-            throw ; \
-            } \
-            }, Utils::runtime_error);
+#define TEST_THROW(FUNC, ERRMSG)                                                                                       \
+    EXPECT_THROW(                                                                                                      \
+        {                                                                                                              \
+            try {                                                                                                      \
+                FUNC                                                                                                   \
+            } catch (Utils::runtime_error const& err) {                                                                \
+                EXPECT_STREQ(ERRMSG, err.what());                                                                      \
+                throw;                                                                                                 \
+            }                                                                                                          \
+        },                                                                                                             \
+        Utils::runtime_error);
 
 TEST(StrCreation, default_construction) {
     Str str;

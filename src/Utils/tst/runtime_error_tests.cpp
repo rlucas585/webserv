@@ -14,12 +14,14 @@
 #include <gtest/gtest.h>
 
 TEST(Utils_tests, runtime_error) {
-    EXPECT_THROW({
+    EXPECT_THROW(
+        {
             try {
-            throw Utils::runtime_error("crash it all");
+                throw Utils::runtime_error("crash it all");
             } catch (Utils::runtime_error const& err) {
-            EXPECT_STREQ("crash it all", err.what());
-            throw ;
+                EXPECT_STREQ("crash it all", err.what());
+                throw;
             }
-            }, Utils::runtime_error);
+        },
+        Utils::runtime_error);
 }

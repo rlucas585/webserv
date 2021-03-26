@@ -12,8 +12,7 @@
 
 #include "SocketAddr.hpp"
 
-SocketAddrV4::SocketAddrV4(void) {
-}
+SocketAddrV4::SocketAddrV4(void) {}
 
 // SocketAddrV4::SocketAddrV4(Ipv4Addr ip, u_int16_t port) {
 //     inner.sin_family = AF_INET;
