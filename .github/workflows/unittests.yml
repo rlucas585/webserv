@@ -3,15 +3,15 @@ name: Unittests
 on:
   push:
     branches:
-      - master
+      - main
       - develop
   pull_request:
   workflow_dispatch:
 
 jobs:
-  ubuntu:
+  unittests:
     runs-on: ubuntu-latest
-    name: Run Catch2 unittests
+    name: Compile and run unittests
 
     steps:
     - name: Checkout repository and submodules
