@@ -84,8 +84,8 @@ TEST(Utils_tests, strpbrk) {
 }
 
 TEST(Utils_tests, memset) {
-    char        buf[10];
-    char        buf2[10];
+    char buf[10];
+    char buf2[10];
 
     Utils::memset(buf, 15, 10);
     memset(buf2, 15, 10);

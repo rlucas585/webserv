@@ -92,8 +92,8 @@ const char* strpbrk(const char* s, const char* accept) {
     return 0;
 }
 
-void*   memset(void *b, int c, size_t len) {
-    unsigned char*  p = reinterpret_cast<unsigned char*>(b);
+void* memset(void* b, int c, size_t len) {
+    unsigned char* p = reinterpret_cast<unsigned char*>(b);
     for (; len != 0; p++, len--) {
         *p = c;
     }
