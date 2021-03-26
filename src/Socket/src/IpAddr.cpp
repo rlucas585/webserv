@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/25 10:48:38 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 12:42:53 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <arpa/inet.h>
 #include "../../Utils/src/Utils.hpp"
 
-u_int32_t       IpAddr::convert_to_big_endian(u_int8_t bytes[4]) {
+u_int32_t       IpAddr::u32_convert_to_big_endian(u_int8_t bytes[4]) {
     u_int32_t       output = 0;
 
     output = output | bytes[0];
@@ -24,13 +24,29 @@ u_int32_t       IpAddr::convert_to_big_endian(u_int8_t bytes[4]) {
     return output;
 }
 
-u_int32_t       IpAddr::convert_to_little_endian(u_int8_t bytes[4]) {
+u_int32_t       IpAddr::u32_convert_to_little_endian(u_int8_t bytes[4]) {
     u_int32_t       output = 0;
 
     output = output | bytes[0] << 24;
     output = output | bytes[1] << 16;
     output = output | bytes[2] << 8;
     output = output | bytes[3];
+    return output;
+}
+
+u_int16_t    IpAddr::u16_convert_to_big_endian(u_int8_t bytes[2]) {
+    u_int16_t       output = 0;
+
+    output = output | bytes[0];
+    output = output | bytes[1] << 8;
+    return output;
+}
+
+u_int16_t    IpAddr::u16_convert_to_little_endian(u_int8_t bytes[2]) {
+    u_int16_t       output = 0;
+
+    output = output | bytes[0] << 8;
+    output = output | bytes[1];
     return output;
 }
 
@@ -44,7 +60,7 @@ u_int32_t       IpAddr::network_to_host_long(u_int32_t netlong) {
     bytes[1] = netlong >> 8;
     bytes[2] = netlong >> 16;
     bytes[3] = netlong >> 24;
-    return convert_to_little_endian(bytes);
+    return u32_convert_to_little_endian(bytes);
 }
 
 u_int16_t       IpAddr::network_to_host_short(u_int16_t netshort) {
@@ -55,26 +71,31 @@ u_int16_t       IpAddr::network_to_host_short(u_int16_t netshort) {
     }
     bytes[0] = netshort;
     bytes[1] = netshort >> 8;
-    return convert_to_little_endian(bytes); // TODO this is incorrect
+    return u16_convert_to_little_endian(bytes);
 }
 
 u_int32_t       IpAddr::host_to_network_long(u_int32_t hostlong) {
     u_int8_t            bytes[4];
-    u_int32_t           networklong;
 
     if (host_is_big_endian()) {
         return hostlong;
     }
-    bytes[0] = hostlong
-    bytes[0] = netlong;
-    bytes[1] = netlong >> 8;
-    bytes[2] = netlong >> 16;
-    bytes[3] = netlong >> 24;
-    networklong = convert_to_big_endian()
+    bytes[0] = hostlong >> 24;
+    bytes[1] = hostlong >> 16;
+    bytes[2] = hostlong >> 8;
+    bytes[3] = hostlong;
+    return u32_convert_to_big_endian(bytes);
 }
 
 u_int16_t       IpAddr::host_to_network_short(u_int16_t hostshort) {
+    u_int8_t            bytes[2];
 
+    if (host_is_big_endian()) {
+        return hostshort;
+    }
+    bytes[0] = hostshort >> 8;
+    bytes[1] = hostshort;
+    return u16_convert_to_big_endian(bytes);
 }
 
 bool            IpAddr::host_is_little_endian(void) {
@@ -106,7 +127,7 @@ Ipv4Addr::~Ipv4Addr(void) {
 }
 
 Ipv4Addr::Ipv4Addr(u_int8_t bytes[4]) {
-    inner.s_addr = convert_to_big_endian(bytes);
+    inner.s_addr = u32_convert_to_big_endian(bytes);
 }
 
 Ipv4Addr::Ipv4Addr(const char* str) {
