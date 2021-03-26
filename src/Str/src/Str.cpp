@@ -1,8 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   Str.cpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rlucas <marvin@codam.nl>                     +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
+/*   Updated: 2021/03/26 20:58:35 by rlucas        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Str.hpp"
 
 #include "../../Utils/src/Utils.hpp"
-
-char Str::emptyBuffer[1] = "";
 
 Str::Split::Split(const char* start) : _remainder(start), _delimiter(" ") {}
 
@@ -34,6 +44,8 @@ Str Str::Split::next(void) {
     _remainder = _findFirstNotOf(nextDelim, _delimiter);
     return slice;
 }
+
+bool Str::Split::is_complete(void) const { return _remainder == NULL; }
 
 const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) const {
     for (; s != NULL; s++) {
@@ -199,6 +211,8 @@ size_t Str::length(void) const {
     return _len;
 }
 
+const char* Str::raw(void) const { return _data; }
+
 bool Str::isInitialized(void) const {
     if (_data)
         return true;
@@ -219,7 +233,7 @@ Str::iterator Str::end(void) const {
     return iterator(_data + _len - 1, 0, _len);
 }
 
-Str::Split Str::split(const char* delim) { return Str::Split(_data, delim); }
+Str::Split Str::split(const char* delim) const { return Str::Split(_data, delim); }
 
 bool Str::operator==(Str const& rhs) const { return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0; }
 

@@ -6,13 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:38:46 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 17:52:55 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 20:31:18 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IPADDR_HPP
 #define IPADDR_HPP
 
+#include "../../Str/src/Str.hpp"
 #include <netinet/in.h>
 
 class IpAddr {
@@ -40,6 +41,7 @@ class Ipv4Addr : public IpAddr {
     static Ipv4Addr init_from_bytes(u_int8_t bytes[4]);
     static Ipv4Addr init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t d);
     static Ipv4Addr init_from_string(const char* str);
+    static Ipv4Addr init_from_string(Str const& str);
 
     void octets(u_int8_t bytes[4]) const;
     bool is_unspecified(void) const;
@@ -56,7 +58,7 @@ class Ipv4Addr : public IpAddr {
     in_addr inner;
 
     Ipv4Addr(u_int8_t bytes[4]);
-    Ipv4Addr(const char* str);
+    Ipv4Addr(Str const& ip_str);
 };
 
 bool operator==(in_addr const& lhs, Ipv4Addr const& rhs);

@@ -6,13 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 17:52:47 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 22:00:32 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IpAddr.hpp"
 #include "../../Utils/src/Utils.hpp"
 #include <arpa/inet.h>
+#include <string>
 
 u_int32_t IpAddr::u32_convert_to_big_endian(u_int8_t bytes[4]) {
     u_int32_t output = 0;
@@ -123,8 +124,19 @@ Ipv4Addr::~Ipv4Addr(void) {}
 
 Ipv4Addr::Ipv4Addr(u_int8_t bytes[4]) { inner.s_addr = u32_convert_to_big_endian(bytes); }
 
-Ipv4Addr::Ipv4Addr(const char* str) {
-    inner.s_addr = inet_addr(str);
+Ipv4Addr::Ipv4Addr(Str const& ip_str) {
+    std::string buf; // Used to isolate and null terminate the Str
+
+    if (!ip_str.isInitialized() || ip_str.length() > 15) {
+        throw Utils::runtime_error("Invalid Str used for Ipv4Addr");
+    }
+    if (ip_str == "localhost") {
+        inner.s_addr = inet_addr("127.0.0.1");
+        return;
+    }
+    buf = ip_str.toString();
+    buf.push_back(' ');
+    inner.s_addr = inet_addr(buf.c_str());
     if (inner.s_addr == INADDR_NONE) {
         throw Utils::runtime_error("Invalid string used for Ipv4Addr");
     }
@@ -149,6 +161,8 @@ Ipv4Addr Ipv4Addr::init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t 
 }
 
 Ipv4Addr Ipv4Addr::init_from_string(const char* str) { return Ipv4Addr(str); }
+
+Ipv4Addr Ipv4Addr::init_from_string(Str const& str) { return Ipv4Addr(str); }
 
 // We'd like to return a [u8; 4], but this is not possible in C++.
 // A std::vector is possible, but feels like overkill.

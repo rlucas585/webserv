@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 14:11:34 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 21:24:18 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,30 @@ void* memset(void* b, int c, size_t len) {
         *p = c;
     }
     return b;
+}
+
+int atoi(const char* str) {
+    size_t i = 0;
+    unsigned long result = 0;
+    int sign = 1;
+    for (; ((str[i] >= '\t' && str[i] <= '\r') || str[i] == ' '); i++) {
+    }
+    if (str[i] == '+' || str[i] == '-') {
+        if (str[i] == '-') {
+            sign = -1;
+        }
+        i += 1;
+    }
+    for (; str[i] >= '0' && str[i] <= '9'; i++) {
+        result = result * 10 + (str[i] - '0');
+    }
+    if (sign == 1 && result >= 9223372036854775807) {
+        return -1;
+    }
+    if (sign == -1 && result > 9223372036854775807) {
+        return 0;
+    }
+    return static_cast<int>(result * sign);
 }
 
 runtime_error::runtime_error(void) : _msg("Undefined error") {}

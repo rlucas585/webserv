@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:08:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 14:14:20 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 21:14:49 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,12 @@ TEST(Utils_tests, memset) {
     for (size_t i = 0; i < 10; i++) {
         EXPECT_EQ(buf[i], buf2[i]);
     }
+}
+
+TEST(Utils_tests, atoi) {
+    int num = Utils::atoi("15");
+
+    ASSERT_EQ(num, 15);
 }
 
 TEST(Utils_tests, min) {

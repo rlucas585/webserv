@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   Str.hpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rlucas <marvin@codam.nl>                     +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
+/*   Updated: 2021/03/26 20:58:07 by rlucas        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef STR_HPP
 #define STR_HPP
 
@@ -24,6 +36,7 @@ class Str {
             }
             return c;
         }
+        bool is_complete(void) const;
 
       private:
         const char* _remainder;
@@ -68,8 +81,6 @@ class Str {
     operator std::string() const;
     std::string toString(void) const;
 
-    static char emptyBuffer[1];
-
     ~Str(void);
     Str(Str const& src) { *this = src; }
     Str& operator=(Str const& rhs);
@@ -82,11 +93,12 @@ class Str {
     static Str newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset);
 
     size_t length(void) const;
+    const char* raw(void) const;
     bool isInitialized(void) const;
     iterator begin(void) const;
     iterator end(void) const;
 
-    Split split(const char* delim = " ");
+    Split split(const char* delim = " ") const;
 
     bool operator==(Str const& rhs) const;
     bool operator!=(Str const& rhs) const;

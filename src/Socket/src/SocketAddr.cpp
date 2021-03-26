@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:59:55 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 18:19:12 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 22:03:51 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,24 @@ SocketAddrV4::SocketAddrV4(Ipv4Addr ip, u_int16_t port) {
 }
 
 SocketAddrV4 SocketAddrV4::init(Ipv4Addr ip, u_int16_t port) { return SocketAddrV4(ip, port); }
+
+SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
+    Str::Split iter = socket_addr_str.split(":");
+    Str ip_str = iter.next();
+    Str port_str = iter.next();
+    Ipv4Addr addr;
+    int port;
+
+    if (!ip_str.isInitialized() || !port_str.isInitialized() || !iter.is_complete()) {
+        throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
+    }
+    addr = Ipv4Addr::init_from_string(ip_str);
+    port = Utils::atoi(port_str.raw());
+    if (port < 0 || port > 65535) {
+        throw Utils::runtime_error("Invalid port value");
+    }
+    return init(addr, static_cast<u_int16_t>(port));
+}
 
 Ipv4Addr const& SocketAddrV4::ip(void) const {
     // Possible as Ipv4Addr has identical data structure to in_addr

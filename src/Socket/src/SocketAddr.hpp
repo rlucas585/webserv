@@ -6,13 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:57:14 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 18:19:14 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 20:38:18 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SOCKETADDR_HPP
 #define SOCKETADDR_HPP
 
+#include "../../Str/src/Str.hpp"
 #include "IpAddr.hpp"
 #include <arpa/inet.h>
 
@@ -25,6 +26,7 @@ class SocketAddrV4 : public SocketAddr {
     SocketAddrV4 operator=(SocketAddrV4 const& rhs);
 
     static SocketAddrV4 init(Ipv4Addr ip, u_int16_t port);
+    static SocketAddrV4 init(Str const& socket_addr_str);
 
     Ipv4Addr const& ip(void) const;
     void set_ip(Ipv4Addr new_ip);

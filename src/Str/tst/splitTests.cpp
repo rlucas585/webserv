@@ -12,6 +12,7 @@ TEST(StrSplit, split_test_basic) {
     ASSERT_EQ("A", iter.next());
     ASSERT_EQ("few", iter.next());
     ASSERT_EQ("words", iter.next());
+    ASSERT_TRUE(iter.is_complete());
 }
 
 TEST(StrSplit, split_test_period_delim) {
@@ -22,6 +23,7 @@ TEST(StrSplit, split_test_period_delim) {
     ASSERT_EQ("168", iter.next());
     ASSERT_EQ("0", iter.next());
     ASSERT_EQ("1", iter.next());
+    ASSERT_TRUE(iter.is_complete());
 }
 
 TEST(StrSplit, split_with_c_string) {
@@ -36,6 +38,7 @@ TEST(StrSplit, split_with_c_string) {
     ASSERT_EQ("on", iter.next());
     ASSERT_EQ("the", iter.next());
     ASSERT_EQ("stack.", iter.next());
+    ASSERT_TRUE(iter.is_complete());
 }
 
 TEST(StrSplit, split_test_string_delim) {

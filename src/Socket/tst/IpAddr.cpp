@@ -6,11 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 17:32:02 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 22:00:03 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../src/IpAddr.hpp"
+#include "../../Str/src/Str.hpp"
+#include "../../Utils/src/Utils.hpp"
 #include <arpa/inet.h>
 #include <cstdio>
 #include <gtest/gtest.h>
@@ -106,6 +108,53 @@ TEST(IpAddr_tests, creation_with_bytes_test) {
 
     addr.octets(actual_bytes);
     EXPECT_TRUE(ArraysMatch(expected_bytes, actual_bytes));
+}
+
+TEST(IpAddr_tests, creation_with_slice_test) {
+    Str total_str = "127.2.1.1:80";
+    Str::Split iter = total_str.split(":");
+    Str ip_str = iter.next();
+    Ipv4Addr addr = Ipv4Addr::init_from_string(ip_str);
+    u_int8_t expected_bytes[] = {127, 2, 1, 1};
+    u_int8_t actual_bytes[4];
+
+    addr.octets(actual_bytes);
+    EXPECT_TRUE(ArraysMatch(expected_bytes, actual_bytes));
+}
+
+TEST(IpAddr_tests, creation_with_localhost_test) {
+    Ipv4Addr addr = Ipv4Addr::init_from_string("localhost");
+    u_int8_t expected_bytes[] = {127, 0, 0, 1};
+    u_int8_t actual_bytes[4];
+
+    addr.octets(actual_bytes);
+    EXPECT_TRUE(ArraysMatch(expected_bytes, actual_bytes));
+}
+
+TEST(IpAddr_tests, crash_test1) {
+    EXPECT_THROW(
+        {
+            try {
+                Ipv4Addr addr = Ipv4Addr::init_from_string("hello");
+            } catch (Utils::runtime_error const& err) {
+                EXPECT_STREQ("Invalid string used for Ipv4Addr", err.what());
+                throw;
+            }
+        },
+        Utils::runtime_error);
+}
+
+TEST(IpAddr_tests, crash_test2) {
+    EXPECT_THROW(
+        {
+            try {
+                Ipv4Addr addr = Ipv4Addr::init_from_string("127.0.0.1.5");
+            } catch (Utils::runtime_error const& err) {
+                EXPECT_STREQ("Invalid string used for Ipv4Addr", err.what());
+                throw;
+            }
+        },
+        Utils::runtime_error);
 }
 
 TEST(IpAddr_tests, into_inner_test) {
