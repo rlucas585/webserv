@@ -60,7 +60,7 @@ class Str {
         iterator operator--(int);
         bool operator==(const iterator& rhs) const;
         bool operator!=(const iterator& rhs) const;
-        const char& operator*(void)const;
+        const char& operator*(void);
 
       private:
         const char* _p;
