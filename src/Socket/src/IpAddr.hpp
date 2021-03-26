@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:38:46 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 11:00:49 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 11:33:54 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 #define IPADDR_HPP
 
 #include <netinet/in.h>
+
+#undef ntohl
+#undef ntohs
+#undef htonl
+#undef htons
 
 class IpAddr {
     public:
