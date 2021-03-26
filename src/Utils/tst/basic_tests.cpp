@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:08:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/24 16:18:37 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 14:14:20 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,17 @@ TEST(Utils_tests, strpbrk) {
         EXPECT_TRUE(strcmp(test, real) == 0);
         test = Utils::strpbrk(test + 1, key);
         real = strpbrk(real + 1, key);
+    }
+}
+
+TEST(Utils_tests, memset) {
+    char        buf[10];
+    char        buf2[10];
+
+    Utils::memset(buf, 15, 10);
+    memset(buf2, 15, 10);
+    for (size_t i = 0; i < 10; i++) {
+        EXPECT_EQ(buf[i], buf2[i]);
     }
 }
 

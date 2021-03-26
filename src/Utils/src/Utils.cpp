@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/23 18:03:06 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/26 14:11:34 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,14 @@ const char* strpbrk(const char* s, const char* accept) {
             return (s + i);
     }
     return 0;
+}
+
+void*   memset(void *b, int c, size_t len) {
+    unsigned char*  p = reinterpret_cast<unsigned char*>(b);
+    for (; len != 0; p++, len--) {
+        *p = c;
+    }
+    return b;
 }
 
 runtime_error::runtime_error(void) : _msg("Undefined error") {}

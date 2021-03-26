@@ -39,6 +39,7 @@
 # Open Vim files and Vim configuration
 *.swp
 *.vimrc
+*.vim
 
 # CMake files
 CMakeLists.txt.user
