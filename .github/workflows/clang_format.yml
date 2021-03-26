@@ -1,4 +1,4 @@
-name: Clang-format linter
+name: Clang-format
 
 on:
   push:
