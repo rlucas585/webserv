@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:57:14 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 20:38:18 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 14:52:23 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@
 #include "IpAddr.hpp"
 #include <arpa/inet.h>
 
-class SocketAddr {};
+class SocketAddr {
+    public:
+        virtual int family(void) const = 0;
+};
 
 class SocketAddrV4 : public SocketAddr {
   public:
@@ -34,6 +37,7 @@ class SocketAddrV4 : public SocketAddr {
     void set_port(u_int16_t new_port);
 
     sockaddr_in into_inner(void) const;
+    int family(void) const;
 
     bool operator==(SocketAddrV4 const& other) const;
     bool operator!=(SocketAddrV4 const& other) const;

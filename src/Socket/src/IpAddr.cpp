@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 22:00:32 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 09:35:59 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ bool Ipv4Addr::is_loopback(void) const {
     u_int8_t bytes[4];
 
     octets(bytes);
-    return bytes[0] == 127;
+    return bytes[0] == 127 && bytes[1] == 0 && bytes[2] == 0 && bytes[3] == 1;
 }
 
 in_addr Ipv4Addr::into_inner(void) const { return inner; }

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:59:55 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 22:03:51 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 14:52:22 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ u_int16_t SocketAddrV4::port(void) const { return IpAddr::network_to_host_short(
 void SocketAddrV4::set_port(u_int16_t new_port) { inner.sin_port = IpAddr::host_to_network_short(new_port); }
 
 sockaddr_in SocketAddrV4::into_inner(void) const { return inner; }
+
+int SocketAddrV4::family(void) const { return AF_INET; }
 
 bool SocketAddrV4::operator==(SocketAddrV4 const& other) const { return inner == other.inner; }
 

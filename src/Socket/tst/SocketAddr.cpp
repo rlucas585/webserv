@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 13:50:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 22:04:37 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 14:51:45 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,15 @@ TEST(SocketAddr_tests, creation_test) {
     EXPECT_EQ(socket_addr, expected_addr);
 }
 
+TEST(SocketAddr_tests, family_test) {
+    const char* ip_str = "127.2.1.1";
+    const u_int16_t port = 1500;
+    Ipv4Addr addr = Ipv4Addr::init_from_string(ip_str);
+    SocketAddrV4 socket_addr = SocketAddrV4::init(addr, port);
+
+    EXPECT_EQ(socket_addr.family(), AF_INET);
+}
+
 TEST(SocketAddr_tests, string_creation_test) {
     SocketAddrV4 socket_addr = SocketAddrV4::init("127.2.1.1:1500");
     struct sockaddr_in expected_addr;
@@ -41,6 +50,18 @@ TEST(SocketAddr_tests, string_creation_test) {
 
     EXPECT_EQ(socket_addr, expected_addr);
 }
+
+// TEST(SocketAddr_tests, implicit_creation_test) {
+//     SocketAddrV4 socket_addr = "127.0.0.1:4242";
+//     struct sockaddr_in expected_addr;
+//
+//     expected_addr.sin_family = AF_INET;
+//     expected_addr.sin_port = htons(4242);
+//     expected_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+//     memset(expected_addr.sin_zero, 0, 8);
+//
+//     EXPECT_EQ(socket_addr, expected_addr);
+// }
 
 TEST(SocketAddr_tests, string_creation_test2) {
     SocketAddrV4 socket_addr = SocketAddrV4::init("localhost:4242");

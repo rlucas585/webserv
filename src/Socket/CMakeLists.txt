@@ -1,4 +1,4 @@
-set(MODULE_NAME SocketAddr)
+set(MODULE_NAME Socket)
 
 include_directories(src)
 

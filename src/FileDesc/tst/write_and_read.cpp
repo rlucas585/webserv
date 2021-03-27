@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/20 16:02:15 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/24 18:34:50 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 14:39:50 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,19 @@ TEST(FileDesc_tests, read_and_write_strings) {
 
     // Remove the temporary file
     EXPECT_EQ(remove("output.txt"), 0);
+}
+
+// Test demonstrating that FileDesc uses move semantics for copy
+TEST(FileDesc_tests, move_semantics_test) {
+    FileDesc        fd = FileDesc::init(5);
+    FileDesc        fd2;
+
+    EXPECT_EQ(fd.raw(), 5);
+
+    fd2 = fd;
+
+    EXPECT_EQ(fd.raw(), 0);
+    EXPECT_EQ(fd2.raw(), 5);
 }
 
 TEST(FileDesc_tests, read_and_write_buffers) {
