@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 16:30:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 16:31:11 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 21:11:05 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ namespace Utils {
 template <typename T1 = int, typename T2 = int> struct pair {
   public:
     pair(void) : first(), second() {}
+    ~pair(void) {}
     pair(const T1& x, const T2& y) : first(x), second(y) {}
     template <class U1, class U2> pair(const pair<U1, U2>& p) : first(p.first), second(p.second) {}
     pair& operator=(const pair& other) {
