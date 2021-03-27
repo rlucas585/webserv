@@ -51,23 +51,21 @@ Socket::Socket(Socket const& other) { *this = other; }
 
 // Utilises the "move-semantics" of FileDesc, so that two socket's cannot
 // possibly contain the same file descriptor
-Socket &Socket::operator=(Socket const& rhs) {
-    if (this == &rhs) { return *this; }
+Socket& Socket::operator=(Socket const& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
     inner = rhs.inner;
     return *this;
 }
 
-Socket  Socket::init(const char* str, int type) {
+Socket Socket::init(const char* str, int type) {
     // If Ipv6 is implemented, logic here should change to use SocketAddr
-    SocketAddrV4  addr = SocketAddrV4::init(str);
+    SocketAddrV4 addr = SocketAddrV4::init(str);
 
     return Socket::init(addr, type);
 }
 
-Socket  Socket::init(SocketAddr const& addr, int type) {
-    return Socket(addr.family(), type);
-}
+Socket Socket::init(SocketAddr const& addr, int type) { return Socket(addr.family(), type); }
 
-int Socket::into_inner(void) const {
-    return inner.raw();
-}
+int Socket::into_inner(void) const { return inner.raw(); }

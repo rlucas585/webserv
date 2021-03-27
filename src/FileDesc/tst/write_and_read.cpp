@@ -49,8 +49,8 @@ TEST(FileDesc_tests, read_and_write_strings) {
 
 // Test demonstrating that FileDesc uses move semantics for copy
 TEST(FileDesc_tests, move_semantics_test) {
-    FileDesc        fd = FileDesc::init(5);
-    FileDesc        fd2;
+    FileDesc fd = FileDesc::init(5);
+    FileDesc fd2;
 
     EXPECT_EQ(fd.raw(), 5);
 

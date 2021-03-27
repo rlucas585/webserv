@@ -17,22 +17,22 @@
 #include "SocketAddr.hpp"
 
 class Socket {
-    public:
-        ~Socket(void);
-        Socket(Socket const& other);
-        Socket &operator=(Socket const& rhs);
+  public:
+    ~Socket(void);
+    Socket(Socket const& other);
+    Socket& operator=(Socket const& rhs);
 
-        static Socket   init(const char* str, int type);
-        static Socket   init(SocketAddr const& addr, int type);
+    static Socket init(const char* str, int type);
+    static Socket init(SocketAddr const& addr, int type);
 
-        int into_inner(void) const;
+    int into_inner(void) const;
 
-    private:
-        FileDesc    inner;
+  private:
+    FileDesc inner;
 
-        Socket(void);    // Left undefined
-        // Socket(SocketAddrV4 const& addr, int type);
-        Socket(int family, int type);
+    Socket(void); // Left undefined
+    // Socket(SocketAddrV4 const& addr, int type);
+    Socket(int family, int type);
 };
 
 #endif

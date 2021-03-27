@@ -23,7 +23,11 @@ FileDesc::FileDesc(void) : fd(0) {}
 
 FileDesc::FileDesc(int new_fd) : fd(new_fd) {}
 
-FileDesc::~FileDesc(void) { if (fd > 2) { close(fd); } }
+FileDesc::~FileDesc(void) {
+    if (fd > 2) {
+        close(fd);
+    }
+}
 
 // const_cast used to simulate move-semantics
 FileDesc::FileDesc(FileDesc const& other) : fd(other.fd) {
@@ -31,20 +35,22 @@ FileDesc::FileDesc(FileDesc const& other) : fd(other.fd) {
     ref.fd = 0;
 }
 
-FileDesc &FileDesc::operator=(FileDesc const& rhs) {
-    if (this == &rhs) { return *this; }
+FileDesc& FileDesc::operator=(FileDesc const& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
     FileDesc& ref = const_cast<FileDesc&>(rhs);
     fd = rhs.fd;
     ref.fd = 0;
     return *this;
 }
 
-FileDesc::FileDesc(Utils::rvalue<FileDesc> other) : fd(other.get().fd) {
-    other.get().fd = 0;
-}
+FileDesc::FileDesc(Utils::rvalue<FileDesc> other) : fd(other.get().fd) { other.get().fd = 0; }
 
 FileDesc& FileDesc::operator=(Utils::rvalue<FileDesc> rhs) {
-    if (this == &rhs.get()) { return *this; }
+    if (this == &rhs.get()) {
+        return *this;
+    }
     fd = rhs.get().fd;
     rhs.get().fd = 0;
     return *this;
@@ -56,7 +62,7 @@ int FileDesc::raw(void) const { return fd; }
 
 // "move" semantics for FileDesc
 FileDesc FileDesc::move(void) {
-    FileDesc    ret(fd);
+    FileDesc ret(fd);
     fd = 0;
     return ret;
 }

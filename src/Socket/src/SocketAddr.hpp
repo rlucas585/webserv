@@ -18,8 +18,8 @@
 #include <arpa/inet.h>
 
 class SocketAddr {
-    public:
-        virtual int family(void) const = 0;
+  public:
+    virtual int family(void) const = 0;
 };
 
 class SocketAddrV4 : public SocketAddr {
