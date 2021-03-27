@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 13:18:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 17:06:25 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 17:10:45 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,23 +55,23 @@ TEST(Socket_tests, move_semantics_test) {
 
 // This test requires a manual 'nc' command currently.
 // TODO: Automate this test
-TEST(Socket_tests, bind_test) {
-    SocketAddrV4 addr = SocketAddrV4::init("localhost:4242");
-    Socket socket = Socket::init(addr, SOCK_STREAM);
-    int ret;
-
-    Utils::pair<const sockaddr*, socklen_t> addr_info = addr.into_inner();
-    const sockaddr* addrp = addr_info.first;
-    socklen_t len = addr_info.second;
-    ret = bind(socket.into_inner(), addrp, len);
-    if (ret == -1) {
-        throw Utils::runtime_error("Error binding socket");
-    }
-    ret = listen(socket.into_inner(), 128); // 128 is the backlog
-    if (ret == -1) {
-        throw Utils::runtime_error("Error listening from socket");
-    }
-    sockaddr_storage storage;
-    Utils::memset(&storage, 0, sizeof(storage));
-    Socket client = socket.accept(reinterpret_cast<sockaddr*>(&storage), &len);
-}
+// TEST(Socket_tests, bind_test) {
+//     SocketAddrV4 addr = SocketAddrV4::init("localhost:4242");
+//     Socket socket = Socket::init(addr, SOCK_STREAM);
+//     int ret;
+//
+//     Utils::pair<const sockaddr*, socklen_t> addr_info = addr.into_inner();
+//     const sockaddr* addrp = addr_info.first;
+//     socklen_t len = addr_info.second;
+//     ret = bind(socket.into_inner(), addrp, len);
+//     if (ret == -1) {
+//         throw Utils::runtime_error("Error binding socket");
+//     }
+//     ret = listen(socket.into_inner(), 128); // 128 is the backlog
+//     if (ret == -1) {
+//         throw Utils::runtime_error("Error listening from socket");
+//     }
+//     sockaddr_storage storage;
+//     Utils::memset(&storage, 0, sizeof(storage));
+//     Socket client = socket.accept(reinterpret_cast<sockaddr*>(&storage), &len);
+// }
