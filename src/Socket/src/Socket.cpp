@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 16:28:01 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 23:08:38 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,16 @@ Socket Socket::init(SocketAddr const& addr, int type) { return Socket(addr.famil
 
 int Socket::into_inner(void) const { return inner.raw(); }
 
+bool Socket::connect(const struct sockaddr* addrp, socklen_t len) {
+    int ret;
+
+    ret = ::connect(inner.raw(), addrp, len);
+    return (ret == 0) ? true : false;
+}
+
 Socket Socket::accept(struct sockaddr* storage, socklen_t* len) {
     Socket client_socket;
-    int fd = 0;
+    int fd = -1;
     fd = ::accept(inner.raw(), storage, len);
     if (fd == -1) {
         throw Utils::runtime_error(std::string("Error in accept(): ") + strerror(errno));
@@ -96,3 +103,12 @@ ssize_t Socket::recv_with_flags(void* buf, size_t len, int flags) {
 ssize_t Socket::read(void* buf, size_t len) { return recv_with_flags(buf, len, 0); }
 
 ssize_t Socket::peek(void* buf, size_t len) { return recv_with_flags(buf, len, MSG_PEEK); }
+
+ssize_t Socket::send_with_flags(const void* buf, size_t len, int flags) {
+    ssize_t ret;
+
+    ret = ::send(inner.raw(), buf, len, flags);
+    return ret;
+}
+
+ssize_t Socket::send(const void* buf, size_t len) { return send_with_flags(buf, len, 0); }
