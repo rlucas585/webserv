@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 13:50:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 14:51:45 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 16:50:08 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,5 +171,7 @@ TEST(SocketAddr_tests, into_inner_test) {
     expected_addr.sin_addr.s_addr = inet_addr(ip_str);
     memset(expected_addr.sin_zero, 0, 8);
 
-    EXPECT_EQ(socket_addr.into_inner(), expected_addr);
+    const sockaddr_in* actual_addr = reinterpret_cast<const sockaddr_in*>(socket_addr.into_inner().first);
+
+    EXPECT_EQ(*actual_addr, expected_addr);
 }

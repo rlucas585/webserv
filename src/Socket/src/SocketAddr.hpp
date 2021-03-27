@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:57:14 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 14:52:23 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 16:46:06 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 #define SOCKETADDR_HPP
 
 #include "../../Str/src/Str.hpp"
+#include "../../Utils/src/pair.hpp"
 #include "IpAddr.hpp"
 #include <arpa/inet.h>
 
 class SocketAddr {
   public:
     virtual int family(void) const = 0;
+    virtual Utils::pair<const sockaddr*, socklen_t> into_inner(void) const = 0;
 };
 
 class SocketAddrV4 : public SocketAddr {
@@ -36,7 +38,7 @@ class SocketAddrV4 : public SocketAddr {
     u_int16_t port(void) const;
     void set_port(u_int16_t new_port);
 
-    sockaddr_in into_inner(void) const;
+    Utils::pair<const sockaddr*, socklen_t> into_inner(void) const;
     int family(void) const;
 
     bool operator==(SocketAddrV4 const& other) const;

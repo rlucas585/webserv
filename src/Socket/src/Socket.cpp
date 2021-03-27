@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 14:45:14 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/27 16:28:01 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+
+Socket::Socket(void) {}
 
 // inner FileDesc has it's own destructor, which calls close()
 Socket::~Socket(void) {}
@@ -69,3 +71,28 @@ Socket Socket::init(const char* str, int type) {
 Socket Socket::init(SocketAddr const& addr, int type) { return Socket(addr.family(), type); }
 
 int Socket::into_inner(void) const { return inner.raw(); }
+
+Socket Socket::accept(struct sockaddr* storage, socklen_t* len) {
+    Socket client_socket;
+    int fd = 0;
+    fd = ::accept(inner.raw(), storage, len);
+    if (fd == -1) {
+        throw Utils::runtime_error(std::string("Error in accept(): ") + strerror(errno));
+    }
+    client_socket.inner = FileDesc::init(fd);
+    return client_socket;
+}
+
+ssize_t Socket::recv_with_flags(void* buf, size_t len, int flags) {
+    ssize_t ret;
+
+    ret = recv(inner.raw(), buf, len, flags);
+    if (ret == -1) {
+        throw Utils::runtime_error(std::string("Error in recv(): ") + strerror(errno));
+    }
+    return ret;
+}
+
+ssize_t Socket::read(void* buf, size_t len) { return recv_with_flags(buf, len, 0); }
+
+ssize_t Socket::peek(void* buf, size_t len) { return recv_with_flags(buf, len, MSG_PEEK); }
