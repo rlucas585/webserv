@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 09:55:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 22:20:06 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/28 22:10:01 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ class Socket {
 
     static Socket init(const char* str, int type);
     static Socket init(SocketAddr const& addr, int type);
+
+    template <typename T>
+    static int setsockopt(Socket const& sock, int options, int value, T payload);
 
     int into_inner(void) const;
     bool connect(const struct sockaddr* addrp, socklen_t len);

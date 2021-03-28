@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 23:08:38 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/28 22:27:29 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,8 @@ Socket::~Socket(void) {}
 
 Socket::Socket(int family, int type) {
     int fd = 0;
-    int yes = 1;
-    int err = 0;
 #ifdef __APPLE__
+    int err = 0;
     fd = socket(family, type, 0);
     if (fd == -1) {
         throw Utils::runtime_error("Error in socket()");
@@ -32,7 +31,7 @@ Socket::Socket(int family, int type) {
     inner = FileDesc::init(fd);
     // We'd maybe like to set CLOEXEC here for MacOs also, but ioctl is not permitted in
     // this project
-    err = setsockopt(this->into_inner(), SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE, &yes, sizeof(yes));
+    err = setsockopt(*this, SOL_SOCKET, SO_NOSIGPIPE, 1);
     if (err == -1) {
         throw Utils::runtime_error(std::string("Error in setsockopt(): ") + strerror(errno));
     }
@@ -42,10 +41,6 @@ Socket::Socket(int family, int type) {
         throw Utils::runtime_error(std::string("Error in socket(): ") + strerror(errno));
     }
     inner = FileDesc::init(fd);
-    err = setsockopt(this->into_inner(), SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-    if (err == -1) {
-        throw Utils::runtime_error(std::string("Error in setsockopt(): ") + strerror(errno));
-    }
 #endif
 }
 
@@ -69,6 +64,16 @@ Socket Socket::init(const char* str, int type) {
 }
 
 Socket Socket::init(SocketAddr const& addr, int type) { return Socket(addr.family(), type); }
+
+template <typename T>
+int Socket::setsockopt(Socket const& sock, int options, int value, T payload) {
+    void* payload_ptr = reinterpret_cast<void*>(&payload);
+    return ::setsockopt(sock.into_inner(),
+            options,
+            value,
+            payload_ptr,
+            static_cast<socklen_t>(sizeof(T)));
+}
 
 int Socket::into_inner(void) const { return inner.raw(); }
 
