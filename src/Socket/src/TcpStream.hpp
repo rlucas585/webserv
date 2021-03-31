@@ -16,23 +16,23 @@
 #include "Socket.hpp"
 
 class TcpStream {
-    public:
-        ~TcpStream(void);
-        TcpStream(Socket sock);
-        TcpStream(TcpStream const& other);
-        TcpStream &operator=(TcpStream const& rhs);
+  public:
+    ~TcpStream(void);
+    TcpStream(Socket sock);
+    TcpStream(TcpStream const& other);
+    TcpStream& operator=(TcpStream const& rhs);
 
-        static TcpStream connect(const char* str);
-        static TcpStream connect(SocketAddr const& addr);
+    static TcpStream connect(const char* str);
+    static TcpStream connect(SocketAddr const& addr);
 
-        ssize_t read(void *buf, size_t len);
-        ssize_t write(const void *buf, size_t len);
-        ssize_t write(const char *str);
-        ssize_t write(std::string const& str);
+    ssize_t read(void* buf, size_t len);
+    ssize_t write(const void* buf, size_t len);
+    ssize_t write(const char* str);
+    ssize_t write(std::string const& str);
 
-    private:
-        Socket inner;
-        TcpStream(void);
+  private:
+    Socket inner;
+    TcpStream(void);
 };
 
 #endif

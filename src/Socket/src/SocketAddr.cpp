@@ -34,9 +34,7 @@ SocketAddrV4::SocketAddrV4(Ipv4Addr ip, u_int16_t port) {
     Utils::memset(reinterpret_cast<void*>(inner.sin_zero), 0, 8);
 }
 
-SocketAddrV4::SocketAddrV4(sockaddr_in const& storage) {
-    inner = storage;
-}
+SocketAddrV4::SocketAddrV4(sockaddr_in const& storage) { inner = storage; }
 
 SocketAddrV4 SocketAddrV4::init(Ipv4Addr ip, u_int16_t port) { return SocketAddrV4(ip, port); }
 
@@ -61,9 +59,7 @@ SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
     return init(addr, static_cast<u_int16_t>(port));
 }
 
-SocketAddrV4 SocketAddrV4::init(sockaddr_in const& storage) {
-    return SocketAddrV4(storage);
-}
+SocketAddrV4 SocketAddrV4::init(sockaddr_in const& storage) { return SocketAddrV4(storage); }
 
 Ipv4Addr const& SocketAddrV4::ip(void) const {
     // Possible as Ipv4Addr has identical data structure to in_addr

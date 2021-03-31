@@ -26,15 +26,10 @@ class Socket {
     static Socket init(const char* str, int type);
     static Socket init(SocketAddr const& addr, int type);
 
-    template <typename T>
-        static int setsockopt(Socket const& sock, int options, int value, T payload) {
-            void* payload_ptr = reinterpret_cast<void*>(&payload);
-            return ::setsockopt(sock.into_inner(),
-                    options,
-                    value,
-                    payload_ptr,
-                    static_cast<socklen_t>(sizeof(T)));
-        }
+    template <typename T> static int setsockopt(Socket const& sock, int options, int value, T payload) {
+        void* payload_ptr = reinterpret_cast<void*>(&payload);
+        return ::setsockopt(sock.into_inner(), options, value, payload_ptr, static_cast<socklen_t>(sizeof(T)));
+    }
 
     int into_inner(void) const;
     bool connect(const struct sockaddr* addrp, socklen_t len);

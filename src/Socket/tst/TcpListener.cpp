@@ -18,15 +18,13 @@
 #include <thread>
 #include <vector>
 
-TEST(TcpListener_tests, creation_test) {
-    TcpListener     listener = TcpListener::bind("127.0.0.1:7878");
-}
+TEST(TcpListener_tests, creation_test) { TcpListener listener = TcpListener::bind("127.0.0.1:7878"); }
 
 TEST(TcpListener_tests, crash_test1) {
     EXPECT_THROW(
         {
             try {
-            TcpListener     listener = TcpListener::bind("127.2.1.1:::::7878");
+                TcpListener listener = TcpListener::bind("127.2.1.1:::::7878");
             } catch (Utils::runtime_error const& err) {
                 EXPECT_STREQ("Invalid Str used for SocketAddrV4", err.what());
                 throw;
@@ -39,7 +37,7 @@ TEST(TcpListener_tests, crash_test2) {
     EXPECT_THROW(
         {
             try {
-            TcpListener     listener = TcpListener::bind("127.2.1.1:-1");
+                TcpListener listener = TcpListener::bind("127.2.1.1:-1");
             } catch (Utils::runtime_error const& err) {
                 EXPECT_STREQ("Invalid port value", err.what());
                 throw;
@@ -52,7 +50,7 @@ TEST(TcpListener_tests, crash_test3) {
     EXPECT_THROW(
         {
             try {
-            TcpListener     listener = TcpListener::bind("127.2.1.1.1:4242");
+                TcpListener listener = TcpListener::bind("127.2.1.1.1:4242");
             } catch (Utils::runtime_error const& err) {
                 EXPECT_STREQ("Invalid string used for Ipv4Addr", err.what());
                 throw;
@@ -76,18 +74,18 @@ TEST(TcpListener_tests, connection_test) {
     TcpListener listener = TcpListener::bind(addr);
 
     std::thread server_thread = std::thread([&listener](void) {
-            TcpStream thread_client = listener.accept().first;
-            std::string message_received;
-            char        buffer[30];
+        TcpStream thread_client = listener.accept().first;
+        std::string message_received;
+        char buffer[30];
 
-            thread_client.read(reinterpret_cast<void*>(buffer), 30);
-            message_received = buffer;
-            EXPECT_EQ(message_received, "hello from the other side");
-            });
+        thread_client.read(reinterpret_cast<void*>(buffer), 30);
+        message_received = buffer;
+        EXPECT_EQ(message_received, "hello from the other side");
+    });
     // Sleep to allow server thread time to setup (probably not necessary)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-    TcpStream   client = TcpStream::connect("localhost:4242");
+    TcpStream client = TcpStream::connect("localhost:4242");
     if (client.write("hello from the other side") == -1) {
         throw Utils::runtime_error(std::string("Error in write(): ") + strerror(errno));
     }

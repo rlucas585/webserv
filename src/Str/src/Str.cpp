@@ -212,7 +212,7 @@ size_t Str::length(void) const {
 }
 
 size_t Str::count(char c) const {
-    size_t      count = 0;
+    size_t count = 0;
 
     if (!this->isInitialized())
         return 0;

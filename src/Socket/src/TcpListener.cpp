@@ -21,20 +21,18 @@ TcpListener::~TcpListener(void) {}
 
 TcpListener::TcpListener(Socket sock) : inner(sock) {}
 
-TcpListener::TcpListener(TcpListener const& other) {
-    *this = other;
-}
+TcpListener::TcpListener(TcpListener const& other) { *this = other; }
 
-TcpListener &TcpListener::operator=(TcpListener const& rhs) {
-    if (this == &rhs) { return *this; }
-    inner = rhs.inner;  // Move semantics preserved from FileDesc
+TcpListener& TcpListener::operator=(TcpListener const& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    inner = rhs.inner; // Move semantics preserved from FileDesc
     return *this;
 }
 
 // Requires updating for Ipv6
-TcpListener TcpListener::bind(const char* str) {
-    return TcpListener::bind(SocketAddrV4::init(str));
-}
+TcpListener TcpListener::bind(const char* str) { return TcpListener::bind(SocketAddrV4::init(str)); }
 
 TcpListener TcpListener::bind(SocketAddr const& addr) {
     // Get address info for later C-function calls
@@ -67,18 +65,16 @@ TcpListener TcpListener::bind(SocketAddr const& addr) {
     return TcpListener(sock);
 }
 
-Socket const& TcpListener::socket(void) const {
-    return inner;
-}
+Socket const& TcpListener::socket(void) const { return inner; }
 
 // Would need to be capable of returning SocketAddr instead of SocketAddrV4
 // for Ipv6 functionality
 Utils::pair<TcpStream, SocketAddrV4> TcpListener::accept(void) const {
-    sockaddr_storage    storage;
-    socklen_t           len = 0;
+    sockaddr_storage storage;
+    socklen_t len = 0;
 
     Utils::memset(reinterpret_cast<void*>(&storage), 0, sizeof(storage));
-    Socket              sock = inner.accept(&storage, &len);
-    SocketAddrV4        addr = SocketAddrV4::init(*reinterpret_cast<sockaddr_in*>(&storage));
+    Socket sock = inner.accept(&storage, &len);
+    SocketAddrV4 addr = SocketAddrV4::init(*reinterpret_cast<sockaddr_in*>(&storage));
     return Utils::make_pair(TcpStream(sock), addr);
 }
