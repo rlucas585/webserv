@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 20:58:07 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 10:42:11 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ class Str {
     static Str newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset);
 
     size_t length(void) const;
+    size_t count(char c) const;
     const char* raw(void) const;
     bool isInitialized(void) const;
     iterator begin(void) const;

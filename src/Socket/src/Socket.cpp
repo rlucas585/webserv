@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/28 22:27:29 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 10:28:57 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,6 @@ Socket Socket::init(const char* str, int type) {
 
 Socket Socket::init(SocketAddr const& addr, int type) { return Socket(addr.family(), type); }
 
-template <typename T>
-int Socket::setsockopt(Socket const& sock, int options, int value, T payload) {
-    void* payload_ptr = reinterpret_cast<void*>(&payload);
-    return ::setsockopt(sock.into_inner(),
-            options,
-            value,
-            payload_ptr,
-            static_cast<socklen_t>(sizeof(T)));
-}
-
 int Socket::into_inner(void) const { return inner.raw(); }
 
 bool Socket::connect(const struct sockaddr* addrp, socklen_t len) {
@@ -84,7 +74,7 @@ bool Socket::connect(const struct sockaddr* addrp, socklen_t len) {
     return (ret == 0) ? true : false;
 }
 
-Socket Socket::accept(struct sockaddr* storage, socklen_t* len) {
+Socket Socket::accept(struct sockaddr* storage, socklen_t* len) const {
     Socket client_socket;
     int fd = -1;
     fd = ::accept(inner.raw(), storage, len);
@@ -93,6 +83,10 @@ Socket Socket::accept(struct sockaddr* storage, socklen_t* len) {
     }
     client_socket.inner = FileDesc::init(fd);
     return client_socket;
+}
+
+Socket Socket::accept(struct sockaddr_storage* storage, socklen_t* len) const {
+    return accept(reinterpret_cast<sockaddr*>(storage), len);
 }
 
 ssize_t Socket::recv_with_flags(void* buf, size_t len, int flags) {

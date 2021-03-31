@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 20:58:35 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 10:43:51 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,18 @@ size_t Str::length(void) const {
     if (_throwIfUninitialized())
         return 0;
     return _len;
+}
+
+size_t Str::count(char c) const {
+    size_t      count = 0;
+
+    if (!this->isInitialized())
+        return 0;
+    for (size_t i = 0; i < _len; i++) {
+        if (_data[i] == c)
+            count += 1;
+    }
+    return count;
 }
 
 const char* Str::raw(void) const { return _data; }

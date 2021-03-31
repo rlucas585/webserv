@@ -6,12 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:00:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/28 22:55:07 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 15:00:28 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TcpListener.hpp"
 #include "../../Utils/src/Utils.hpp"
+#include <cerrno>
 #include <cstring>
 
 TcpListener::TcpListener(void) : inner() {}
@@ -28,6 +29,11 @@ TcpListener &TcpListener::operator=(TcpListener const& rhs) {
     if (this == &rhs) { return *this; }
     inner = rhs.inner;  // Move semantics preserved from FileDesc
     return *this;
+}
+
+// Requires updating for Ipv6
+TcpListener TcpListener::bind(const char* str) {
+    return TcpListener::bind(SocketAddrV4::init(str));
 }
 
 TcpListener TcpListener::bind(SocketAddr const& addr) {
@@ -65,6 +71,14 @@ Socket const& TcpListener::socket(void) const {
     return inner;
 }
 
+// Would need to be capable of returning SocketAddr instead of SocketAddrV4
+// for Ipv6 functionality
 Utils::pair<TcpStream, SocketAddrV4> TcpListener::accept(void) const {
+    sockaddr_storage    storage;
+    socklen_t           len = 0;
 
+    Utils::memset(reinterpret_cast<void*>(&storage), 0, sizeof(storage));
+    Socket              sock = inner.accept(&storage, &len);
+    SocketAddrV4        addr = SocketAddrV4::init(*reinterpret_cast<sockaddr_in*>(&storage));
+    return Utils::make_pair(TcpStream(sock), addr);
 }

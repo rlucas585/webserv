@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:59:55 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 16:46:32 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 10:48:50 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ SocketAddrV4::SocketAddrV4(Ipv4Addr ip, u_int16_t port) {
     Utils::memset(reinterpret_cast<void*>(inner.sin_zero), 0, 8);
 }
 
+SocketAddrV4::SocketAddrV4(sockaddr_in const& storage) {
+    inner = storage;
+}
+
 SocketAddrV4 SocketAddrV4::init(Ipv4Addr ip, u_int16_t port) { return SocketAddrV4(ip, port); }
 
 SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
@@ -42,6 +46,9 @@ SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
     Str port_str = iter.next();
     Ipv4Addr addr;
     int port;
+
+    if (socket_addr_str.count(':') != 1)
+        throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
 
     if (!ip_str.isInitialized() || !port_str.isInitialized() || !iter.is_complete()) {
         throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
@@ -52,6 +59,10 @@ SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
         throw Utils::runtime_error("Invalid port value");
     }
     return init(addr, static_cast<u_int16_t>(port));
+}
+
+SocketAddrV4 SocketAddrV4::init(sockaddr_in const& storage) {
+    return SocketAddrV4(storage);
 }
 
 Ipv4Addr const& SocketAddrV4::ip(void) const {

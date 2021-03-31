@@ -91,3 +91,10 @@ TEST(StrCreation, construction_of_slices_from_others_with_offset) {
 
     ASSERT_EQ(str2, "string slice");
 }
+
+TEST(Str_tests, count_test) {
+    Str str = "count the number of e's in this Str please";
+
+    EXPECT_EQ(str.count('e'), 5);
+    EXPECT_EQ(str.count('u'), 2);
+}

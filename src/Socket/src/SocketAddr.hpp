@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:57:14 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 16:46:06 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 09:30:52 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class SocketAddrV4 : public SocketAddr {
 
     static SocketAddrV4 init(Ipv4Addr ip, u_int16_t port);
     static SocketAddrV4 init(Str const& socket_addr_str);
+    static SocketAddrV4 init(sockaddr_in const& storage);
 
     Ipv4Addr const& ip(void) const;
     void set_ip(Ipv4Addr new_ip);
@@ -51,6 +52,7 @@ class SocketAddrV4 : public SocketAddr {
 
     SocketAddrV4(void);
     SocketAddrV4(Ipv4Addr ip, u_int16_t port);
+    SocketAddrV4(sockaddr_in const& storage);
 };
 
 bool operator==(sockaddr_in const& lhs, SocketAddrV4 const& rhs);
