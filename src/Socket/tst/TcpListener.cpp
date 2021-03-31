@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 15:15:14 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 15:19:55 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ TEST(TcpListener_tests, connection_test) {
         TcpStream thread_client = listener.accept().first;
         std::string message_received;
         char buffer[30];
+        Utils::memset(buffer, 0, 30);
 
         thread_client.read(reinterpret_cast<void*>(buffer), 30);
         message_received = buffer;
