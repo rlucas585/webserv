@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 13:18:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 23:08:24 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 15:14:21 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ TEST(Socket_tests, bind_test) {
 
 // Code here is messy, TcpListener should internalise much of the logic in future
 TEST(Socket_tests, connection_test) {
-    SocketAddrV4 addr = SocketAddrV4::init("localhost:4242");
+    SocketAddrV4 addr = SocketAddrV4::init("localhost:4243");
     Socket server = Socket::init(addr, SOCK_STREAM);
     int ret;
 

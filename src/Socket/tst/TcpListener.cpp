@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 14:24:35 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 15:15:14 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ TEST(TcpListener_tests, crash_test3) {
 }
 
 TEST(TcpListener_tests, move_semantics_test) {
-    TcpListener listener1 = TcpListener::bind("127.2.1.1:4242");
+    TcpListener listener1 = TcpListener::bind("127.2.1.1:4244");
     int initialfd = listener1.socket().into_inner();
     TcpListener listener2 = listener1;
 
@@ -70,8 +70,7 @@ TEST(TcpListener_tests, move_semantics_test) {
 }
 
 TEST(TcpListener_tests, connection_test) {
-    SocketAddrV4 addr = SocketAddrV4::init("localhost:4242");
-    TcpListener listener = TcpListener::bind(addr);
+    TcpListener listener = TcpListener::bind("localhost:4245");
 
     std::thread server_thread = std::thread([&listener](void) {
         TcpStream thread_client = listener.accept().first;
@@ -85,7 +84,7 @@ TEST(TcpListener_tests, connection_test) {
     // Sleep to allow server thread time to setup (probably not necessary)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-    TcpStream client = TcpStream::connect("localhost:4242");
+    TcpStream client = TcpStream::connect("localhost:4245");
     if (client.write("hello from the other side") == -1) {
         throw Utils::runtime_error(std::string("Error in write(): ") + strerror(errno));
     }
