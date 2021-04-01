@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 13:18:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 15:14:21 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/01 17:37:06 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,17 @@ TEST(Socket_tests, connection_test) {
     Socket server = Socket::init(addr, SOCK_STREAM);
     int ret;
 
+    // sockaddr* and socklen_t are required for socket functions
     Utils::pair<const sockaddr*, socklen_t> addr_info = addr.into_inner();
     const sockaddr* addrp = addr_info.first;
     socklen_t len = addr_info.second;
+
+    // Ensure quick rebinding
+    ret = 1;
+    if (setsockopt(server.into_inner(), SOL_SOCKET, SO_REUSEADDR, &ret, sizeof(sockaddr_in)) == -1) {
+        throw Utils::runtime_error(std::string("Error in setsockopt(): ") + strerror(errno));
+    }
+
     ret = bind(server.into_inner(), addrp, len);
     if (ret == -1) {
         throw Utils::runtime_error("Error binding socket");

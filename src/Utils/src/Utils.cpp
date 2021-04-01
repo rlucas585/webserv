@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 21:24:18 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 20:55:19 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,14 @@ void* memset(void* b, int c, size_t len) {
         *p = c;
     }
     return b;
+}
+
+void* memcpy(void* dest, const void* src, size_t n) {
+    unsigned char* destp = reinterpret_cast<unsigned char*>(dest);
+    const unsigned char* srcp = reinterpret_cast<const unsigned char*>(src);
+    for (; n > 0; n--, destp++, srcp++)
+        *destp = *srcp;
+    return dest;
 }
 
 int atoi(const char* str) {
