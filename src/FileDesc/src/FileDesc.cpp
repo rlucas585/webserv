@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 14:48:58 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/01 23:33:27 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,11 @@ void FileDesc::writeToFile(const char* str) const {
     writeToFile(reinterpret_cast<const void*>(str), Utils::min(Utils::strlen(str), static_cast<size_t>(READ_LIMIT)));
 }
 
-void FileDesc::writeToFile(const void* buf, size_t count) const {
-    if (write(fd, buf, count) == -1) {
-        throw Utils::runtime_error(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
-    }
+FileDesc::Result FileDesc::writeToFile(const void* buf, size_t count) const {
+    ssize_t ret = write(fd, buf, count);
+    if (ret == -1)
+        return FileDesc::Result::Err(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
+    return FileDesc::Result::Ok(ret);
 }
 
 void FileDesc::readFromFile(void* buf, size_t len) const {

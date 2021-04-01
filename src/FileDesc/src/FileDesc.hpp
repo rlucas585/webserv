@@ -6,15 +6,15 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 14:35:04 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/01 23:32:47 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FILEDESC_HPP
 #define FILEDESC_HPP
 
+#include "../../Result/src/result.hpp"
 #include "../../Utils/src/rvalue.hpp"
-#include <limits>
 #include <string>
 #include <sys/types.h>
 
@@ -23,6 +23,8 @@
 #endif
 
 class FileDesc {
+    typedef Utils::result<ssize_t, std::string> Result;
+
   public:
     FileDesc(void);
     ~FileDesc(void);
@@ -37,7 +39,7 @@ class FileDesc {
     FileDesc move(void);
 
     void writeToFile(const char* str) const;
-    void writeToFile(const void* buf, size_t count) const;
+    Result writeToFile(const void* buf, size_t count) const;
 
     void readFromFile(void* buf, size_t len) const;
     void readFromFile(std::string& str, size_t len) const;
