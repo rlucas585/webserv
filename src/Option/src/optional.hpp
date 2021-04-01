@@ -6,21 +6,17 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 17:16:36 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/01 20:42:30 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/01 22:34:11 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef OPTIONAL_STORAGE_HPP
-#define OPTIONAL_STORAGE_HPP
+#ifndef OPTIONAL_HPP
+#define OPTIONAL_HPP
 
 #include "../../Utils/src/Utils.hpp"
-#include <cstddef>
+#include "../../Utils/src/type_traits.hpp"
 
 namespace Utils {
-
-template <typename T> struct remove_const { typedef T type; };
-
-template <typename T> struct remove_const<const T> { typedef T type; };
 
 struct nullopt_t {
     explicit nullopt_t(int) {}
@@ -86,7 +82,7 @@ template <typename T> class optional {
         stored_type ret = payload;
         if (!engaged)
             throw Utils::runtime_error(errmsg);
-        this->reset();
+        this->reset(); // "Remove" the stored value
         return ret;
     }
     stored_type value_or(stored_type const& default_value) const {
