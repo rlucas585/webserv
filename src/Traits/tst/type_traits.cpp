@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:53 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 22:32:28 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 22:35:41 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ template <typename T> class Traits : public ::testing::Test {};
 
 typedef testing::Types<int, char, std::string, double> Implementations;
 
-TYPED_TEST_CASE(Traits, Implementations);
+TYPED_TEST_SUITE(Traits, Implementations);
 
 TYPED_TEST(Traits, alignment_of) {
     size_t actual = meta::alignment_of<TypeParam>::value;
