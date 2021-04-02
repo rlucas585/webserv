@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 17:16:36 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 18:01:38 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:14:52 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ template <typename T> class optional {
     optional(void) : engaged(false) {}
     ~optional(void) { this->reset(); }
     optional(struct nullopt_t) : engaged(false) {}
-    optional(T const& data) : engaged(false) { this->construct(data); }
+    optional(stored_type const& data) : engaged(false) { this->construct(data); }
     optional(optional const& other) : engaged(false) {
         if (other.engaged) {
             this->construct(other.value());

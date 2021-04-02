@@ -6,13 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 17:38:48 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:31:28 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
+#include "../../AlignedStorage/src/aligned_storage.hpp"
 #include "../../Traits/src/type_traits.hpp"
 #include "../../Utils/src/Utils.hpp"
 
@@ -28,71 +29,115 @@ template <typename T, typename E> class result {
         Okay,
     };
 
-    typedef typename meta::remove_const<T>::type stored_type;
-    typedef typename meta::remove_const<E>::type error_type;
+    typedef typename meta::remove_const<T>::type ok_type;
+    typedef typename meta::remove_const<E>::type err_type;
 
-    union {
-        error_type error;
-        stored_type payload;
-    };
+    typedef typename meta::if_c<(sizeof(ok_type) > sizeof(err_type)),
+            ok_type,
+            err_type>::type larger_type;
+    typedef Utils::aligned_storage<larger_type> storage_type;
+
     Status stat;
+    storage_type storage;
 
   public:
     ~result(void) { this->destroy(); }
-    result(T const& data) : payload(data), stat(Okay) {}
-    result(E const& err) : error(err), stat(Error) {}
+    result(ok_type const& data) : stat(Okay) {
+        this->construct(data);
+    }
+    result(err_type const& err) : stat(Error) {
+        this->construct(err);
+    }
     result(result const& other) {
         if (other.stat == Error)
-            new (&error) error_type(other.error);
+            this->construct(other.err());
         else
-            new (&payload) stored_type(other.payload);
+            this->construct(other.ok());
     }
     result& operator=(result const& rhs) {
+        this->destroy(); // XXX I worry that this may be called with an uninitialized result - Test
         if (rhs.stat == Error)
-            new (&error) error_type(rhs.error);
+            this->construct(rhs.err());
         else
-            new (&payload) stored_type(rhs.payload);
+            this->construct(rhs.ok());
     }
     static result Ok(T const& data) { return result(data); }
     static result Err(E const& err) { return result(err); }
 
     bool is_ok(void) const { return stat == Okay; }
     bool is_err(void) const { return stat == Error; }
-    stored_type unwrap(void) { return this->expect(); }
-    stored_type expect(const char* errmsg = "Called unwrap on an Err value: ") {
-        stored_type ret = payload;
+    ok_type unwrap(void) { return this->expect(); }
+    ok_type expect(const char* errmsg = "Called unwrap on an Err value: ") {
         if (stat == Error) {
-            throw Utils::runtime_error(std::string(errmsg) + "\"" + error + "\"");
+            throw Utils::runtime_error(std::string(errmsg) + "\"" + this->err() + "\"");
         }
+        ok_type ret = this->ok();
         this->set_as_default_error(); // Value is "removed", so type now err's if unwrap called
         return ret;
     }
-    error_type unwrap_err(void) { return this->expect_err(); }
-    error_type expect_err(const char* errmsg = "Called unwrap_err on an Ok value.") {
-        error_type ret = error;
+    err_type unwrap_err(void) { return this->expect_err(); }
+    err_type expect_err(const char* errmsg = "Called unwrap_err on an Ok value.") {
         if (stat == Okay) {
             throw Utils::runtime_error(errmsg);
         }
+        err_type ret = this->err();
         this->set_as_default_error();
         return ret;
+    }
+    ok_type const& ok(void) const {
+        return *reinterpret_cast<ok_type const*>(storage.address());
+    }
+    ok_type& ok(void) {
+        return *reinterpret_cast<ok_type *>(storage.address());
+    }
+    err_type const& err(void) const {
+        return *reinterpret_cast<err_type const*>(storage.address());
+    }
+    err_type& err(void) {
+        return *reinterpret_cast<err_type *>(storage.address());
     }
 
   private:
     result(void);
 
-    void destroy(void) {
+    void construct(ok_type const& data) {
+        new (storage.address()) ok_type(data);
+        stat = Okay;
+    }
+    void construct(err_type const& err) {
+        new (storage.address()) err_type(err);
+        stat = Error;
+    }
+    template <class Expr> void construct(Expr const& expr, void const*) {
         if (stat == Error)
-            error.~error_type();
+            new (storage.address()) err_type(expr);
         else
-            payload.~stored_type();
+            new (storage.address()) ok_type(expr);
+    }
+    void destroy(void) {
+        if (stat == Error) {
+            this->get_err_ptr()->err_type::~err_type();
+        }
+        else {
+            this->get_ok_ptr()->ok_type::~ok_type();
+        }
     }
     void set_as_default_error(void) {
-        if (stat == Error)
-            error.~error_type();
-        else
-            payload.~stored_type();
-        new (&error) error_type();
+        this->destroy();
+        new (storage.address()) err_type();
         stat = Error;
+    }
+    err_type const* get_err_ptr(void) const {
+        return reinterpret_cast<err_type const*>(storage.address());
+    }
+    err_type* get_err_ptr(void) {
+        return reinterpret_cast<err_type *>(storage.address());
+    }
+    ok_type const* get_ok_ptr(void) const {
+        return reinterpret_cast<ok_type const*>(storage.address());
+    }
+    ok_type* get_ok_ptr(void) {
+        return reinterpret_cast<ok_type *>(storage.address());
     }
 };
 

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:08 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 17:37:29 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:29:14 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,30 +94,30 @@ template <size_t target> union lower_alignment {
     enum { found11 = lower_alignment_helper<found10, target, member_ptr>::value };
     typename lower_alignment_helper<found11, target, member_function_ptr>::type t11;
     enum { found12 = lower_alignment_helper<found11, target, member_function_ptr>::value };
-    typename lower_alignment_helper<found12, target, has_one_T<char>>::type t12;
-    enum { found13 = lower_alignment_helper<found12, target, has_one_T<char>>::value };
-    typename lower_alignment_helper<found13, target, has_one_T<short>>::type t13;
-    enum { found14 = lower_alignment_helper<found13, target, has_one_T<short>>::value };
-    typename lower_alignment_helper<found14, target, has_one_T<int>>::type t14;
-    enum { found15 = lower_alignment_helper<found14, target, has_one_T<int>>::value };
-    typename lower_alignment_helper<found15, target, has_one_T<long>>::type t15;
-    enum { found16 = lower_alignment_helper<found15, target, has_one_T<long>>::value };
-    typename lower_alignment_helper<found16, target, has_one_T<long long>>::type t16;
-    enum { found17 = lower_alignment_helper<found16, target, has_one_T<long long>>::value };
-    typename lower_alignment_helper<found17, target, has_one_T<float>>::type t17;
-    enum { found18 = lower_alignment_helper<found17, target, has_one_T<float>>::value };
-    typename lower_alignment_helper<found18, target, has_one_T<double>>::type t18;
-    enum { found19 = lower_alignment_helper<found18, target, has_one_T<double>>::value };
-    typename lower_alignment_helper<found19, target, has_one_T<long double>>::type t19;
-    enum { found20 = lower_alignment_helper<found19, target, has_one_T<long double>>::value };
-    typename lower_alignment_helper<found20, target, has_one_T<void*>>::type t20;
-    enum { found21 = lower_alignment_helper<found20, target, has_one_T<void*>>::value };
-    typename lower_alignment_helper<found21, target, has_one_T<function_ptr>>::type t21;
-    enum { found22 = lower_alignment_helper<found21, target, has_one_T<function_ptr>>::value };
-    typename lower_alignment_helper<found22, target, has_one_T<member_ptr>>::type t22;
-    enum { found23 = lower_alignment_helper<found22, target, has_one_T<member_ptr>>::value };
-    typename lower_alignment_helper<found23, target, has_one_T<member_function_ptr>>::type t23;
-    enum { found24 = lower_alignment_helper<found23, target, has_one_T<member_function_ptr>>::value };
+    typename lower_alignment_helper<found12, target, has_one_T<char> >::type t12;
+    enum { found13 = lower_alignment_helper<found12, target, has_one_T<char> >::value };
+    typename lower_alignment_helper<found13, target, has_one_T<short> >::type t13;
+    enum { found14 = lower_alignment_helper<found13, target, has_one_T<short> >::value };
+    typename lower_alignment_helper<found14, target, has_one_T<int> >::type t14;
+    enum { found15 = lower_alignment_helper<found14, target, has_one_T<int> >::value };
+    typename lower_alignment_helper<found15, target, has_one_T<long> >::type t15;
+    enum { found16 = lower_alignment_helper<found15, target, has_one_T<long> >::value };
+    typename lower_alignment_helper<found16, target, has_one_T<long long> >::type t16;
+    enum { found17 = lower_alignment_helper<found16, target, has_one_T<long long> >::value };
+    typename lower_alignment_helper<found17, target, has_one_T<float> >::type t17;
+    enum { found18 = lower_alignment_helper<found17, target, has_one_T<float> >::value };
+    typename lower_alignment_helper<found18, target, has_one_T<double> >::type t18;
+    enum { found19 = lower_alignment_helper<found18, target, has_one_T<double> >::value };
+    typename lower_alignment_helper<found19, target, has_one_T<long double> >::type t19;
+    enum { found20 = lower_alignment_helper<found19, target, has_one_T<long double> >::value };
+    typename lower_alignment_helper<found20, target, has_one_T<void*> >::type t20;
+    enum { found21 = lower_alignment_helper<found20, target, has_one_T<void*> >::value };
+    typename lower_alignment_helper<found21, target, has_one_T<function_ptr> >::type t21;
+    enum { found22 = lower_alignment_helper<found21, target, has_one_T<function_ptr> >::value };
+    typename lower_alignment_helper<found22, target, has_one_T<member_ptr> >::type t22;
+    enum { found23 = lower_alignment_helper<found22, target, has_one_T<member_ptr> >::value };
+    typename lower_alignment_helper<found23, target, has_one_T<member_function_ptr> >::type t23;
+    enum { found24 = lower_alignment_helper<found23, target, has_one_T<member_function_ptr> >::value };
 };
 
 union max_align {
