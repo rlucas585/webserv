@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:47:56 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 22:45:39 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,18 +74,21 @@ FileDesc::Result FileDesc::writeToFile(const char* str) const {
 
 FileDesc::Result FileDesc::writeToFile(const void* buf, size_t count) const {
     ssize_t ret = write(fd, buf, count);
-    if (ret == -1)
-        return FileDesc::Result::Err(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
+    if (ret == -1) {
+        return FileDesc::Result::Err(strerror(errno));
+    }
     return FileDesc::Result::Ok(ret);
 }
 
-void FileDesc::readFromFile(void* buf, size_t len) const {
-    if (read(fd, buf, len) == -1) {
-        throw Utils::runtime_error(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
+FileDesc::Result FileDesc::readFromFile(void* buf, size_t len) const {
+    ssize_t ret = read(fd, buf, len);
+    if (ret == -1) {
+        return FileDesc::Result::Err(strerror(errno));
     }
+    return FileDesc::Result::Ok(ret);
 }
 
-void FileDesc::readFromFile(std::string& str, size_t len) const {
+FileDesc::Result FileDesc::readFromFile(std::string& str, size_t len) const {
     size_t previous_length = str.size();
     void* buf;
     ssize_t ret;
@@ -94,9 +97,10 @@ void FileDesc::readFromFile(std::string& str, size_t len) const {
     buf = &str[previous_length];
     ret = read(fd, buf, len);
     if (ret == -1) {
-        throw Utils::runtime_error(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
+        return FileDesc::Result::Err(strerror(errno));
     }
     if (static_cast<size_t>(ret) < len) {
         str.resize(previous_length + ret);
     }
+    return FileDesc::Result::Ok(ret);
 }

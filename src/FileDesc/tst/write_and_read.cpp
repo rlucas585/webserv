@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/20 16:02:15 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:57:47 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 23:02:14 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,9 @@ TEST(FileDesc_tests, read_and_write_buffers) {
         int fd = open("output.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
         FileDesc file = FileDesc::init(fd);
 
-        file.writeToFile(write_buffer, 30);
+        FileDesc::Result res = file.writeToFile(write_buffer, 30);
+        EXPECT_TRUE(res.is_ok());
+        EXPECT_EQ(res.unwrap(), 30);
     }
     {
         int fd = open("output.txt", O_RDONLY, 0644);
@@ -83,7 +85,6 @@ TEST(FileDesc_tests, error_tests) {
     int fd = open("output2.txt", O_WRONLY | O_TRUNC, 0644);
     FileDesc file = FileDesc::init(fd);
 
-    FileDesc::Result res = file.writeToFile("hello there");
     EXPECT_EQ(file.writeToFile("hello there"),
-              FileDesc::Result::Err("FileDesc::writeToFile Error: Bad file descriptor"));
+              FileDesc::Result::Err("Bad file descriptor"));
 }

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:59:55 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 10:48:50 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 23:07:36 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
     Str::Split iter = socket_addr_str.split(":");
     Str ip_str = iter.next();
     Str port_str = iter.next();
-    Ipv4Addr addr;
     int port;
 
     if (socket_addr_str.count(':') != 1)
@@ -51,7 +50,10 @@ SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
     if (!ip_str.isInitialized() || !port_str.isInitialized() || !iter.is_complete()) {
         throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
     }
-    addr = Ipv4Addr::init_from_string(ip_str);
+    Ipv4Addr::Result res = Ipv4Addr::init_from_string(ip_str);
+    if (res.is_err())
+        throw Utils::runtime_error(res.unwrap_err()); // TODO change this to pass error on!!
+    Ipv4Addr addr = res.unwrap();
     port = Utils::atoi(port_str.raw());
     if (port < 0 || port > 65535) {
         throw Utils::runtime_error("Invalid port value");

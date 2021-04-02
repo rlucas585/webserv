@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 13:18:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/01 17:37:06 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 23:11:35 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ TEST(Socket_tests, crash_test2) {
             try {
                 Socket socket = Socket::init("127.2.1.1.1:4242", SOCK_STREAM);
             } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid string used for Ipv4Addr", err.what());
+                EXPECT_STREQ("Invalid Str used for Ipv4Addr", err.what());
                 throw;
             }
         },

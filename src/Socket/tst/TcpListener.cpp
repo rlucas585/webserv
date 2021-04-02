@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 15:19:55 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 23:11:11 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ TEST(TcpListener_tests, crash_test3) {
             try {
                 TcpListener listener = TcpListener::bind("127.2.1.1.1:4242");
             } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid string used for Ipv4Addr", err.what());
+                EXPECT_STREQ("Invalid Str used for Ipv4Addr", err.what());
                 throw;
             }
         },
