@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:53 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 17:37:08 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 22:32:28 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ TEST(Traits, integral_constant_int) {
 }
 
 TEST(Traits, integral_constant_size_t) {
-    size_t actual = meta::integral_constant<size_t, -1>::value;
-    size_t expected = std::integral_constant<size_t, -1>::value;
+    size_t actual = meta::integral_constant<size_t, 4>::value;
+    size_t expected = std::integral_constant<size_t, 4>::value;
     size_t actual2 = meta::integral_constant<size_t, 50>::value;
     size_t expected2 = std::integral_constant<size_t, 50>::value;
 
