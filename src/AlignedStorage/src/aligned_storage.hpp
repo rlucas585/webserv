@@ -1,22 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   type_traits.hpp                                    :+:    :+:            */
+/*   aligned_storage.hpp                                :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/04/01 21:17:40 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/01 21:18:14 by rlucas        ########   odam.nl         */
+/*   Created: 2021/04/02 17:31:57 by rlucas        #+#    #+#                 */
+/*   Updated: 2021/04/02 17:34:59 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TYPE_TRAITS_HPP
-#define TYPE_TRAITS_HPP
+#ifndef ALIGNED_STORAGE_HPP
+#define ALIGNED_STORAGE_HPP
+
+#include "../../Traits/src/type_traits.hpp"
 
 namespace Utils {
 
-template <typename T> struct remove_const { typedef T type; };
-template <typename T> struct remove_const<const T> { typedef T type; };
+template <typename T> class aligned_storage {
+    union dummy_u {
+        char data[sizeof(T)];
+        typedef typename meta::type_with_alignment<meta::alignment_of<T>::value>::type aligner;
+    } dummy;
+
+  public:
+    void const* address(void) const { return &dummy.data[0]; }
+    void* address(void) { return &dummy.data[0]; }
+};
 
 } // namespace Utils
 

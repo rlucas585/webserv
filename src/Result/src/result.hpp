@@ -6,15 +6,15 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/01 23:46:08 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 17:38:48 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
+#include "../../Traits/src/type_traits.hpp"
 #include "../../Utils/src/Utils.hpp"
-#include "../../Utils/src/type_traits.hpp"
 
 namespace Utils {
 
@@ -28,8 +28,8 @@ template <typename T, typename E> class result {
         Okay,
     };
 
-    typedef typename remove_const<T>::type stored_type;
-    typedef typename remove_const<E>::type error_type;
+    typedef typename meta::remove_const<T>::type stored_type;
+    typedef typename meta::remove_const<E>::type error_type;
 
     union {
         error_type error;

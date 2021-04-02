@@ -6,13 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:53 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 16:05:50 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 17:37:08 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
-#include <type_traits>
 #include <iostream>
+#include <type_traits>
 
 #include "../src/type_traits.hpp"
 
@@ -36,9 +36,7 @@ TEST(Traits, integral_constant_size_t) {
     EXPECT_EQ(actual2, expected2);
 }
 
-template <typename T>
-class Traits : public ::testing::Test {
-};
+template <typename T> class Traits : public ::testing::Test {};
 
 typedef testing::Types<int, char, std::string, double> Implementations;
 
