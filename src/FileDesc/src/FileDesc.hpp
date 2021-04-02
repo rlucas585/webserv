@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/01 23:32:47 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:47:50 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #endif
 
 class FileDesc {
+  public:
     typedef Utils::result<ssize_t, std::string> Result;
 
   public:
@@ -38,7 +39,7 @@ class FileDesc {
     int raw(void) const;
     FileDesc move(void);
 
-    void writeToFile(const char* str) const;
+    Result writeToFile(const char* str) const;
     Result writeToFile(const void* buf, size_t count) const;
 
     void readFromFile(void* buf, size_t len) const;

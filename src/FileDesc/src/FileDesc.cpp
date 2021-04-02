@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/01 23:33:27 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:47:56 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,9 @@ FileDesc FileDesc::move(void) {
     return ret;
 }
 
-void FileDesc::writeToFile(const char* str) const {
-    writeToFile(reinterpret_cast<const void*>(str), Utils::min(Utils::strlen(str), static_cast<size_t>(READ_LIMIT)));
+FileDesc::Result FileDesc::writeToFile(const char* str) const {
+    return writeToFile(reinterpret_cast<const void*>(str),
+                       Utils::min(Utils::strlen(str), static_cast<size_t>(READ_LIMIT)));
 }
 
 FileDesc::Result FileDesc::writeToFile(const void* buf, size_t count) const {

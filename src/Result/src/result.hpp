@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:31:28 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:54:48 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,7 @@ template <typename T, typename E> class result {
     typedef typename meta::remove_const<T>::type ok_type;
     typedef typename meta::remove_const<E>::type err_type;
 
-    typedef typename meta::if_c<(sizeof(ok_type) > sizeof(err_type)),
-            ok_type,
-            err_type>::type larger_type;
+    typedef typename meta::if_c<(sizeof(ok_type) > sizeof(err_type)), ok_type, err_type>::type larger_type;
     typedef Utils::aligned_storage<larger_type> storage_type;
 
     Status stat;
@@ -42,12 +40,8 @@ template <typename T, typename E> class result {
 
   public:
     ~result(void) { this->destroy(); }
-    result(ok_type const& data) : stat(Okay) {
-        this->construct(data);
-    }
-    result(err_type const& err) : stat(Error) {
-        this->construct(err);
-    }
+    result(ok_type const& data) : stat(Okay) { this->construct(data); }
+    result(err_type const& err) : stat(Error) { this->construct(err); }
     result(result const& other) {
         if (other.stat == Error)
             this->construct(other.err());
@@ -84,18 +78,20 @@ template <typename T, typename E> class result {
         this->set_as_default_error();
         return ret;
     }
-    ok_type const& ok(void) const {
-        return *reinterpret_cast<ok_type const*>(storage.address());
+    ok_type const& ok(void) const { return *reinterpret_cast<ok_type const*>(storage.address()); }
+    ok_type& ok(void) { return *reinterpret_cast<ok_type*>(storage.address()); }
+    err_type const& err(void) const { return *reinterpret_cast<err_type const*>(storage.address()); }
+    err_type& err(void) { return *reinterpret_cast<err_type*>(storage.address()); }
+
+    bool operator==(result<ok_type, err_type> const& other) const {
+        if (stat != other.stat)
+            return false;
+        if (stat == Okay)
+            return this->ok() == other.ok();
+        else
+            return this->err() == other.err();
     }
-    ok_type& ok(void) {
-        return *reinterpret_cast<ok_type *>(storage.address());
-    }
-    err_type const& err(void) const {
-        return *reinterpret_cast<err_type const*>(storage.address());
-    }
-    err_type& err(void) {
-        return *reinterpret_cast<err_type *>(storage.address());
-    }
+    bool operator!=(result<ok_type, err_type> const& other) const { return !(*this == other); }
 
   private:
     result(void);
@@ -117,8 +113,7 @@ template <typename T, typename E> class result {
     void destroy(void) {
         if (stat == Error) {
             this->get_err_ptr()->err_type::~err_type();
-        }
-        else {
+        } else {
             this->get_ok_ptr()->ok_type::~ok_type();
         }
     }
@@ -127,18 +122,10 @@ template <typename T, typename E> class result {
         new (storage.address()) err_type();
         stat = Error;
     }
-    err_type const* get_err_ptr(void) const {
-        return reinterpret_cast<err_type const*>(storage.address());
-    }
-    err_type* get_err_ptr(void) {
-        return reinterpret_cast<err_type *>(storage.address());
-    }
-    ok_type const* get_ok_ptr(void) const {
-        return reinterpret_cast<ok_type const*>(storage.address());
-    }
-    ok_type* get_ok_ptr(void) {
-        return reinterpret_cast<ok_type *>(storage.address());
-    }
+    err_type const* get_err_ptr(void) const { return reinterpret_cast<err_type const*>(storage.address()); }
+    err_type* get_err_ptr(void) { return reinterpret_cast<err_type*>(storage.address()); }
+    ok_type const* get_ok_ptr(void) const { return reinterpret_cast<ok_type const*>(storage.address()); }
+    ok_type* get_ok_ptr(void) { return reinterpret_cast<ok_type*>(storage.address()); }
 };
 
 } // namespace Utils

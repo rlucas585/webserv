@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/20 16:02:15 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/27 14:39:50 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 19:57:47 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ TEST(FileDesc_tests, move_semantics_test) {
 TEST(FileDesc_tests, read_and_write_buffers) {
     char write_buffer[] = "All your base are belong to us";
     char read_buffer[35];
+    Utils::memset(read_buffer, 0, 35);
     {
         int fd = open("output.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
         FileDesc file = FileDesc::init(fd);
@@ -82,14 +83,7 @@ TEST(FileDesc_tests, error_tests) {
     int fd = open("output2.txt", O_WRONLY | O_TRUNC, 0644);
     FileDesc file = FileDesc::init(fd);
 
-    EXPECT_THROW(
-        {
-            try {
-                file.writeToFile("hello there");
-            } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("FileDesc::writeToFile Error: Bad file descriptor", err.what());
-                throw;
-            }
-        },
-        Utils::runtime_error);
+    FileDesc::Result res = file.writeToFile("hello there");
+    EXPECT_EQ(file.writeToFile("hello there"),
+              FileDesc::Result::Err("FileDesc::writeToFile Error: Bad file descriptor"));
 }
