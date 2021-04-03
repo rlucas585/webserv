@@ -188,7 +188,8 @@ TEST(optional, swap_test1) {
 }
 
 TEST(optional, swap_test2) {
-    Utils::optional<std::string> opt1(std::string("Somewhat long string that should heap allocated"));
+    Utils::optional<std::string> opt1(
+        std::string("Somewhat long string that should heap allocated"));
     Utils::optional<std::string> opt2;
 
     EXPECT_TRUE(opt1.has_value());
@@ -210,7 +211,8 @@ TEST(optional, reset) {
     EXPECT_FALSE(opt1.has_value());
 }
 
-template <typename T> static Utils::optional<T> get_val_at_position(std::vector<T> const& vec, size_t index) {
+template <typename T>
+static Utils::optional<T> get_val_at_position(std::vector<T> const& vec, size_t index) {
     if (index >= vec.size())
         return Utils::optional<int>();
     return Utils::make_optional(vec[index]);

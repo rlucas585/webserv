@@ -19,47 +19,73 @@
 
 namespace meta {
 
-template <typename T> struct remove_const { typedef T type; };
-template <typename T> struct remove_const<const T> { typedef T type; };
+template <typename T>
+struct remove_const {
+    typedef T type;
+};
+template <typename T>
+struct remove_const<const T> {
+    typedef T type;
+};
 
-template <typename T, T val> struct integral_constant {
+template <typename T, T val>
+struct integral_constant {
     static const T value = val;
     typedef T value_type;
     typedef integral_constant type;
     operator value_type() const { return this->value; }
 };
 
-template <typename T> struct alignment_of;
+template <typename T>
+struct alignment_of;
 
-template <typename T> struct alignment_of_hack {
+template <typename T>
+struct alignment_of_hack {
     char c;
     T t;
     alignment_of_hack();
 };
 
-template <unsigned A, unsigned S> struct alignment_logic { static const size_t value = A < S ? A : S; };
-
-template <typename T> struct alignment_of_impl {
-    static const size_t value = (alignment_logic<sizeof(alignment_of_hack<T>) - sizeof(T), sizeof(T)>::value);
+template <unsigned A, unsigned S>
+struct alignment_logic {
+    static const size_t value = A < S ? A : S;
 };
 
-template <typename T> struct alignment_of : integral_constant<size_t, alignment_of_impl<T>::value> {};
+template <typename T>
+struct alignment_of_impl {
+    static const size_t value =
+        (alignment_logic<sizeof(alignment_of_hack<T>) - sizeof(T), sizeof(T)>::value);
+};
 
-template <bool c, typename T1, typename T2> struct if_c { typedef T1 type; };
+template <typename T>
+struct alignment_of : integral_constant<size_t, alignment_of_impl<T>::value> {};
 
-template <typename T1, typename T2> struct if_c<false, T1, T2> { typedef T2 type; };
+template <bool c, typename T1, typename T2>
+struct if_c {
+    typedef T1 type;
+};
 
-template <bool found, size_t target, class TestType> struct lower_alignment_helper {
+template <typename T1, typename T2>
+struct if_c<false, T1, T2> {
+    typedef T2 type;
+};
+
+template <bool found, size_t target, class TestType>
+struct lower_alignment_helper {
     typedef char type;
     enum { value = true };
 };
 
-template <size_t target, class TestType> struct lower_alignment_helper<false, target, TestType> {
+template <size_t target, class TestType>
+struct lower_alignment_helper<false, target, TestType> {
     enum { value = (alignment_of<TestType>::value == target) };
     typedef typename if_c<value, TestType, char>::type type;
 };
 
-template <typename T> struct has_one_T { T data; };
+template <typename T>
+struct has_one_T {
+    T data;
+};
 
 class alignment_dummy;
 typedef void (*function_ptr)();
@@ -67,7 +93,8 @@ typedef int(alignment_dummy::*member_ptr);
 typedef int (alignment_dummy::*member_function_ptr)();
 
 // Lifted in large part from Boost but w/o macros
-template <size_t target> union lower_alignment {
+template <size_t target>
+union lower_alignment {
     enum { found0 = false };
 
     typename lower_alignment_helper<found0, target, char>::type t0;
@@ -117,7 +144,9 @@ template <size_t target> union lower_alignment {
     typename lower_alignment_helper<found22, target, has_one_T<member_ptr> >::type t22;
     enum { found23 = lower_alignment_helper<found22, target, has_one_T<member_ptr> >::value };
     typename lower_alignment_helper<found23, target, has_one_T<member_function_ptr> >::type t23;
-    enum { found24 = lower_alignment_helper<found23, target, has_one_T<member_function_ptr> >::value };
+    enum {
+        found24 = lower_alignment_helper<found23, target, has_one_T<member_function_ptr> >::value
+    };
 };
 
 union max_align {
@@ -147,13 +176,16 @@ union max_align {
     has_one_T<member_function_ptr> t23;
 };
 
-template <size_t TAlign, size_t Align> struct is_aligned {
+template <size_t TAlign, size_t Align>
+struct is_aligned {
     static const bool value = ((TAlign >= Align) & (TAlign % Align)) == 0;
 };
 
-template <size_t Align> class type_with_alignment {
+template <size_t Align>
+class type_with_alignment {
     typedef lower_alignment<Align> t1;
-    typedef typename if_c<is_aligned<alignment_of<t1>::value, Align>::value, t1, max_align>::type align_t;
+    typedef typename if_c<is_aligned<alignment_of<t1>::value, Align>::value, t1, max_align>::type
+        align_t;
 
     static const size_t found = alignment_of<align_t>::value;
 

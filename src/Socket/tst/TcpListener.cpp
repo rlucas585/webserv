@@ -18,7 +18,9 @@
 #include <thread>
 #include <vector>
 
-TEST(TcpListener_tests, creation_test) { TcpListener listener = TcpListener::bind("127.0.0.1:7878").unwrap(); }
+TEST(TcpListener_tests, creation_test) {
+    TcpListener listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+}
 
 TEST(TcpListener_tests, crash_test1) {
     TcpListener::Result res = TcpListener::bind("127.2.1.1:::::7878");
@@ -64,7 +66,8 @@ TEST(TcpListener_tests, connection_test) {
     // Sleep to allow server thread time to setup (probably not necessary)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-    TcpStream client = TcpStream::connect("localhost:4245").expect("Unable to connect to localhost:4245");
+    TcpStream client =
+        TcpStream::connect("localhost:4245").expect("Unable to connect to localhost:4245");
     client.write("hello from the other side").expect("Error writing to localhost:4245");
     server_thread.join();
 }

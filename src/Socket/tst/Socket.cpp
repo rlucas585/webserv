@@ -76,7 +76,8 @@ TEST(Socket_tests, connection_test) {
 
     // Ensure quick rebinding
     ret = 1;
-    if (setsockopt(server.into_inner(), SOL_SOCKET, SO_REUSEADDR, &ret, sizeof(sockaddr_in)) == -1) {
+    if (setsockopt(server.into_inner(), SOL_SOCKET, SO_REUSEADDR, &ret, sizeof(sockaddr_in)) ==
+        -1) {
         throw Utils::runtime_error(std::string("Error in setsockopt(): ") + strerror(errno));
     }
 
@@ -94,7 +95,8 @@ TEST(Socket_tests, connection_test) {
         sockaddr_storage storage;
         Utils::memset(&storage, 0, sizeof(storage));
         Socket client;
-        client = server.accept(reinterpret_cast<sockaddr*>(&storage), &server_len).expect("Some error in accept?");
+        client = server.accept(reinterpret_cast<sockaddr*>(&storage), &server_len)
+                     .expect("Some error in accept?");
         std::vector<char> buf(max_buf, 0);
 
         if (client.read(&buf[0], max_buf) == -1) {
@@ -114,6 +116,7 @@ TEST(Socket_tests, connection_test) {
         std::cout << "Error connecting to server" << std::endl;
     }
     std::string message_sent("hello from the other side");
-    client.send(message_sent.c_str(), message_sent.size()).expect("Error writing to localhost:4243");
+    client.send(message_sent.c_str(), message_sent.size())
+        .expect("Error writing to localhost:4243");
     server_thread.join();
 }

@@ -71,7 +71,9 @@ void SocketAddrV4::set_ip(Ipv4Addr new_ip) { inner.sin_addr = new_ip.into_inner(
 
 u_int16_t SocketAddrV4::port(void) const { return IpAddr::network_to_host_short(inner.sin_port); }
 
-void SocketAddrV4::set_port(u_int16_t new_port) { inner.sin_port = IpAddr::host_to_network_short(new_port); }
+void SocketAddrV4::set_port(u_int16_t new_port) {
+    inner.sin_port = IpAddr::host_to_network_short(new_port);
+}
 
 Utils::pair<const sockaddr*, socklen_t> SocketAddrV4::into_inner(void) const {
     return Utils::make_pair(reinterpret_cast<const sockaddr*>(&inner), sizeof(inner));
@@ -92,8 +94,8 @@ bool operator==(sockaddr_in const& lhs, SocketAddrV4 const& rhs) { return rhs ==
 bool operator!=(sockaddr_in const& lhs, SocketAddrV4 const& rhs) { return rhs != lhs; }
 
 bool operator==(sockaddr_in const& lhs, sockaddr_in const& rhs) {
-    bool values =
-        lhs.sin_family == rhs.sin_family && lhs.sin_port == rhs.sin_port && lhs.sin_addr.s_addr == rhs.sin_addr.s_addr;
+    bool values = lhs.sin_family == rhs.sin_family && lhs.sin_port == rhs.sin_port &&
+                  lhs.sin_addr.s_addr == rhs.sin_addr.s_addr;
     for (size_t i = 0; i < 8; i++) {
         if (lhs.sin_zero[i] != rhs.sin_zero[i])
             return false;
