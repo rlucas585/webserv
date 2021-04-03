@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 21:50:39 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 22:25:31 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,14 @@ Socket::Result Socket::init(const char* str, int type) {
 Socket::Result Socket::init(SocketAddr const& addr, int type) {
     int fd = 0;
 #ifdef __APPLE__
-    fd = socket(family, type, 0);
+    fd = socket(addr.family(), type, 0);
     if (fd == -1) {
         return Socket::Result::Err(strerror(errno));
     }
     // We'd maybe like to set CLOEXEC here for MacOs also, but ioctl is not permitted in
     // this project
-    if (setsockopt(*this, SOL_SOCKET, SO_NOSIGPIPE, 1) == -1)
+    Socket sock(fd);
+    if (Socket::setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, 1) == -1)
         return Socket::Result::Err(strerror(errno));
 #elif __linux__
     fd = socket(addr.family(), type | SOCK_CLOEXEC, 0);
