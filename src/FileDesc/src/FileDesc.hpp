@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 22:42:47 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 14:45:37 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,26 +24,20 @@
 
 class FileDesc {
   public:
-    typedef Utils::result<ssize_t, std::string> Result;
-
-  public:
     FileDesc(void);
     ~FileDesc(void);
     FileDesc(FileDesc const& other);
     FileDesc& operator=(FileDesc const& rhs);
-    FileDesc(Utils::rvalue<FileDesc> other);
-    FileDesc& operator=(Utils::rvalue<FileDesc> rhs);
 
     static FileDesc init(int new_fd);
 
     int raw(void) const;
-    FileDesc move(void);
 
-    Result writeToFile(const char* str) const;
-    Result writeToFile(const void* buf, size_t count) const;
+    Utils::RwResult writeToFile(const char* str) const;
+    Utils::RwResult writeToFile(const void* buf, size_t count) const;
 
-    Result readFromFile(void* buf, size_t len) const;
-    Result readFromFile(std::string& str, size_t len) const;
+    Utils::RwResult readFromFile(void* buf, size_t len) const;
+    Utils::RwResult readFromFile(std::string& str, size_t len) const;
 
   private:
     int fd;

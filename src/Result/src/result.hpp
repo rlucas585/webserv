@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:54:48 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 14:44:24 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "../../AlignedStorage/src/aligned_storage.hpp"
 #include "../../Traits/src/type_traits.hpp"
 #include "../../Utils/src/Utils.hpp"
+
+#include <sys/types.h>
 
 namespace Utils {
 
@@ -127,6 +129,10 @@ template <typename T, typename E> class result {
     ok_type const* get_ok_ptr(void) const { return reinterpret_cast<ok_type const*>(storage.address()); }
     ok_type* get_ok_ptr(void) { return reinterpret_cast<ok_type*>(storage.address()); }
 };
+
+// The following definitions are for reusable Result types that can be used
+// across multiple classes.
+typedef Utils::result<ssize_t, std::string> RwResult;
 
 } // namespace Utils
 

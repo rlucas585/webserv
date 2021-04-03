@@ -13,8 +13,8 @@
 #ifndef IPADDR_HPP
 #define IPADDR_HPP
 
-#include "../../Str/src/Str.hpp"
 #include "../../Result/src/result.hpp"
+#include "../../Str/src/Str.hpp"
 #include <netinet/in.h>
 
 class IpAddr {
@@ -33,8 +33,8 @@ class IpAddr {
 };
 
 class Ipv4Addr : public IpAddr {
-    public:
-        typedef Utils::result<Ipv4Addr, std::string> Result;
+  public:
+    typedef Utils::result<Ipv4Addr, std::string> Result;
 
   public:
     Ipv4Addr(void);

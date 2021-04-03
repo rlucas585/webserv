@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:59:55 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 23:07:36 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 14:20:54 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,26 @@ SocketAddrV4::SocketAddrV4(sockaddr_in const& storage) { inner = storage; }
 
 SocketAddrV4 SocketAddrV4::init(Ipv4Addr ip, u_int16_t port) { return SocketAddrV4(ip, port); }
 
-SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
+SocketAddrV4::Result SocketAddrV4::init(Str const& socket_addr_str) {
     Str::Split iter = socket_addr_str.split(":");
     Str ip_str = iter.next();
     Str port_str = iter.next();
     int port;
 
     if (socket_addr_str.count(':') != 1)
-        throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
+        return SocketAddrV4::Result::Err("Invalid Str used for SocketAddrV4");
 
     if (!ip_str.isInitialized() || !port_str.isInitialized() || !iter.is_complete()) {
-        throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
+        return SocketAddrV4::Result::Err("Invalid Str used for SocketAddrV4");
     }
-    Ipv4Addr::Result res = Ipv4Addr::init_from_string(ip_str);
-    if (res.is_err())
-        throw Utils::runtime_error(res.unwrap_err()); // TODO change this to pass error on!!
-    Ipv4Addr addr = res.unwrap();
+    Ipv4Addr::Result addr = Ipv4Addr::init_from_string(ip_str);
+    if (addr.is_err())
+        return SocketAddrV4::Result::Err(addr.unwrap_err());
     port = Utils::atoi(port_str.raw());
     if (port < 0 || port > 65535) {
-        throw Utils::runtime_error("Invalid port value");
+        return SocketAddrV4::Result::Err("Invalid port value");
     }
-    return init(addr, static_cast<u_int16_t>(port));
+    return SocketAddrV4::Result::Ok(SocketAddrV4(addr.unwrap(), static_cast<u_int16_t>(port)));
 }
 
 SocketAddrV4 SocketAddrV4::init(sockaddr_in const& storage) { return SocketAddrV4(storage); }

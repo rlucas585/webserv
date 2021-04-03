@@ -124,9 +124,7 @@ Ipv4Addr::~Ipv4Addr(void) {}
 
 Ipv4Addr::Ipv4Addr(u_int8_t bytes[4]) { inner.s_addr = u32_convert_to_big_endian(bytes); }
 
-Ipv4Addr::Ipv4Addr(struct in_addr address) {
-    inner = address;
-}
+Ipv4Addr::Ipv4Addr(struct in_addr address) { inner = address; }
 
 Ipv4Addr::Ipv4Addr(Ipv4Addr const& other) { *this = other; }
 
@@ -146,13 +144,11 @@ Ipv4Addr Ipv4Addr::init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t 
     return Ipv4Addr(bytes);
 }
 
-Ipv4Addr::Result Ipv4Addr::init_from_string(const char* str) {
-    return Ipv4Addr::init_from_string(Str(str));
-}
+Ipv4Addr::Result Ipv4Addr::init_from_string(const char* str) { return Ipv4Addr::init_from_string(Str(str)); }
 
 Ipv4Addr::Result Ipv4Addr::init_from_string(Str const& ip_str) {
     std::string buf; // Used to isolate and null terminate the Str
-    in_addr     address;
+    in_addr address;
 
     if (!ip_str.isInitialized() || ip_str.length() > 15) {
         return Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr");
