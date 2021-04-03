@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 21:57:46 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 15:21:11 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 22:13:29 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,15 @@ class TcpListener {
     TcpListener(TcpListener const& other);
     TcpListener& operator=(TcpListener const& rhs);
 
-    Result bind(const char* str);
-    Result bind(SocketAddr const& addr);
+    static Result bind(const char* str);
+    static Result bind(SocketAddr const& addr);
 
     Socket const& socket(void) const;
 
     AcceptResult accept(void) const;
+
+    bool operator==(TcpListener const& other) const;
+    bool operator!=(TcpListener const& other) const;
 
   private:
     Socket inner;

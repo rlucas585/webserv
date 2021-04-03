@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 13:50:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 23:10:50 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 21:52:56 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ TEST(SocketAddr_tests, family_test) {
 }
 
 TEST(SocketAddr_tests, string_creation_test) {
-    SocketAddrV4 socket_addr = SocketAddrV4::init("127.2.1.1:1500");
+    SocketAddrV4 socket_addr = SocketAddrV4::init("127.2.1.1:1500").unwrap();
     struct sockaddr_in expected_addr;
 
     expected_addr.sin_family = AF_INET;
@@ -51,20 +51,8 @@ TEST(SocketAddr_tests, string_creation_test) {
     EXPECT_EQ(socket_addr, expected_addr);
 }
 
-// TEST(SocketAddr_tests, implicit_creation_test) {
-//     SocketAddrV4 socket_addr = "127.0.0.1:4242";
-//     struct sockaddr_in expected_addr;
-//
-//     expected_addr.sin_family = AF_INET;
-//     expected_addr.sin_port = htons(4242);
-//     expected_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-//     memset(expected_addr.sin_zero, 0, 8);
-//
-//     EXPECT_EQ(socket_addr, expected_addr);
-// }
-
 TEST(SocketAddr_tests, string_creation_test2) {
-    SocketAddrV4 socket_addr = SocketAddrV4::init("localhost:4242");
+    SocketAddrV4 socket_addr = SocketAddrV4::init("localhost:4242").unwrap();
     struct sockaddr_in expected_addr;
 
     expected_addr.sin_family = AF_INET;
@@ -76,29 +64,15 @@ TEST(SocketAddr_tests, string_creation_test2) {
 }
 
 TEST(SocketAddr_tests, crash_test1) {
-    EXPECT_THROW(
-        {
-            try {
-                SocketAddrV4 socket_addr = SocketAddrV4::init("127.0.0.1.5:1500");
-            } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid Str used for Ipv4Addr", err.what());
-                throw;
-            }
-        },
-        Utils::runtime_error);
+    SocketAddrV4::Result res = SocketAddrV4::init("127.0.0.1.5:1500");
+
+    EXPECT_EQ(res, SocketAddrV4::Result::Err("Invalid Str used for Ipv4Addr"));
 }
 
 TEST(SocketAddr_tests, crash_test2) {
-    EXPECT_THROW(
-        {
-            try {
-                SocketAddrV4 socket_addr = SocketAddrV4::init("127.0.0.1:-1");
-            } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid port value", err.what());
-                throw;
-            }
-        },
-        Utils::runtime_error);
+    SocketAddrV4::Result res = SocketAddrV4::init("127.0.0.1:-1");
+
+    EXPECT_EQ(res, SocketAddrV4::Result::Err("Invalid port value"));
 }
 
 TEST(SocketAddr_tests, ip_test) {

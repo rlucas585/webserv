@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:32:29 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 14:23:29 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 21:36:40 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,30 +24,42 @@ TcpStream::TcpStream(Socket sock) : inner(sock) {}
 TcpStream::TcpStream(TcpStream const& other) { *this = other; }
 
 // Requires updating for Ipv6
-TcpStream TcpStream::connect(const char* str) { return TcpStream::connect(SocketAddrV4::init(str)); }
+TcpStream::Result TcpStream::connect(const char* str) {
+    SocketAddrV4::Result addr = SocketAddrV4::init(str);
 
-TcpStream TcpStream::connect(SocketAddr const& addr) {
+    if (addr.is_err()) {
+        return TcpStream::Result::Err(addr.unwrap_err());
+    }
+    return TcpStream::connect(addr.unwrap());
+}
+
+TcpStream::Result TcpStream::connect(SocketAddr const& addr) {
     Utils::pair<const sockaddr*, socklen_t> addr_info = addr.into_inner();
     const sockaddr* addrp = addr_info.first;
     socklen_t len = addr_info.second;
-    int err = 0;
 
-    Socket sock = Socket::init(addr, SOCK_STREAM);
+    Socket::Result sock_res = Socket::init(addr, SOCK_STREAM);
 
-    err = ::connect(sock.into_inner(), addrp, len);
-    if (err == -1) {
-        throw Utils::runtime_error(std::string("Error in connect(): ") + strerror(errno));
+    if (sock_res.is_err()) {
+        return TcpStream::Result::Err(sock_res.unwrap_err());
+    }
+    Socket sock = sock_res.unwrap();
+
+    if (::connect(sock.into_inner(), addrp, len) == -1) {
+        return TcpStream::Result::Err(strerror(errno));
     }
     return TcpStream(sock);
 }
 
-ssize_t TcpStream::read(void* buf, size_t len) { return inner.read(buf, len); }
+Utils::RwResult TcpStream::read(void* buf, size_t len) { return inner.read(buf, len); }
 
-ssize_t TcpStream::write(const void* buf, size_t len) { return inner.send(buf, len); }
+Utils::RwResult TcpStream::write(const void* buf, size_t len) { return inner.send(buf, len); }
 
-ssize_t TcpStream::write(const char* str) { return inner.send(reinterpret_cast<const void*>(str), Utils::strlen(str)); }
+Utils::RwResult TcpStream::write(const char* str) {
+    return inner.send(reinterpret_cast<const void*>(str), Utils::strlen(str));
+}
 
-ssize_t TcpStream::write(std::string const& str) {
+Utils::RwResult TcpStream::write(std::string const& str) {
     return inner.send(reinterpret_cast<const void*>(str.c_str()), str.size());
 }
 

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 14:57:48 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 21:50:39 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,3 +113,7 @@ Utils::RwResult Socket::send_with_flags(const void* buf, size_t len, int flags) 
 }
 
 Utils::RwResult Socket::send(const void* buf, size_t len) { return send_with_flags(buf, len, 0); }
+
+bool Socket::operator==(Socket const& rhs) const { return inner.raw() == rhs.inner.raw(); }
+
+bool Socket::operator!=(Socket const& rhs) const { return !(*this == rhs); }

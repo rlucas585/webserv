@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 09:55:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 14:57:53 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 21:49:26 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ class Socket {
     Utils::RwResult peek(void* buf, size_t len);
     Utils::RwResult send_with_flags(const void* buf, size_t len, int flags);
     Utils::RwResult send(const void* buf, size_t len);
+
+    bool operator==(Socket const& rhs) const;
+    bool operator!=(Socket const& rhs) const;
 
   private:
     FileDesc inner;

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:00:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 15:22:21 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 22:13:31 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ TcpListener::Result TcpListener::bind(SocketAddr const& addr) {
     // Create new socket
     Socket::Result sock_res = Socket::init(addr, SOCK_STREAM);
 
-    if (sock_res.is_err())
+    if (sock_res.is_err()) {
         return TcpListener::Result::Err(sock_res.unwrap_err());
+    }
     Socket sock = sock_res.unwrap();
 
     // Set socket option: SO_REUSEADDR allows quick rebinding to socket, without
@@ -90,3 +91,7 @@ TcpListener::AcceptResult TcpListener::accept(void) const {
     SocketAddrV4 addr = SocketAddrV4::init(*reinterpret_cast<sockaddr_in*>(&storage));
     return Utils::make_pair(TcpStream(sock), addr);
 }
+
+bool TcpListener::operator==(TcpListener const& other) const { return inner == other.inner; }
+
+bool TcpListener::operator!=(TcpListener const& other) const { return !(*this == other); }

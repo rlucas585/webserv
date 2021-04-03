@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 23:11:11 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 22:03:02 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,49 +18,28 @@
 #include <thread>
 #include <vector>
 
-TEST(TcpListener_tests, creation_test) { TcpListener listener = TcpListener::bind("127.0.0.1:7878"); }
+TEST(TcpListener_tests, creation_test) { TcpListener listener = TcpListener::bind("127.0.0.1:7878").unwrap(); }
 
 TEST(TcpListener_tests, crash_test1) {
-    EXPECT_THROW(
-        {
-            try {
-                TcpListener listener = TcpListener::bind("127.2.1.1:::::7878");
-            } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid Str used for SocketAddrV4", err.what());
-                throw;
-            }
-        },
-        Utils::runtime_error);
+    TcpListener::Result res = TcpListener::bind("127.2.1.1:::::7878");
+
+    EXPECT_EQ(res, TcpListener::Result::Err("Invalid Str used for SocketAddrV4"));
 }
 
 TEST(TcpListener_tests, crash_test2) {
-    EXPECT_THROW(
-        {
-            try {
-                TcpListener listener = TcpListener::bind("127.2.1.1:-1");
-            } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid port value", err.what());
-                throw;
-            }
-        },
-        Utils::runtime_error);
+    TcpListener::Result res = TcpListener::bind("127.2.1.1:-1");
+
+    EXPECT_EQ(res, TcpListener::Result::Err("Invalid port value"));
 }
 
 TEST(TcpListener_tests, crash_test3) {
-    EXPECT_THROW(
-        {
-            try {
-                TcpListener listener = TcpListener::bind("127.2.1.1.1:4242");
-            } catch (Utils::runtime_error const& err) {
-                EXPECT_STREQ("Invalid Str used for Ipv4Addr", err.what());
-                throw;
-            }
-        },
-        Utils::runtime_error);
+    TcpListener::Result res = TcpListener::bind("127.2.1.1.1:4242");
+
+    EXPECT_EQ(res, TcpListener::Result::Err("Invalid Str used for Ipv4Addr"));
 }
 
 TEST(TcpListener_tests, move_semantics_test) {
-    TcpListener listener1 = TcpListener::bind("127.2.1.1:4244");
+    TcpListener listener1 = TcpListener::bind("127.2.1.1:4244").unwrap();
     int initialfd = listener1.socket().into_inner();
     TcpListener listener2 = listener1;
 
@@ -70,10 +49,10 @@ TEST(TcpListener_tests, move_semantics_test) {
 }
 
 TEST(TcpListener_tests, connection_test) {
-    TcpListener listener = TcpListener::bind("localhost:4245");
+    TcpListener listener = TcpListener::bind("localhost:4245").unwrap();
 
     std::thread server_thread = std::thread([&listener](void) {
-        TcpStream thread_client = listener.accept().first;
+        TcpStream thread_client = listener.accept().unwrap().first;
         std::string message_received;
         char buffer[30];
         Utils::memset(buffer, 0, 30);
@@ -85,9 +64,7 @@ TEST(TcpListener_tests, connection_test) {
     // Sleep to allow server thread time to setup (probably not necessary)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-    TcpStream client = TcpStream::connect("localhost:4245");
-    if (client.write("hello from the other side") == -1) {
-        throw Utils::runtime_error(std::string("Error in write(): ") + strerror(errno));
-    }
+    TcpStream client = TcpStream::connect("localhost:4245").expect("Unable to connect to localhost:4245");
+    client.write("hello from the other side").expect("Error writing to localhost:4245");
     server_thread.join();
 }
