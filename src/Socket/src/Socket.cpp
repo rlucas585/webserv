@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 22:25:31 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/04 11:39:35 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ Socket::Result Socket::init(SocketAddr const& addr, int type) {
 #endif
     return Socket::Result::Ok(Socket(fd));
 }
+
+Socket Socket::init_from_raw(int fd) { return Socket(fd); }
 
 int Socket::into_inner(void) const { return inner.raw(); }
 

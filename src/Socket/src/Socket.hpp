@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 09:55:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 21:49:26 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/04 11:38:42 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Socket {
 
     static Result init(const char* str, int type);
     static Result init(SocketAddr const& addr, int type);
+    static Socket init_from_raw(int fd);
 
     template <typename T>
     static int setsockopt(Socket const& sock, int options, int value, T payload) {
