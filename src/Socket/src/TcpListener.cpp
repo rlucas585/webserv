@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:00:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/05 01:15:34 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 01:46:58 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+#include <sys/select.h>
 
 TcpListener::TcpListener(void) : inner(), config() { FD_ZERO(&config.current_sockets); }
 
