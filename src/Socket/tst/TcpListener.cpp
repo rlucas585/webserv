@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/05 12:11:11 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 12:25:09 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,6 @@ static void client_func(int n, const char* address, std::string message) {
         EXPECT_EQ(message_received, "Hi third terminal!");
     }
 }
-
-static const size_t READ_LIMIT = 512;
 
 typedef std::vector<TcpStream>::iterator client_it;
 
