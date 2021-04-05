@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/04 11:39:35 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 10:41:44 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+
+size_t Socket::READ_LIMIT = 512;
 
 Socket::Socket(void) {}
 

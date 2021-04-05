@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 09:55:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/04 11:38:42 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 10:43:07 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 class Socket {
   public:
     typedef Utils::result<Socket, std::string> Result;
+
+    static size_t READ_LIMIT;
 
   public:
     Socket(void);
