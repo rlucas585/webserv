@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:59:55 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 10:48:50 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 14:20:54 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,25 +38,26 @@ SocketAddrV4::SocketAddrV4(sockaddr_in const& storage) { inner = storage; }
 
 SocketAddrV4 SocketAddrV4::init(Ipv4Addr ip, u_int16_t port) { return SocketAddrV4(ip, port); }
 
-SocketAddrV4 SocketAddrV4::init(Str const& socket_addr_str) {
+SocketAddrV4::Result SocketAddrV4::init(Str const& socket_addr_str) {
     Str::Split iter = socket_addr_str.split(":");
     Str ip_str = iter.next();
     Str port_str = iter.next();
-    Ipv4Addr addr;
     int port;
 
     if (socket_addr_str.count(':') != 1)
-        throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
+        return SocketAddrV4::Result::Err("Invalid Str used for SocketAddrV4");
 
     if (!ip_str.isInitialized() || !port_str.isInitialized() || !iter.is_complete()) {
-        throw Utils::runtime_error("Invalid Str used for SocketAddrV4");
+        return SocketAddrV4::Result::Err("Invalid Str used for SocketAddrV4");
     }
-    addr = Ipv4Addr::init_from_string(ip_str);
+    Ipv4Addr::Result addr = Ipv4Addr::init_from_string(ip_str);
+    if (addr.is_err())
+        return SocketAddrV4::Result::Err(addr.unwrap_err());
     port = Utils::atoi(port_str.raw());
     if (port < 0 || port > 65535) {
-        throw Utils::runtime_error("Invalid port value");
+        return SocketAddrV4::Result::Err("Invalid port value");
     }
-    return init(addr, static_cast<u_int16_t>(port));
+    return SocketAddrV4::Result::Ok(SocketAddrV4(addr.unwrap(), static_cast<u_int16_t>(port)));
 }
 
 SocketAddrV4 SocketAddrV4::init(sockaddr_in const& storage) { return SocketAddrV4(storage); }
@@ -70,7 +71,9 @@ void SocketAddrV4::set_ip(Ipv4Addr new_ip) { inner.sin_addr = new_ip.into_inner(
 
 u_int16_t SocketAddrV4::port(void) const { return IpAddr::network_to_host_short(inner.sin_port); }
 
-void SocketAddrV4::set_port(u_int16_t new_port) { inner.sin_port = IpAddr::host_to_network_short(new_port); }
+void SocketAddrV4::set_port(u_int16_t new_port) {
+    inner.sin_port = IpAddr::host_to_network_short(new_port);
+}
 
 Utils::pair<const sockaddr*, socklen_t> SocketAddrV4::into_inner(void) const {
     return Utils::make_pair(reinterpret_cast<const sockaddr*>(&inner), sizeof(inner));
@@ -91,8 +94,8 @@ bool operator==(sockaddr_in const& lhs, SocketAddrV4 const& rhs) { return rhs ==
 bool operator!=(sockaddr_in const& lhs, SocketAddrV4 const& rhs) { return rhs != lhs; }
 
 bool operator==(sockaddr_in const& lhs, sockaddr_in const& rhs) {
-    bool values =
-        lhs.sin_family == rhs.sin_family && lhs.sin_port == rhs.sin_port && lhs.sin_addr.s_addr == rhs.sin_addr.s_addr;
+    bool values = lhs.sin_family == rhs.sin_family && lhs.sin_port == rhs.sin_port &&
+                  lhs.sin_addr.s_addr == rhs.sin_addr.s_addr;
     for (size_t i = 0; i < 8; i++) {
         if (lhs.sin_zero[i] != rhs.sin_zero[i])
             return false;

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:54:48 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 14:44:24 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,15 @@
 #include "../../Traits/src/type_traits.hpp"
 #include "../../Utils/src/Utils.hpp"
 
+#include <sys/types.h>
+
 namespace Utils {
 
 // E must be convertible to std::string for Error printing.
 // Would be better with traits to test whether E has an << overload to an
 // ostream.
-template <typename T, typename E> class result {
+template <typename T, typename E>
+class result {
     // Ok and Err would be preferred, but naming-conflicts are unavoidable
     enum Status {
         Error,
@@ -32,7 +35,8 @@ template <typename T, typename E> class result {
     typedef typename meta::remove_const<T>::type ok_type;
     typedef typename meta::remove_const<E>::type err_type;
 
-    typedef typename meta::if_c<(sizeof(ok_type) > sizeof(err_type)), ok_type, err_type>::type larger_type;
+    typedef typename meta::if_c<(sizeof(ok_type) > sizeof(err_type)), ok_type, err_type>::type
+        larger_type;
     typedef Utils::aligned_storage<larger_type> storage_type;
 
     Status stat;
@@ -80,7 +84,9 @@ template <typename T, typename E> class result {
     }
     ok_type const& ok(void) const { return *reinterpret_cast<ok_type const*>(storage.address()); }
     ok_type& ok(void) { return *reinterpret_cast<ok_type*>(storage.address()); }
-    err_type const& err(void) const { return *reinterpret_cast<err_type const*>(storage.address()); }
+    err_type const& err(void) const {
+        return *reinterpret_cast<err_type const*>(storage.address());
+    }
     err_type& err(void) { return *reinterpret_cast<err_type*>(storage.address()); }
 
     bool operator==(result<ok_type, err_type> const& other) const {
@@ -104,7 +110,8 @@ template <typename T, typename E> class result {
         new (storage.address()) err_type(err);
         stat = Error;
     }
-    template <class Expr> void construct(Expr const& expr, void const*) {
+    template <class Expr>
+    void construct(Expr const& expr, void const*) {
         if (stat == Error)
             new (storage.address()) err_type(expr);
         else
@@ -122,11 +129,19 @@ template <typename T, typename E> class result {
         new (storage.address()) err_type();
         stat = Error;
     }
-    err_type const* get_err_ptr(void) const { return reinterpret_cast<err_type const*>(storage.address()); }
+    err_type const* get_err_ptr(void) const {
+        return reinterpret_cast<err_type const*>(storage.address());
+    }
     err_type* get_err_ptr(void) { return reinterpret_cast<err_type*>(storage.address()); }
-    ok_type const* get_ok_ptr(void) const { return reinterpret_cast<ok_type const*>(storage.address()); }
+    ok_type const* get_ok_ptr(void) const {
+        return reinterpret_cast<ok_type const*>(storage.address());
+    }
     ok_type* get_ok_ptr(void) { return reinterpret_cast<ok_type*>(storage.address()); }
 };
+
+// The following definitions are for reusable Result types that can be used
+// across multiple classes.
+typedef Utils::result<ssize_t, std::string> RwResult;
 
 } // namespace Utils
 

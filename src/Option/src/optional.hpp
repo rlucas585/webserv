@@ -27,7 +27,8 @@ const nullopt_t nullopt(0);
 
 // Glaring inefficiencies in optional due to the lack of move
 // semantics in C++98, thus requiring copy semantics
-template <typename T> class optional {
+template <typename T>
+class optional {
     typedef typename meta::remove_const<T>::type stored_type;
     typedef Utils::aligned_storage<stored_type> storage_type;
 
@@ -104,9 +105,13 @@ template <typename T> class optional {
         engaged = false;
     }
     stored_type& operator*() { return *reinterpret_cast<stored_type*>(storage.address()); }
-    stored_type const& operator*() const { return *reinterpret_cast<stored_type*>(storage.address()); }
+    stored_type const& operator*() const {
+        return *reinterpret_cast<stored_type*>(storage.address());
+    }
     stored_type* operator->() { return reinterpret_cast<stored_type*>(storage.address()); }
-    const stored_type* operator->() const { return reinterpret_cast<stored_type*>(storage.address()); }
+    const stored_type* operator->() const {
+        return reinterpret_cast<stored_type*>(storage.address());
+    }
 
   private:
     void construct(stored_type const& data) {
@@ -115,17 +120,23 @@ template <typename T> class optional {
         new (storage.address()) stored_type(data);
         engaged = true;
     }
-    template <class Expr> void construct(Expr const& expr, void const*) {
+    template <class Expr>
+    void construct(Expr const& expr, void const*) {
         if (engaged)
             this->reset();
         new (storage.address()) stored_type(expr);
         engaged = true;
     }
-    stored_type const* get_ptr(void) const { return reinterpret_cast<stored_type const*>(storage.address()); }
+    stored_type const* get_ptr(void) const {
+        return reinterpret_cast<stored_type const*>(storage.address());
+    }
     stored_type* get_ptr(void) { return reinterpret_cast<stored_type*>(storage.address()); }
 };
 
-template <typename T> optional<T> make_optional(T const& data) { return optional<T>(data); }
+template <typename T>
+optional<T> make_optional(T const& data) {
+    return optional<T>(data);
+}
 } // namespace Utils
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:47:56 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/03 14:45:33 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,47 +45,32 @@ FileDesc& FileDesc::operator=(FileDesc const& rhs) {
     return *this;
 }
 
-FileDesc::FileDesc(Utils::rvalue<FileDesc> other) : fd(other.get().fd) { other.get().fd = 0; }
-
-FileDesc& FileDesc::operator=(Utils::rvalue<FileDesc> rhs) {
-    if (this == &rhs.get()) {
-        return *this;
-    }
-    fd = rhs.get().fd;
-    rhs.get().fd = 0;
-    return *this;
-}
-
 FileDesc FileDesc::init(int new_fd) { return FileDesc(new_fd); }
 
 int FileDesc::raw(void) const { return fd; }
 
-// "move" semantics for FileDesc
-FileDesc FileDesc::move(void) {
-    FileDesc ret(fd);
-    fd = 0;
-    return ret;
-}
-
-FileDesc::Result FileDesc::writeToFile(const char* str) const {
+Utils::RwResult FileDesc::writeToFile(const char* str) const {
     return writeToFile(reinterpret_cast<const void*>(str),
                        Utils::min(Utils::strlen(str), static_cast<size_t>(READ_LIMIT)));
 }
 
-FileDesc::Result FileDesc::writeToFile(const void* buf, size_t count) const {
+Utils::RwResult FileDesc::writeToFile(const void* buf, size_t count) const {
     ssize_t ret = write(fd, buf, count);
-    if (ret == -1)
-        return FileDesc::Result::Err(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
-    return FileDesc::Result::Ok(ret);
-}
-
-void FileDesc::readFromFile(void* buf, size_t len) const {
-    if (read(fd, buf, len) == -1) {
-        throw Utils::runtime_error(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
+    if (ret == -1) {
+        return Utils::RwResult::Err(strerror(errno));
     }
+    return Utils::RwResult::Ok(ret);
 }
 
-void FileDesc::readFromFile(std::string& str, size_t len) const {
+Utils::RwResult FileDesc::readFromFile(void* buf, size_t len) const {
+    ssize_t ret = read(fd, buf, len);
+    if (ret == -1) {
+        return Utils::RwResult::Err(strerror(errno));
+    }
+    return Utils::RwResult::Ok(ret);
+}
+
+Utils::RwResult FileDesc::readFromFile(std::string& str, size_t len) const {
     size_t previous_length = str.size();
     void* buf;
     ssize_t ret;
@@ -94,9 +79,10 @@ void FileDesc::readFromFile(std::string& str, size_t len) const {
     buf = &str[previous_length];
     ret = read(fd, buf, len);
     if (ret == -1) {
-        throw Utils::runtime_error(std::string("FileDesc::writeToFile Error: ") + strerror(errno));
+        return Utils::RwResult::Err(strerror(errno));
     }
     if (static_cast<size_t>(ret) < len) {
         str.resize(previous_length + ret);
     }
+    return Utils::RwResult::Ok(ret);
 }

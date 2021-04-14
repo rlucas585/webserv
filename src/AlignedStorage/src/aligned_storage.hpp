@@ -17,7 +17,8 @@
 
 namespace Utils {
 
-template <typename T> class aligned_storage {
+template <typename T>
+class aligned_storage {
     union dummy_u {
         char data[sizeof(T)];
         typedef typename meta::type_with_alignment<meta::alignment_of<T>::value>::type aligner;

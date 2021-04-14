@@ -11,6 +11,9 @@ add_subdirectory(Result)
 add_subdirectory(Traits)
 add_subdirectory(AlignedStorage)
 
+# Only for testing
+add_subdirectory(Examples)
+
 include_directories(Utils)
 include_directories(Str)
 include_directories(FileDesc)
