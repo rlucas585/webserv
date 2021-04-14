@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 14:09:26 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/03/31 20:50:38 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,16 @@ int strncmp(const char* s1, const char* s2, size_t n);
 char* strpbrk(char* s, const char* accept);
 const char* strpbrk(const char* s, const char* accept);
 void* memset(void* b, int c, size_t len);
-template <typename T> T const& min(T const& lhs, T const& rhs) { return (rhs < lhs) ? rhs : lhs; }
-template <typename T> T const& max(T const& lhs, T const& rhs) { return (lhs < rhs) ? rhs : lhs; }
+void* memcpy(void* dest, const void* src, size_t n);
+int atoi(const char* str);
+template <typename T>
+T const& min(T const& lhs, T const& rhs) {
+    return (rhs < lhs) ? rhs : lhs;
+}
+template <typename T>
+T const& max(T const& lhs, T const& rhs) {
+    return (lhs < rhs) ? rhs : lhs;
+}
 
 class runtime_error : public std::exception {
   public:
@@ -45,7 +53,8 @@ class runtime_error : public std::exception {
     runtime_error(void);
 };
 
-template <typename T> class unique_ptr {
+template <typename T>
+class unique_ptr {
   public:
     typedef T* pointer;
     typedef T& reference;

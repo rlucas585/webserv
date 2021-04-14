@@ -1,8 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   Str.cpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rlucas <marvin@codam.nl>                     +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
+/*   Updated: 2021/03/31 10:43:51 by rlucas        ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Str.hpp"
 
 #include "../../Utils/src/Utils.hpp"
-
-char Str::emptyBuffer[1] = "";
 
 Str::Split::Split(const char* start) : _remainder(start), _delimiter(" ") {}
 
@@ -35,6 +45,8 @@ Str Str::Split::next(void) {
     return slice;
 }
 
+bool Str::Split::is_complete(void) const { return _remainder == NULL; }
+
 const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) const {
     for (; s != NULL; s++) {
         if (!Utils::strchr(reject, *s))
@@ -43,7 +55,8 @@ const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) const
     return s;
 }
 
-Str::iterator::iterator(const char* start, size_t len, size_t maxLen) : _p(start), _len(len), _maxLen(maxLen) {}
+Str::iterator::iterator(const char* start, size_t len, size_t maxLen)
+    : _p(start), _len(len), _maxLen(maxLen) {}
 
 Str::iterator::~iterator(void) {}
 
@@ -181,7 +194,8 @@ Str Str::newSliceWithOffset(const char* data, size_t offset) {
 
 Str Str::newSliceWithOffset(Str const& src, size_t offset) {
     if (offset > src._len)
-        throw Utils::runtime_error("Initializing Str with offset greater than length of source Str");
+        throw Utils::runtime_error(
+            "Initializing Str with offset greater than length of source Str");
     return Str(src._data + offset, src._len - offset);
 }
 
@@ -189,7 +203,8 @@ Str Str::newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset
     if (!data)
         throw Utils::runtime_error("Initializing Str with offset + length, but null pointer");
     if (offset + len > Utils::strlen(data))
-        throw Utils::runtime_error("Initializing Str with offset + length greater than length of data");
+        throw Utils::runtime_error(
+            "Initializing Str with offset + length greater than length of data");
     return Str(data, len, offset);
 }
 
@@ -198,6 +213,20 @@ size_t Str::length(void) const {
         return 0;
     return _len;
 }
+
+size_t Str::count(char c) const {
+    size_t count = 0;
+
+    if (!this->isInitialized())
+        return 0;
+    for (size_t i = 0; i < _len; i++) {
+        if (_data[i] == c)
+            count += 1;
+    }
+    return count;
+}
+
+const char* Str::raw(void) const { return _data; }
 
 bool Str::isInitialized(void) const {
     if (_data)
@@ -219,13 +248,17 @@ Str::iterator Str::end(void) const {
     return iterator(_data + _len - 1, 0, _len);
 }
 
-Str::Split Str::split(const char* delim) { return Str::Split(_data, delim); }
+Str::Split Str::split(const char* delim) const { return Str::Split(_data, delim); }
 
-bool Str::operator==(Str const& rhs) const { return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0; }
+bool Str::operator==(Str const& rhs) const {
+    return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0;
+}
 
 bool Str::operator!=(Str const& rhs) const { return !(*this == rhs); }
 
-bool Str::operator<(Str const& rhs) const { return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) < 0; }
+bool Str::operator<(Str const& rhs) const {
+    return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) < 0;
+}
 
 bool Str::operator<=(Str const& rhs) const { return !(rhs < *this); }
 

@@ -6,17 +6,19 @@
 #include <iostream>
 #include <sstream>
 
-#define TEST_THROW(FUNC, ERRMSG)                                                                                       \
-    EXPECT_THROW(                                                                                                      \
-        {                                                                                                              \
-            try {                                                                                                      \
-                FUNC                                                                                                   \
-            } catch (Utils::runtime_error const& err) {                                                                \
-                EXPECT_STREQ(ERRMSG, err.what());                                                                      \
-                throw;                                                                                                 \
-            }                                                                                                          \
-        },                                                                                                             \
+// clang-format off
+#define TEST_THROW(FUNC, ERRMSG) \
+    EXPECT_THROW( \
+        { \
+            try { \
+                FUNC \
+            } catch (Utils::runtime_error const& err) { \
+                EXPECT_STREQ(ERRMSG, err.what()); \
+                throw; \
+            } \
+        }, \
         Utils::runtime_error);
+// clang-format on
 
 TEST(StrCreation, default_construction) {
     Str str;
@@ -88,4 +90,11 @@ TEST(StrCreation, construction_of_slices_from_others_with_offset) {
     Str str2 = Str::newSliceWithOffset(str, 7);
 
     ASSERT_EQ(str2, "string slice");
+}
+
+TEST(Str_tests, count_test) {
+    Str str = "count the number of e's in this Str please";
+
+    EXPECT_EQ(str.count('e'), 5);
+    EXPECT_EQ(str.count('u'), 2);
 }

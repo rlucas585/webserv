@@ -6,13 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/26 12:42:53 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/02 23:10:32 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IpAddr.hpp"
 #include "../../Utils/src/Utils.hpp"
 #include <arpa/inet.h>
+#include <string>
 
 u_int32_t IpAddr::u32_convert_to_big_endian(u_int8_t bytes[4]) {
     u_int32_t output = 0;
@@ -123,12 +124,7 @@ Ipv4Addr::~Ipv4Addr(void) {}
 
 Ipv4Addr::Ipv4Addr(u_int8_t bytes[4]) { inner.s_addr = u32_convert_to_big_endian(bytes); }
 
-Ipv4Addr::Ipv4Addr(const char* str) {
-    inner.s_addr = inet_addr(str);
-    if (inner.s_addr == INADDR_NONE) {
-        throw Utils::runtime_error("Invalid string used for Ipv4Addr");
-    }
-}
+Ipv4Addr::Ipv4Addr(struct in_addr address) { inner = address; }
 
 Ipv4Addr::Ipv4Addr(Ipv4Addr const& other) { *this = other; }
 
@@ -148,7 +144,29 @@ Ipv4Addr Ipv4Addr::init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t 
     return Ipv4Addr(bytes);
 }
 
-Ipv4Addr Ipv4Addr::init_from_string(const char* str) { return Ipv4Addr(str); }
+Ipv4Addr::Result Ipv4Addr::init_from_string(const char* str) {
+    return Ipv4Addr::init_from_string(Str(str));
+}
+
+Ipv4Addr::Result Ipv4Addr::init_from_string(Str const& ip_str) {
+    std::string buf; // Used to isolate and null terminate the Str
+    in_addr address;
+
+    if (!ip_str.isInitialized() || ip_str.length() > 15) {
+        return Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr");
+    }
+    if (ip_str == "localhost") {
+        address.s_addr = inet_addr("127.0.0.1");
+        return Ipv4Addr::Result::Ok(Ipv4Addr(address));
+    }
+    buf = ip_str.toString();
+    buf.push_back(' ');
+    address.s_addr = inet_addr(buf.c_str());
+    if (address.s_addr == INADDR_NONE) {
+        return Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr");
+    }
+    return Ipv4Addr::Result::Ok(Ipv4Addr(address));
+}
 
 // We'd like to return a [u8; 4], but this is not possible in C++.
 // A std::vector is possible, but feels like overkill.
@@ -165,9 +183,21 @@ bool Ipv4Addr::is_loopback(void) const {
     u_int8_t bytes[4];
 
     octets(bytes);
-    return bytes[0] == 127;
+    return bytes[0] == 127 && bytes[1] == 0 && bytes[2] == 0 && bytes[3] == 1;
 }
 
-bool Ipv4Addr::operator==(Ipv4Addr const& other) const { return inner.s_addr == other.inner.s_addr; }
+in_addr Ipv4Addr::into_inner(void) const { return inner; }
+
+bool Ipv4Addr::operator==(Ipv4Addr const& other) const {
+    return inner.s_addr == other.inner.s_addr;
+}
 
 bool Ipv4Addr::operator!=(Ipv4Addr const& other) const { return !(*this == other); }
+
+bool Ipv4Addr::operator==(in_addr const& other) const { return inner.s_addr == other.s_addr; }
+
+bool Ipv4Addr::operator!=(in_addr const& other) const { return !(*this == other); }
+
+bool operator==(in_addr const& lhs, Ipv4Addr const& rhs) { return rhs == lhs; }
+
+bool operator!=(in_addr const& lhs, Ipv4Addr const& rhs) { return rhs != lhs; }

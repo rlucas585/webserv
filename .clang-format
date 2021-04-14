@@ -8,5 +8,12 @@ Language: Cpp
 DerivePointerAlignment: false
 PointerAlignment: Left
 
-ColumnLimit: 120
+# Sorry Stan, my screen isn't wide enough for 120 characters
+ColumnLimit: 100
+
+# Break after template <typename> lines
+AlwaysBreakTemplateDeclarations: true
+
+# Important: Nested templates get broken with C++11 formatting
+Standard: Cpp03
 ---
