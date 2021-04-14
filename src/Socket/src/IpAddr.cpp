@@ -144,7 +144,9 @@ Ipv4Addr Ipv4Addr::init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t 
     return Ipv4Addr(bytes);
 }
 
-Ipv4Addr::Result Ipv4Addr::init_from_string(const char* str) { return Ipv4Addr::init_from_string(Str(str)); }
+Ipv4Addr::Result Ipv4Addr::init_from_string(const char* str) {
+    return Ipv4Addr::init_from_string(Str(str));
+}
 
 Ipv4Addr::Result Ipv4Addr::init_from_string(Str const& ip_str) {
     std::string buf; // Used to isolate and null terminate the Str
@@ -186,7 +188,9 @@ bool Ipv4Addr::is_loopback(void) const {
 
 in_addr Ipv4Addr::into_inner(void) const { return inner; }
 
-bool Ipv4Addr::operator==(Ipv4Addr const& other) const { return inner.s_addr == other.inner.s_addr; }
+bool Ipv4Addr::operator==(Ipv4Addr const& other) const {
+    return inner.s_addr == other.inner.s_addr;
+}
 
 bool Ipv4Addr::operator!=(Ipv4Addr const& other) const { return !(*this == other); }
 

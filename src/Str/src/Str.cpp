@@ -55,7 +55,8 @@ const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) const
     return s;
 }
 
-Str::iterator::iterator(const char* start, size_t len, size_t maxLen) : _p(start), _len(len), _maxLen(maxLen) {}
+Str::iterator::iterator(const char* start, size_t len, size_t maxLen)
+    : _p(start), _len(len), _maxLen(maxLen) {}
 
 Str::iterator::~iterator(void) {}
 
@@ -193,7 +194,8 @@ Str Str::newSliceWithOffset(const char* data, size_t offset) {
 
 Str Str::newSliceWithOffset(Str const& src, size_t offset) {
     if (offset > src._len)
-        throw Utils::runtime_error("Initializing Str with offset greater than length of source Str");
+        throw Utils::runtime_error(
+            "Initializing Str with offset greater than length of source Str");
     return Str(src._data + offset, src._len - offset);
 }
 
@@ -201,7 +203,8 @@ Str Str::newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset
     if (!data)
         throw Utils::runtime_error("Initializing Str with offset + length, but null pointer");
     if (offset + len > Utils::strlen(data))
-        throw Utils::runtime_error("Initializing Str with offset + length greater than length of data");
+        throw Utils::runtime_error(
+            "Initializing Str with offset + length greater than length of data");
     return Str(data, len, offset);
 }
 
@@ -247,11 +250,15 @@ Str::iterator Str::end(void) const {
 
 Str::Split Str::split(const char* delim) const { return Str::Split(_data, delim); }
 
-bool Str::operator==(Str const& rhs) const { return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0; }
+bool Str::operator==(Str const& rhs) const {
+    return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) == 0;
+}
 
 bool Str::operator!=(Str const& rhs) const { return !(*this == rhs); }
 
-bool Str::operator<(Str const& rhs) const { return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) < 0; }
+bool Str::operator<(Str const& rhs) const {
+    return Utils::strncmp(_data, rhs._data, std::max(_len, rhs._len)) < 0;
+}
 
 bool Str::operator<=(Str const& rhs) const { return !(rhs < *this); }
 

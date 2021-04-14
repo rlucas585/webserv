@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:32:29 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 21:36:40 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 11:26:54 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+#include <vector>
 
 TcpStream::TcpStream(void) : inner() {}
 
@@ -52,6 +53,29 @@ TcpStream::Result TcpStream::connect(SocketAddr const& addr) {
 }
 
 Utils::RwResult TcpStream::read(void* buf, size_t len) { return inner.read(buf, len); }
+
+// I'm not positive on the most efficient way to Read into a string from a
+// socket - this utilizes a char vector, removes '\0', then appends it to a
+// string, but maybe there are better ways.
+Utils::RwResult TcpStream::read(std::string& str) {
+    std::vector<char> buffer(Socket::READ_LIMIT, 0);
+    Utils::RwResult ret = inner.read(&buffer[0], Socket::READ_LIMIT);
+
+    if (ret.is_err()) {
+        return ret;
+    }
+    for (std::vector<char>::reverse_iterator it = buffer.rbegin();
+         it != buffer.rend() && *it == 0;) {
+        std::vector<char>::reverse_iterator tmp = it;
+        tmp++;
+        buffer.erase(--(it.base()));
+        it = tmp;
+    }
+
+    str.append(buffer.begin(), buffer.end());
+
+    return ret;
+}
 
 Utils::RwResult TcpStream::write(const void* buf, size_t len) { return inner.send(buf, len); }
 

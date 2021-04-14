@@ -145,7 +145,8 @@ TEST(SocketAddr_tests, into_inner_test) {
     expected_addr.sin_addr.s_addr = inet_addr(ip_str);
     memset(expected_addr.sin_zero, 0, 8);
 
-    const sockaddr_in* actual_addr = reinterpret_cast<const sockaddr_in*>(socket_addr.into_inner().first);
+    const sockaddr_in* actual_addr =
+        reinterpret_cast<const sockaddr_in*>(socket_addr.into_inner().first);
 
     EXPECT_EQ(*actual_addr, expected_addr);
 }

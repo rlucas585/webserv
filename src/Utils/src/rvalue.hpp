@@ -15,7 +15,8 @@
 
 namespace Utils {
 // A type that pretends to be an r-value reference
-template <typename T> class rvalue {
+template <typename T>
+class rvalue {
   public:
     explicit rvalue(T& new_ref) : ref(&new_ref) {}
 
@@ -28,7 +29,10 @@ template <typename T> class rvalue {
 };
 
 // returns something that pretends to be an R-value reference
-template <typename T> rvalue<T> move(T& v) { return rvalue<T>(v); }
+template <typename T>
+rvalue<T> move(T& v) {
+    return rvalue<T>(v);
+}
 } // namespace Utils
 
 #endif

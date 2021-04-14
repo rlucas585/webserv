@@ -36,7 +36,8 @@ TEST(Traits, integral_constant_size_t) {
     EXPECT_EQ(actual2, expected2);
 }
 
-template <typename T> class Traits : public ::testing::Test {};
+template <typename T>
+class Traits : public ::testing::Test {};
 
 typedef testing::Types<int, char, std::string, double> Implementations;
 
@@ -68,7 +69,8 @@ TEST(Traits, type_with_alignment_int) {
 }
 
 TEST(Traits, type_with_alignment_string) {
-    typedef typename meta::type_with_alignment<meta::alignment_of<std::string>::value>::type aligner;
+    typedef
+        typename meta::type_with_alignment<meta::alignment_of<std::string>::value>::type aligner;
 
     EXPECT_EQ(sizeof(aligner), 8);
 }

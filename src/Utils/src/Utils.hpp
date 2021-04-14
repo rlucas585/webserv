@@ -28,8 +28,14 @@ const char* strpbrk(const char* s, const char* accept);
 void* memset(void* b, int c, size_t len);
 void* memcpy(void* dest, const void* src, size_t n);
 int atoi(const char* str);
-template <typename T> T const& min(T const& lhs, T const& rhs) { return (rhs < lhs) ? rhs : lhs; }
-template <typename T> T const& max(T const& lhs, T const& rhs) { return (lhs < rhs) ? rhs : lhs; }
+template <typename T>
+T const& min(T const& lhs, T const& rhs) {
+    return (rhs < lhs) ? rhs : lhs;
+}
+template <typename T>
+T const& max(T const& lhs, T const& rhs) {
+    return (lhs < rhs) ? rhs : lhs;
+}
 
 class runtime_error : public std::exception {
   public:
@@ -47,7 +53,8 @@ class runtime_error : public std::exception {
     runtime_error(void);
 };
 
-template <typename T> class unique_ptr {
+template <typename T>
+class unique_ptr {
   public:
     typedef T* pointer;
     typedef T& reference;
