@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 22:25:31 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 10:41:44 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+
+size_t Socket::READ_LIMIT = 512;
 
 Socket::Socket(void) {}
 
@@ -64,6 +66,8 @@ Socket::Result Socket::init(SocketAddr const& addr, int type) {
 #endif
     return Socket::Result::Ok(Socket(fd));
 }
+
+Socket Socket::init_from_raw(int fd) { return Socket(fd); }
 
 int Socket::into_inner(void) const { return inner.raw(); }
 
