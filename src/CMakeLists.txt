@@ -7,12 +7,21 @@ add_subdirectory(Str)
 add_subdirectory(FileDesc)
 add_subdirectory(Socket)
 add_subdirectory(Option)
+add_subdirectory(Result)
+add_subdirectory(Traits)
+add_subdirectory(AlignedStorage)
+
+# Only for testing
+add_subdirectory(Examples)
 
 include_directories(Utils)
 include_directories(Str)
 include_directories(FileDesc)
 include_directories(Socket)
 include_directories(Option)
+include_directories(Result)
+include_directories(Traits)
+include_directories(AlignedStorage)
 
 add_executable(${BINARY}.run ${SOURCES})
 

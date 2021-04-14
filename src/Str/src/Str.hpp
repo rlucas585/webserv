@@ -27,7 +27,8 @@ class Str {
         Split(Split const& src);
         Split& operator=(Split const& rhs);
         Str next(void);
-        template <typename Container> Container collect(void) {
+        template <typename Container>
+        Container collect(void) {
             Container c;
             Str item;
 

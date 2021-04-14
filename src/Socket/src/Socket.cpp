@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 10:05:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 10:28:57 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/05 10:41:44 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,34 +15,14 @@
 #include <cerrno>
 #include <cstring>
 
+size_t Socket::READ_LIMIT = 512;
+
 Socket::Socket(void) {}
 
 // inner FileDesc has it's own destructor, which calls close()
 Socket::~Socket(void) {}
 
-Socket::Socket(int family, int type) {
-    int fd = 0;
-#ifdef __APPLE__
-    int err = 0;
-    fd = socket(family, type, 0);
-    if (fd == -1) {
-        throw Utils::runtime_error("Error in socket()");
-    }
-    inner = FileDesc::init(fd);
-    // We'd maybe like to set CLOEXEC here for MacOs also, but ioctl is not permitted in
-    // this project
-    err = setsockopt(*this, SOL_SOCKET, SO_NOSIGPIPE, 1);
-    if (err == -1) {
-        throw Utils::runtime_error(std::string("Error in setsockopt(): ") + strerror(errno));
-    }
-#elif __linux__
-    fd = socket(family, type | SOCK_CLOEXEC, 0);
-    if (fd == -1) {
-        throw Utils::runtime_error(std::string("Error in socket(): ") + strerror(errno));
-    }
-    inner = FileDesc::init(fd);
-#endif
-}
+Socket::Socket(int fd) { inner = FileDesc::init(fd); }
 
 Socket::Socket(Socket const& other) { *this = other; }
 
@@ -56,14 +36,38 @@ Socket& Socket::operator=(Socket const& rhs) {
     return *this;
 }
 
-Socket Socket::init(const char* str, int type) {
+Socket::Result Socket::init(const char* str, int type) {
     // If Ipv6 is implemented, logic here should change to use SocketAddr
-    SocketAddrV4 addr = SocketAddrV4::init(str);
+    SocketAddrV4::Result addr = SocketAddrV4::init(str);
 
-    return Socket::init(addr, type);
+    if (addr.is_err())
+        return Socket::Result::Err(addr.unwrap_err());
+
+    return Socket::init(addr.unwrap(), type);
 }
 
-Socket Socket::init(SocketAddr const& addr, int type) { return Socket(addr.family(), type); }
+Socket::Result Socket::init(SocketAddr const& addr, int type) {
+    int fd = 0;
+#ifdef __APPLE__
+    fd = socket(addr.family(), type, 0);
+    if (fd == -1) {
+        return Socket::Result::Err(strerror(errno));
+    }
+    // We'd maybe like to set CLOEXEC here for MacOs also, but ioctl is not permitted in
+    // this project
+    Socket sock(fd);
+    if (Socket::setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, 1) == -1)
+        return Socket::Result::Err(strerror(errno));
+#elif __linux__
+    fd = socket(addr.family(), type | SOCK_CLOEXEC, 0);
+    if (fd == -1) {
+        return Socket::Result::Err(strerror(errno));
+    }
+#endif
+    return Socket::Result::Ok(Socket(fd));
+}
+
+Socket Socket::init_from_raw(int fd) { return Socket(fd); }
 
 int Socket::into_inner(void) const { return inner.raw(); }
 
@@ -74,40 +78,47 @@ bool Socket::connect(const struct sockaddr* addrp, socklen_t len) {
     return (ret == 0) ? true : false;
 }
 
-Socket Socket::accept(struct sockaddr* storage, socklen_t* len) const {
+Socket::Result Socket::accept(struct sockaddr* storage, socklen_t* len) const {
     Socket client_socket;
     int fd = -1;
     fd = ::accept(inner.raw(), storage, len);
     if (fd == -1) {
-        throw Utils::runtime_error(std::string("Error in accept(): ") + strerror(errno));
+        return Socket::Result::Err(strerror(errno));
     }
     client_socket.inner = FileDesc::init(fd);
-    return client_socket;
+    return Socket::Result::Ok(client_socket);
 }
 
-Socket Socket::accept(struct sockaddr_storage* storage, socklen_t* len) const {
+Socket::Result Socket::accept(struct sockaddr_storage* storage, socklen_t* len) const {
     return accept(reinterpret_cast<sockaddr*>(storage), len);
 }
 
-ssize_t Socket::recv_with_flags(void* buf, size_t len, int flags) {
+Utils::RwResult Socket::recv_with_flags(void* buf, size_t len, int flags) {
     ssize_t ret;
 
     ret = recv(inner.raw(), buf, len, flags);
     if (ret == -1) {
-        throw Utils::runtime_error(std::string("Error in recv(): ") + strerror(errno));
+        return Utils::RwResult::Err(strerror(errno));
     }
-    return ret;
+    return Utils::RwResult::Ok(ret);
 }
 
-ssize_t Socket::read(void* buf, size_t len) { return recv_with_flags(buf, len, 0); }
+Utils::RwResult Socket::read(void* buf, size_t len) { return recv_with_flags(buf, len, 0); }
 
-ssize_t Socket::peek(void* buf, size_t len) { return recv_with_flags(buf, len, MSG_PEEK); }
+Utils::RwResult Socket::peek(void* buf, size_t len) { return recv_with_flags(buf, len, MSG_PEEK); }
 
-ssize_t Socket::send_with_flags(const void* buf, size_t len, int flags) {
+Utils::RwResult Socket::send_with_flags(const void* buf, size_t len, int flags) {
     ssize_t ret;
 
     ret = ::send(inner.raw(), buf, len, flags);
-    return ret;
+    if (ret == -1) {
+        return Utils::RwResult::Err(strerror(errno));
+    }
+    return Utils::RwResult::Ok(ret);
 }
 
-ssize_t Socket::send(const void* buf, size_t len) { return send_with_flags(buf, len, 0); }
+Utils::RwResult Socket::send(const void* buf, size_t len) { return send_with_flags(buf, len, 0); }
+
+bool Socket::operator==(Socket const& rhs) const { return inner.raw() == rhs.inner.raw(); }
+
+bool Socket::operator!=(Socket const& rhs) const { return !(*this == rhs); }

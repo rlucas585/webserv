@@ -74,12 +74,12 @@ TEST(StrSplit, split_test_collect) {
     std::vector<std::string>::iterator itFake;
 
     Str str = "The quick brown fox jumps over the lazy dog";
-    std::vector<std::string> vec2 = str.split().collect<std::vector<std::string>>();
+    std::vector<std::string> vec2 = str.split().collect<std::vector<std::string> >();
     itFake = expected.begin();
     for (std::vector<std::string>::iterator it = vec2.begin(); it != vec2.end(); it++, itFake++)
         ASSERT_EQ(*it, *itFake);
 
-    std::vector<Str> vec = str.split().collect<std::vector<Str>>();
+    std::vector<Str> vec = str.split().collect<std::vector<Str> >();
     itFake = expected.begin();
     for (std::vector<Str>::iterator it = vec.begin(); it != vec.end(); it++, itFake++)
         ASSERT_EQ(*it, *itFake);
