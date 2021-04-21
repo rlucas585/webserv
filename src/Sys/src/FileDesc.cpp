@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 14:45:33 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 13:19:36 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,35 +49,35 @@ FileDesc FileDesc::init(int new_fd) { return FileDesc(new_fd); }
 
 int FileDesc::raw(void) const { return fd; }
 
-Utils::RwResult FileDesc::writeToFile(const char* str) const {
-    return writeToFile(reinterpret_cast<const void*>(str),
-                       Utils::min(Utils::strlen(str), static_cast<size_t>(READ_LIMIT)));
+Utils::RwResult FileDesc::write(const char* str) const {
+    return write(reinterpret_cast<const void*>(str),
+                 Utils::min(Utils::strlen(str), static_cast<size_t>(READ_LIMIT)));
 }
 
-Utils::RwResult FileDesc::writeToFile(const void* buf, size_t count) const {
-    ssize_t ret = write(fd, buf, count);
+Utils::RwResult FileDesc::write(const void* buf, size_t count) const {
+    ssize_t ret = ::write(fd, buf, count);
     if (ret == -1) {
         return Utils::RwResult::Err(strerror(errno));
     }
     return Utils::RwResult::Ok(ret);
 }
 
-Utils::RwResult FileDesc::readFromFile(void* buf, size_t len) const {
-    ssize_t ret = read(fd, buf, len);
+Utils::RwResult FileDesc::read(void* buf, size_t len) const {
+    ssize_t ret = ::read(fd, buf, len);
     if (ret == -1) {
         return Utils::RwResult::Err(strerror(errno));
     }
     return Utils::RwResult::Ok(ret);
 }
 
-Utils::RwResult FileDesc::readFromFile(std::string& str, size_t len) const {
+Utils::RwResult FileDesc::read(std::string& str, size_t len) const {
     size_t previous_length = str.size();
     void* buf;
     ssize_t ret;
 
     str.resize(previous_length + len);
     buf = &str[previous_length];
-    ret = read(fd, buf, len);
+    ret = ::read(fd, buf, len);
     if (ret == -1) {
         return Utils::RwResult::Err(strerror(errno));
     }
