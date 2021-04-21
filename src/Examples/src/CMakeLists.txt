@@ -4,5 +4,5 @@ add_executable(Select.run Select.cpp)
 
 target_link_libraries(Select.run
     PUBLIC Str_lib
-    PUBLIC Socket_lib
+    PUBLIC Net_lib
 	)

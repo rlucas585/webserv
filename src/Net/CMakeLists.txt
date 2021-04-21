@@ -1,4 +1,4 @@
-set(MODULE_NAME Socket)
+set(MODULE_NAME Net)
 
 include_directories(src)
 

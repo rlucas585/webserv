@@ -1,4 +1,4 @@
-set(MODULE_NAME AlignedStorage)
+set(MODULE_NAME Sys)
 
 include_directories(src)
 

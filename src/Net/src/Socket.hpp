@@ -6,15 +6,15 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 09:55:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/05 10:43:07 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 12:06:58 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
-#include "../../FileDesc/src/FileDesc.hpp"
 #include "../../Result/src/result.hpp"
+#include "../../Sys/src/FileDesc.hpp"
 #include "SocketAddr.hpp"
 
 class Socket {

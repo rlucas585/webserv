@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/05 01:09:53 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/05 01:12:42 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 11:43:20 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 #include <iostream>
 
-#include "../../Socket/src/TcpListener.hpp"
-#include "../../Socket/src/TcpStream.hpp"
+#include "../../Net/src/TcpListener.hpp"
+#include "../../Net/src/TcpStream.hpp"
 
 static const size_t READ_LIMIT = 512;
 
