@@ -6,14 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 17:16:36 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:14:52 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 11:49:57 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef OPTIONAL_HPP
 #define OPTIONAL_HPP
 
-#include "../../AlignedStorage/src/aligned_storage.hpp"
 #include "../../Traits/src/type_traits.hpp"
 #include "../../Utils/src/Utils.hpp"
 
@@ -30,7 +29,7 @@ const nullopt_t nullopt(0);
 template <typename T>
 class optional {
     typedef typename meta::remove_const<T>::type stored_type;
-    typedef Utils::aligned_storage<stored_type> storage_type;
+    typedef meta::aligned_storage<stored_type> storage_type;
 
     bool engaged;
     storage_type storage;

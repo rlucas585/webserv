@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:08 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 19:29:14 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 11:48:15 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,18 @@ class type_with_alignment {
 
   public:
     typedef align_t type;
+};
+
+template <typename T>
+class aligned_storage {
+    union dummy_u {
+        char data[sizeof(T)];
+        typedef typename meta::type_with_alignment<meta::alignment_of<T>::value>::type aligner;
+    } dummy;
+
+  public:
+    void const* address(void) const { return &dummy.data[0]; }
+    void* address(void) { return &dummy.data[0]; }
 };
 
 } // namespace meta

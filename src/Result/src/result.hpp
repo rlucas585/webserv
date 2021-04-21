@@ -6,14 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 14:44:24 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 11:49:33 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
-#include "../../AlignedStorage/src/aligned_storage.hpp"
 #include "../../Traits/src/type_traits.hpp"
 #include "../../Utils/src/Utils.hpp"
 
@@ -37,7 +36,7 @@ class result {
 
     typedef typename meta::if_c<(sizeof(ok_type) > sizeof(err_type)), ok_type, err_type>::type
         larger_type;
-    typedef Utils::aligned_storage<larger_type> storage_type;
+    typedef meta::aligned_storage<larger_type> storage_type;
 
     Status stat;
     storage_type storage;
