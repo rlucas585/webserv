@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 14:45:37 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 13:19:26 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ class FileDesc {
 
     int raw(void) const;
 
-    Utils::RwResult writeToFile(const char* str) const;
-    Utils::RwResult writeToFile(const void* buf, size_t count) const;
+    Utils::RwResult write(const char* str) const;
+    Utils::RwResult write(const void* buf, size_t count) const;
 
-    Utils::RwResult readFromFile(void* buf, size_t len) const;
-    Utils::RwResult readFromFile(std::string& str, size_t len) const;
+    Utils::RwResult read(void* buf, size_t len) const;
+    Utils::RwResult read(std::string& str, size_t len) const;
 
   private:
     int fd;

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 11:49:33 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 13:35:27 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class result {
             this->construct(rhs.err());
         else
             this->construct(rhs.ok());
+        return *this;
     }
     static result Ok(T const& data) { return result(data); }
     static result Err(E const& err) { return result(err); }

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 10:43:51 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/08 15:42:18 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ Str Str::Split::next(void) {
 bool Str::Split::is_complete(void) const { return _remainder == NULL; }
 
 const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) const {
-    for (; s != NULL; s++) {
-        if (!Utils::strchr(reject, *s))
+    for (; s != 0; s++) {
+        if (!Utils::strchr(reject, *s) || s == _delimiter)
             break;
     }
     return s;
@@ -226,6 +226,31 @@ size_t Str::count(char c) const {
     return count;
 }
 
+Utils::optional<Str> Str::strchr(char c) {
+    Utils::optional<Str> ret = Utils::nullopt;
+
+    for (size_t i = 0; i < _len; i++) {
+        if (_data[i] == c) {
+            ret.set(Str::newSliceWithLength(_data + i, _len - i));
+            break;
+        }
+    }
+    return ret;
+}
+
+void Str::trim(const char* reject) {
+    // While _data contains a char in reject, move it forward
+    while (Utils::strchr(reject, *_data) && _len > 0) {
+        _data += 1;
+        _len -= 1;
+    }
+    if (_len == 0)
+        return;
+    while (Utils::strchr(reject, *(_data + _len - 1)) && _len > 0) {
+        _len -= 1;
+    }
+}
+
 const char* Str::raw(void) const { return _data; }
 
 bool Str::isInitialized(void) const {
@@ -282,4 +307,17 @@ std::ostream& operator<<(std::ostream& o, Str const& str) {
     for (Str::iterator it = str.begin(); it != str.end(); it++)
         o << *it;
     return o;
+}
+
+// Interactions with other containers.
+void append_slice_to_vector(std::vector<char>& vec, Str slice) {
+    for (Str::iterator it = slice.begin(); it != slice.end(); it++) {
+        vec.push_back(*it);
+    }
+}
+
+void append_slice_to_string(std::string& str, Str slice) {
+    for (Str::iterator it = slice.begin(); it != slice.end(); it++) {
+        str.push_back(*it);
+    }
 }

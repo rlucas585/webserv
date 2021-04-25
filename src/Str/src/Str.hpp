@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 10:42:11 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/08 13:27:05 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <vector>
+
+#include "../../Option/src/optional.hpp"
 
 class Str {
   public:
@@ -95,12 +98,14 @@ class Str {
 
     size_t length(void) const;
     size_t count(char c) const;
+    Utils::optional<Str> strchr(char c);
+    void trim(const char* reject = " \f\n\r\t\v");
     const char* raw(void) const;
     bool isInitialized(void) const;
     iterator begin(void) const;
     iterator end(void) const;
 
-    Split split(const char* delim = " ") const;
+    Split split(const char* delim = " \f\n\r\t\v") const;
 
     bool operator==(Str const& rhs) const;
     bool operator!=(Str const& rhs) const;
@@ -129,5 +134,8 @@ bool operator>(std::string lhs, Str const& rhs);
 bool operator>=(std::string lhs, Str const& rhs);
 
 std::ostream& operator<<(std::ostream& o, Str const& str);
+
+void append_slice_to_vector(std::vector<char>& vec, Str slice);
+void append_slice_to_string(std::string& str, Str slice);
 
 #endif
