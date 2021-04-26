@@ -25,7 +25,6 @@ class File {
     Utils::RwResult write(const char* str) const;
     Utils::RwResult write(const void* buf, size_t count) const;
     Utils::RwResult write(std::string const& str) const;
-
     Utils::RwResult peek(void* buf, size_t len) const;
 
     Utils::RwResult read(void* buf, size_t len) const;

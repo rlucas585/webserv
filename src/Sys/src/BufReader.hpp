@@ -93,7 +93,6 @@ class BufReader {
     }
 
     R& as_inner(void) { return inner; }
-
     R const& as_inner(void) const { return inner; }
 
   private:
