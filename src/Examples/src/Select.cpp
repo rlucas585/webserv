@@ -6,8 +6,6 @@
 #include "../../ASyncServer/src/Server.hpp"
 #include "../../Result/src/result.hpp"
 
-static const size_t READ_LIMIT = 512;
-
 typedef std::vector<Client*>::iterator client_it;
 
 void handle_client(Client& client) {

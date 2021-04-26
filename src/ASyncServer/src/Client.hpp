@@ -33,7 +33,6 @@ class Client {
   private:
     BufReader<TcpStream> reader;
     std::string data;
-    bool request_ongoing;
 };
 
 #endif

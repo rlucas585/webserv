@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 18:21:58 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/26 16:01:34 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ TEST(TcpListener_tests, crash_test3) {
 }
 
 TEST(TcpListener_tests, move_semantics_test) {
-    TcpListener listener1 = TcpListener::bind("127.2.1.1:4244").unwrap();
+    TcpListener listener1 = TcpListener::bind("127.0.0.1:4242").unwrap();
     int initialfd = listener1.socket().into_inner();
     TcpListener listener2 = listener1;
 

@@ -51,8 +51,9 @@ Socket::Result Socket::init(SocketAddr const& addr, int type) {
     if (fd == -1) {
         return Socket::Result::Err(strerror(errno));
     }
+    Socket sock(fd);
 #endif
-    return Socket::Result::Ok(Socket(fd));
+    return Socket::Result::Ok(sock);
 }
 
 Socket Socket::init_from_raw(int fd) { return Socket(fd); }

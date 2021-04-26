@@ -5,6 +5,7 @@
 #include "../../Result/src/result.hpp"
 #include "Client.hpp"
 
+#include <sys/select.h>
 #include <vector>
 
 #define CLIENT_TOTAL 1000
