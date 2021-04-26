@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   IpAddr.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rlucas <marvin@codam.nl>                     +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2021/03/24 18:39:05 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 23:10:32 by rlucas        ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "IpAddr.hpp"
 #include "../../Utils/src/Utils.hpp"
 #include <arpa/inet.h>
@@ -160,7 +148,7 @@ Ipv4Addr::Result Ipv4Addr::init_from_string(Str const& ip_str) {
         return Ipv4Addr::Result::Ok(Ipv4Addr(address));
     }
     buf = ip_str.toString();
-    buf.push_back(' ');
+    buf.push_back('\0');
     address.s_addr = inet_addr(buf.c_str());
     if (address.s_addr == INADDR_NONE) {
         return Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr");

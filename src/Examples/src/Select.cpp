@@ -1,50 +1,47 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   Select.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rlucas <marvin@codam.nl>                     +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2021/04/05 01:09:53 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 11:43:20 by rlucas        ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
-// An example of how to use the 'select' function of the TcpListener class
-// to asynchronously handle multiple clients.
+// An example of how to use the Server class, to asynchronously handle
+// multiple clients.
 
 #include <iostream>
 
-#include "../../Net/src/TcpListener.hpp"
-#include "../../Net/src/TcpStream.hpp"
+#include "../../ASyncServer/src/Server.hpp"
+#include "../../Result/src/result.hpp"
 
 static const size_t READ_LIMIT = 512;
 
-typedef std::vector<TcpStream>::iterator client_it;
+typedef std::vector<Client*>::iterator client_it;
 
-void handle_client(TcpStream& client) {
-    std::vector<char> buffer(READ_LIMIT, 0);
+void handle_client(Client& client) {
+    std::string message_received;
+    std::string message_sent;
+    Utils::RwResult res = client.read_line(message_received);
+    ssize_t bytes_read = res.unwrap();
 
-    client.read(&buffer[0], READ_LIMIT); // Potentially change to use ssize_t val returned by read.
-    std::string message_received(buffer.begin(), buffer.end());
+    std::cout << "Message from client " << client.fd() << ": " << std::endl;
+    while (bytes_read > 0 && message_received != "\r\n") {
+        std::cout << "bytes_read = " << bytes_read << std::endl;
+        std::cout << message_received;
 
-    std::cout << "Message from client: " << message_received << std::endl;
+        message_received.clear();
 
-    std::string message_sent("hello from the serverside\n");
+        res = client.read_line(message_received);
+        bytes_read = res.unwrap();
+    }
+    message_sent = "hello from the serverside\n";
 
     client.write(message_sent);
 }
 
 int main(void) {
-    TcpListener listener = TcpListener::bind("localhost:4246").expect("Error binding TcpListener");
+    Server server = Server::bind("localhost:4246").unwrap();
+    std::vector<Client*> clients;
 
-    std::cout << "Server running, listening to connections" << std::endl;
+    clients.reserve(CLIENT_TOTAL - 1); // 1, as we are using a single TcpListener
+
     while (true) {
-        std::vector<TcpStream> clients = listener.select().unwrap();
+        server.select(clients);
 
-        std::cout << "Clients received: " << clients.size() << std::endl;
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client(*client);
+            handle_client(**client);
         }
     }
 

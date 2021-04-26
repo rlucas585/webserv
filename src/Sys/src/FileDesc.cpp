@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:44 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 13:19:36 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/21 16:00:37 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ FileDesc& FileDesc::operator=(FileDesc const& rhs) {
         return *this;
     }
     FileDesc& ref = const_cast<FileDesc&>(rhs);
+    if (fd > 2) {
+        close(fd);
+    }
     fd = rhs.fd;
     ref.fd = 0;
     return *this;

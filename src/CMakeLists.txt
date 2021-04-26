@@ -9,6 +9,7 @@ add_subdirectory(Net)
 add_subdirectory(Option)
 add_subdirectory(Result)
 add_subdirectory(Traits)
+add_subdirectory(ASyncServer)
 
 # Only for testing
 add_subdirectory(Examples)
@@ -20,6 +21,7 @@ include_directories(Net)
 include_directories(Option)
 include_directories(Result)
 include_directories(Traits)
+include_directories(ASyncServer)
 
 add_executable(${BINARY}.run ${SOURCES})
 
