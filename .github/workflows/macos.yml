@@ -2,16 +2,16 @@ name: MacOS
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 jobs:
   macos:
+    if: github.event.pull_request.draft == false
     runs-on: macos-latest
-    name: Compatibility checks.
+    name: Compilation and unittests.
 
     steps:
     - name: Checkout repository and submodules
@@ -21,3 +21,7 @@ jobs:
       run: |
         ./configure.sh
         ./build.sh
+
+    - name: Unittests
+      run: |
+        ./test.sh
