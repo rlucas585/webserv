@@ -98,11 +98,7 @@ class BufReader {
 
   private:
     R inner;
-
-  public:
     Utils::array_unique_ptr<char> buffer;
-
-  private:
     size_t position;
     size_t capacity;
     size_t buffer_size;
