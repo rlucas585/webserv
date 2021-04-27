@@ -6,6 +6,9 @@
 
 class TcpStream {
   public:
+    typedef bool stream_category;
+
+  public:
     typedef Utils::result<TcpStream, std::string> Result;
 
   public:
@@ -21,7 +24,7 @@ class TcpStream {
 
     Utils::RwResult read(void* buf, size_t len);
     Utils::RwResult read(std::string& str);
-    Utils::RwResult peek(void* buf, size_t len);
+    Utils::RwResult peek(void);
     Utils::RwResult write(const void* buf, size_t len);
     Utils::RwResult write(const char* str);
     Utils::RwResult write(std::string const& str);
@@ -30,6 +33,8 @@ class TcpStream {
 
   private:
     Socket inner;
+
+    static const size_t PEEK_LIMIT = 50;
 };
 
 #endif

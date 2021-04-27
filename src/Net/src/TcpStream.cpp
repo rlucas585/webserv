@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:32:29 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/26 14:09:00 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/27 09:50:15 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ Utils::RwResult TcpStream::read(std::string& str) {
     return ret;
 }
 
-Utils::RwResult TcpStream::peek(void* buf, size_t len) { return inner.peek(buf, len); }
+Utils::RwResult TcpStream::peek(void) { return Utils::RwResult::Ok(0); }
 
 Utils::RwResult TcpStream::write(const void* buf, size_t len) { return inner.send(buf, len); }
 

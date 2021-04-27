@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:08 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 11:48:15 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/27 13:39:51 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,21 @@
 
 namespace meta {
 
-template <typename T>
-struct remove_const {
+template <bool B, class T = void>
+struct enable_if {};
+
+template <class T>
+struct enable_if<true, T> {
     typedef T type;
 };
-template <typename T>
-struct remove_const<const T> {
+
+template <bool B, class T = void>
+struct type_enable {
+    typedef void type;
+};
+
+template <class T>
+struct type_enable<true, T> {
     typedef T type;
 };
 
@@ -34,6 +43,42 @@ struct integral_constant {
     typedef T value_type;
     typedef integral_constant type;
     operator value_type() const { return this->value; }
+};
+
+typedef integral_constant<bool, true> true_type;
+
+typedef integral_constant<bool, false> false_type;
+
+template <class T, class U>
+struct is_same : false_type {};
+
+template <class T>
+struct is_same<T, T> : true_type {};
+
+template <class T>
+class is_stream {
+  private:
+    typedef char _one;
+    struct _two {
+        char x[2];
+    };
+
+    template <typename U>
+    static _one _test(typename U::stream_category* = 0);
+    template <class U>
+    static _two _test(...);
+
+  public:
+    enum { value = sizeof(_test<T>(0)) == sizeof(char) };
+};
+
+template <typename T>
+struct remove_const {
+    typedef T type;
+};
+template <typename T>
+struct remove_const<const T> {
+    typedef T type;
 };
 
 template <typename T>

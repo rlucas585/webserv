@@ -48,11 +48,7 @@ Utils::RwResult File::write(std::string const& str) const {
 }
 
 // Always returns as ready to read
-Utils::RwResult File::peek(void* buf, size_t len) const {
-    (void)buf;
-    (void)len;
-    return Utils::RwResult::Ok(len);
-}
+Utils::RwResult File::peek(void) const { return Utils::RwResult::Ok(2); }
 
 Utils::RwResult File::read(void* buf, size_t len) const { return inner.read(buf, len); }
 

@@ -8,7 +8,7 @@
 
 class Client {
   public:
-    enum Status { Connected, Read, RequestReady, Write, Inactive };
+    enum Status { Connected, Read, Processing, RequestReady, Write, Inactive };
 
   public:
     Client(void);
@@ -26,6 +26,8 @@ class Client {
     Utils::RwResult read_until(char delimiter, std::string& buf);
 
     Utils::RwResult write(std::string const& str);
+
+    bool eof(void);
 
   public:
     Client::Status state;

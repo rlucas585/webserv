@@ -6,6 +6,8 @@
 #include "../../Str/src/Str.hpp"
 #include "FileDesc.hpp"
 
+#include "../../Net/src/TcpStream.hpp"
+
 #ifndef STRING_LIMIT
 #define STRING_LIMIT 1024
 #endif
@@ -71,15 +73,10 @@ class BufReader {
             Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position));
     }
 
-    bool requires_fill(void) const { return position >= capacity; }
-
-    bool ready_to_read(void) {
-        char c;
-        Utils::RwResult peek_res = inner.peek(&c, 1);
-
-        if (peek_res.is_err() || peek_res.unwrap() == 0)
-            return false;
-        return true;
+    bool eof(char delim = '\n') {
+        return eof_impl(
+            delim,
+            meta::is_same<typename meta::type_enable<meta::is_stream<R>::value, R>::type, R>());
     }
 
     void consume(size_t amount) { position = Utils::min(position + amount, capacity); }
@@ -92,8 +89,57 @@ class BufReader {
         return ::read_until(*this, '\n', buf, read_limit);
     }
 
+    Utils::RwResult read_remaining(std::string& buf) {
+        if (position >= capacity) {
+            return Utils::RwResult::Ok(0);
+        }
+        Str remaining =
+            Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position);
+        size_t bytes_read = remaining.length();
+        append_slice_to_string(buf, remaining);
+
+        return Utils::RwResult::Ok(bytes_read);
+    }
+
     R& as_inner(void) { return inner; }
     R const& as_inner(void) const { return inner; }
+
+  private:
+    // implementation for a stream
+    bool eof_impl(char delim, meta::true_type) {
+        if (capacity == 0) // No read has occurred
+            return false;
+        if (capacity == buffer_size) // Read filled buffer completely, more available
+            return false;
+
+        Str remaining =
+            Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position);
+        Utils::optional<Str> next_opt = remaining.strchr(delim);
+        if (next_opt.has_value())
+            return false;
+        else
+            return true;
+    }
+
+    // implementation for a file
+    bool eof_impl(char delim, meta::false_type) {
+        (void)delim;
+        if (position < capacity)
+            return false;
+
+        if (capacity == buffer_size)
+            return false;
+
+        FillResult fill_res = fill_buf();
+
+        if (fill_res.is_err()) // If failure to read, return eof() == true
+            return true;
+
+        Str available = fill_res.unwrap();
+        if (available.length() == 0)
+            return true;
+        return false;
+    }
 
   private:
     R inner;
@@ -119,7 +165,7 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf, size_t r
         bool done;
         size_t used;
 
-        if (reader.requires_fill() && !reader.ready_to_read())
+        if (reader.eof(delimiter))
             return Utils::RwResult::Ok(bytes_read);
         // First, fill the buffer (may or may not require read, see fill_buf impl)
         typename R::FillResult fill_res = reader.fill_buf();

@@ -1,4 +1,4 @@
-set(MODULE_NAME Testing)
+set(MODULE_NAME Examples)
 
 include_directories(src)
 

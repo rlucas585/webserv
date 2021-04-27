@@ -11,18 +11,12 @@ typedef std::vector<Client*>::iterator client_it;
 void handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
-    Utils::RwResult res = client.read_line(message_received);
-    ssize_t bytes_read = res.unwrap();
 
     std::cout << "Message from client " << client.fd() << ": " << std::endl;
-    while (bytes_read > 0 && message_received != "\r\n") {
-        std::cout << "bytes_read = " << bytes_read << std::endl;
+    while (!client.eof()) {
+        client.read_line(message_received);
         std::cout << message_received;
-
         message_received.clear();
-
-        res = client.read_line(message_received);
-        bytes_read = res.unwrap();
     }
     message_sent = "hello from the serverside\n";
 
