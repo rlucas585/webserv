@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/08 13:27:05 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/30 18:13:16 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
 #include <vector>
 
 #include "../../Option/src/optional.hpp"
@@ -26,6 +27,8 @@ class Str {
       public:
         Split(const char* start);
         Split(const char* start, const char* delim);
+        Split(Str const& str);
+        Split(Str const& str, const char* delim);
         ~Split(void);
         Split(Split const& src);
         Split& operator=(Split const& rhs);
@@ -45,10 +48,11 @@ class Str {
       private:
         const char* _remainder;
         const char* _delimiter;
+        ssize_t length_remaining;
 
         Split(void) {}
 
-        const char* _findFirstNotOf(const char* s, const char* reject) const;
+        const char* _findFirstNotOf(const char* s, const char* reject);
     };
 
   public:

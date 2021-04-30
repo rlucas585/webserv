@@ -84,3 +84,20 @@ TEST(StrSplit, split_test_collect) {
     for (std::vector<Str>::iterator it = vec.begin(); it != vec.end(); it++, itFake++)
         ASSERT_EQ(*it, *itFake);
 }
+
+TEST(StrSplit, split) {
+    Str str("GET / HTTP/1.1\r\n");
+    Str::Split iter = str.split();
+
+    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+
+    EXPECT_EQ(vec.size(), 3);
+}
+
+TEST(StrSplit, split_char) {
+    Str::Split iter("GET / HTTP/1.1\r\n");
+
+    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+
+    EXPECT_EQ(vec.size(), 3);
+}

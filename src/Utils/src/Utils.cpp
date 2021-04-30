@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 20:55:19 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/30 18:00:38 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,24 @@ char* strpbrk(char* s, const char* accept) {
 const char* strpbrk(const char* s, const char* accept) {
     size_t i = 0;
     for (; s[i]; i++) {
+        if (strchr(accept, s[i]))
+            return (s + i);
+    }
+    return 0;
+}
+
+char* strpbrklen(char* s, const char* accept, size_t len) {
+    size_t i = 0;
+    for (; s[i] && len != 0; i++, len--) {
+        if (strchr(accept, s[i]))
+            return (s + i);
+    }
+    return 0;
+}
+
+const char* strpbrklen(const char* s, const char* accept, size_t len) {
+    size_t i = 0;
+    for (; s[i] && len != 0; i++, len--) {
         if (strchr(accept, s[i]))
             return (s + i);
     }
