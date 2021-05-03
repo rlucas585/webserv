@@ -14,6 +14,19 @@ TEST(Request, default_initialization) {
     EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n\r\n");
 }
 
+TEST(Request, method) {
+    Request req = Request::Builder().method(http::GET).build();
+
+    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n\r\n");
+}
+
+TEST(Request, version) {
+    Request req =
+        Request::Builder().method(http::GET).method(http::POST).version(http::HTTP_09).build();
+
+    EXPECT_EQ(req.to_string(), "POST / HTTP/0.9\r\n\r\n");
+}
+
 TEST(Request, with_headers) {
     Request req = Request::Builder()
                       .method(http::GET)
@@ -25,19 +38,36 @@ TEST(Request, with_headers) {
                                "Host: example.com\r\n\r\n");
 }
 
+TEST(Request, with_body) {
+    Request req = Request::Builder()
+                      .method(http::GET)
+                      .header("Host", "example.com")
+                      .header("Content-Length", "27")
+                      .body("data=hello\n")
+                      .append_to_body("moredata=goodbye")
+                      .build();
+
+    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n"
+                               "Content-Length: 27\r\n"
+                               "Host: example.com\r\n"
+                               "\r\n"
+                               "data=hello\n"
+                               "moredata=goodbye");
+}
+
 TEST(RequestParser, state) {
-  Request::State state = Request::OK_200;
-  EXPECT_EQ(state, Request::OK_200);
-  EXPECT_STREQ(state, "OK_200");
+    Request::State state = Request::OK_200;
+    EXPECT_EQ(state, Request::OK_200);
+    EXPECT_STREQ(state, "OK_200");
 
-  state = Request::BadRequest_400;
-  EXPECT_EQ(state, Request::BadRequest_400);
-  EXPECT_STREQ(state, "BadRequest_400");
+    state = Request::BadRequest_400;
+    EXPECT_EQ(state, Request::BadRequest_400);
+    EXPECT_STREQ(state, "BadRequest_400");
 
-  std::string str("State is: ");
+    std::string str("State is: ");
 
-  str.append(state);
-  EXPECT_EQ(str, "State is: BadRequest_400");
+    str.append(state);
+    EXPECT_EQ(str, "State is: BadRequest_400");
 }
 
 TEST(RequestParser, method) {
@@ -53,6 +83,8 @@ TEST(RequestParser, method) {
 
     EXPECT_TRUE(req_res.is_ok());
     Request req = req_res.unwrap();
+
+    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n\r\n");
 }
 
 TEST(RequestParser, invalid_http) {
@@ -81,13 +113,61 @@ TEST(RequestParser, empty) {
     EXPECT_EQ(request_state, Request::BadRequest_400);
 }
 
-TEST(RequestParser, headers_early) {
-  Request::Parser parser;
+TEST(RequestParser, headers) {
+    Request::Parser parser;
 
-  parser.parse_line("Host: example.com");
-  EXPECT_TRUE(parser.is_complete());
+    parser.parse_line("GET / HTTP/1.1\r\n");
+    EXPECT_FALSE(parser.is_complete());
 
-  Request::Result req_res = parser.generate_request();
+    parser.parse_line("Host:          example.com\r\n");
+    EXPECT_FALSE(parser.is_complete());
 
-  EXPECT_EQ(req_res.unwrap_err(), Request::BadRequest_400);
+    parser.parse_line("Ipv6: 2001:0DB8:AC10:FE01::\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("User-Agent:Mozilla FireFox\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("User-Agent: Internet Explorer\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("\r\n");
+
+    Request::Result req_res = parser.generate_request();
+
+    ASSERT_TRUE(req_res.is_ok());
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(), "GET / HTTP/1.1\r\n"
+                                   "Host: example.com\r\n"
+                                   "Ipv6: 2001:0DB8:AC10:FE01::\r\n"
+                                   "User-Agent: Mozilla FireFox, Internet Explorer\r\n"
+                                   "\r\n");
+}
+
+TEST(RequestParser, body) {
+    Request::Parser parser;
+
+    parser.parse_line("POST / HTTP/1.1\r\n");
+    parser.parse_line("Host: example.com\r\n");
+    parser.parse_line("User-Agent:Mozilla Firefox\r\n");
+    parser.parse_line("Content-Length: 10\r\n");
+    parser.parse_line("\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("data=hello");
+
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+
+    ASSERT_TRUE(req_res.is_ok());
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(), "POST / HTTP/1.1\r\n"
+                                   "Content-Length: 10\r\n"
+                                   "Host: example.com\r\n"
+                                   "User-Agent: Mozilla Firefox\r\n"
+                                   "\r\n"
+                                   "data=hello");
 }

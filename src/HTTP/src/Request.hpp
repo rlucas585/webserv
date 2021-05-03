@@ -10,6 +10,7 @@
 #include "../../Str/src/Str.hpp"
 #include "../../Utils/src/Utils.hpp"
 
+#define URI_SIZE_LIMIT 2048
 #define HEADER_SIZE_LIMIT 4096
 
 namespace http {
@@ -56,6 +57,8 @@ class Request {
     enum State_enum {
         OK_200,
         BadRequest_400,
+        LengthRequired_411,
+        URITooLong_414,
         HeaderTooLarge_431,
         NotImplemented_501,
         HttpNotSupported_505,
@@ -67,7 +70,7 @@ class Request {
         State(State_enum state);
         ~State(void);
         State(State const& src);
-        State &operator=(State const& rhs);
+        State& operator=(State const& rhs);
 
         operator State_enum() const;
         operator const char*() const;
@@ -81,7 +84,6 @@ class Request {
     typedef Utils::result<Request, State> Result;
 
     friend std::ostream& operator<<(std::ostream&, Request const&);
-
 
   public:
     class Builder {
@@ -97,11 +99,16 @@ class Request {
         Builder& header(std::string const& key, std::string const& val);
         Builder& uri(std::string const& new_uri);
         Builder& version(Version new_version);
+        Builder& body(std::string new_body);
+        Builder& append_to_body(Str const& slice);
 
+        // TODO remove as many of these as possible, when server is ready
         Method const& get_method(void) const;
         std::string const& get_uri(void) const;
         Version const& get_version(void) const;
+        Utils::optional<std::string const*> get_header(const char* key) const;
         Utils::optional<std::string const*> get_header(std::string const& key) const;
+        std::string const& get_body(void) const;
 
         Request build(void);
 
@@ -110,6 +117,7 @@ class Request {
         std::string uri_; // Consider creating URI class
         Version version_;
         std::map<std::string, std::string> headers;
+        std::string body_;
     };
 
   public:
@@ -119,6 +127,8 @@ class Request {
             Headers,
             Processing,
             Body,
+            Chunked,
+            EndOfChunk,
             Complete,
             Error,
         };
@@ -133,23 +143,24 @@ class Request {
         bool is_complete(void) const;
         bool is_error(void) const;
 
+        Utils::optional<size_t> ready_for_body(void) const;
+
         Result generate_request(void);
 
       private:
         Step step;
         State error;
         Builder builder;
+        Utils::optional<size_t> content_length;
 
         void parse_method(Str line);
         void parse_header(Str line);
         void parse_body(Str line);
+        void parse_chunked(Str line);
 
         void process(void);
 
-        void process_get(void);
-        void process_head(void);
-        void process_post(void);
-        void process_put(void);
+        void set_parser_state(Step new_step, State new_state);
     };
 
   public:
@@ -165,10 +176,11 @@ class Request {
     std::string uri; // Consider creating URI class
     Version version;
     std::map<std::string, std::string> headers;
+    std::string body;
 
     Request(void);
     Request(Method new_method, std::string& new_uri, Version new_version,
-            std::map<std::string, std::string>& new_headers);
+            std::map<std::string, std::string>& new_headers, std::string& new_body);
 
     static std::map<const Str, Method> create_method_map(void);
     static std::map<const Str, bool> create_header_map(void);

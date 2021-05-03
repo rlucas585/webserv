@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/30 18:00:38 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/03 17:18:57 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,44 @@ int atoi(const char* str) {
         return 0;
     }
     return static_cast<int>(result * sign);
+}
+
+long atol(const char* str) {
+    size_t i = 0;
+    unsigned long result = 0;
+    int sign = 1;
+    for (; ((str[i] >= '\t' && str[i] <= '\r') || str[i] == ' '); i++) {
+    }
+    if (str[i] == '+' || str[i] == '-') {
+        if (str[i] == '-') {
+            sign = -1;
+        }
+        i += 1;
+    }
+    for (; str[i] >= '0' && str[i] <= '9'; i++) {
+        result = result * 10 + (str[i] - '0');
+    }
+    return static_cast<long>(result * sign);
+}
+
+long atol_length(const char* str, size_t length) {
+    size_t i = 0;
+    unsigned long result = 0;
+    int sign = 1;
+    for (; ((str[i] >= '\t' && str[i] <= '\r') || str[i] == ' ') && length > 0; i++, length--) {
+    }
+    if (length == 0)
+        return static_cast<long>(result);
+    if (str[i] == '+' || str[i] == '-') {
+        if (str[i] == '-') {
+            sign = -1;
+        }
+        i += 1;
+    }
+    for (; str[i] >= '0' && str[i] <= '9' && length > 0; i++, length--) {
+        result = result * 10 + (str[i] - '0');
+    }
+    return static_cast<long>(result * sign);
 }
 
 runtime_error::runtime_error(void) : _msg("Undefined error") {}

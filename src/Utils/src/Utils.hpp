@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/30 18:01:21 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/03 17:19:13 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ const char* strpbrklen(const char* s, const char* accept, size_t len);
 void* memset(void* b, int c, size_t len);
 void* memcpy(void* dest, const void* src, size_t n);
 int atoi(const char* str);
+long atol(const char* str);
+long atol_length(const char* str, size_t length);
 template <typename T>
 T const& min(T const& lhs, T const& rhs) {
     return (rhs < lhs) ? rhs : lhs;

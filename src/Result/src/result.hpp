@@ -67,7 +67,8 @@ class result {
     ok_type unwrap(void) { return this->expect(); }
     ok_type expect(const char* errmsg = "Called unwrap on an Err value: ") {
         if (stat == Error) {
-            throw Utils::runtime_error(std::string(errmsg).append("\"").append(this->err()).append("\""));
+            throw Utils::runtime_error(
+                std::string(errmsg).append("\"").append(this->err()).append("\""));
         }
         ok_type ret = this->ok();
         this->set_as_default_error(); // Value is "removed", so type now err's if unwrap called

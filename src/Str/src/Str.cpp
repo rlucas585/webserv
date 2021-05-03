@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/03 10:44:52 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/03 11:36:06 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ Str Str::Split::next(void) {
         nextDelim = Utils::strpbrk(_remainder, _delimiter);
 
     if (nextDelim == NULL) {
-      if (this->is_from_slice())
-        slice = Str::newSliceWithLength(_remainder, length_remaining);
-      else
-        slice = Str::newSlice(_remainder);
+        if (this->is_from_slice())
+            slice = Str::newSliceWithLength(_remainder, length_remaining);
+        else
+            slice = Str::newSlice(_remainder);
     } else
         slice = Str::newSliceWithLength(_remainder, nextDelim - _remainder);
     if (this->is_from_slice()) {
@@ -70,13 +70,19 @@ Str Str::Split::next(void) {
     return slice;
 }
 
-bool Str::Split::is_complete(void) const { return _remainder == NULL; }
+bool Str::Split::is_complete(void) const {
+    if (this->is_from_slice()) {
+        if (length_remaining == 0)
+            return true;
+    }
+    return _remainder == 0;
+}
 
 const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) {
     size_t i = 0;
 
     if (s == 0)
-      return 0;
+        return 0;
     for (; s[i]; s++) {
         if (!Utils::strchr(reject, s[i]))
             break;
@@ -95,9 +101,7 @@ const char* Str::Split::_findFirstNotOf(const char* s, const char* reject) {
     return s;
 }
 
-bool Str::Split::is_from_slice(void) const {
-  return length_remaining != -1;
-}
+bool Str::Split::is_from_slice(void) const { return length_remaining != -1; }
 
 Str::SplitN::SplitN(const char* start, size_t n)
     : _remainder(start), _delimiter(" \f\n\r\t\v"), length_remaining(-1), values_left(n) {}
@@ -106,7 +110,8 @@ Str::SplitN::SplitN(const char* start, const char* delim, size_t n)
     : _remainder(start), _delimiter(delim), length_remaining(-1), values_left(n) {}
 
 Str::SplitN::SplitN(Str const& src, size_t n)
-    : _remainder(src.raw()), _delimiter(" \f\n\r\t\v"), length_remaining(src.length()), values_left(n) {}
+    : _remainder(src.raw()), _delimiter(" \f\n\r\t\v"), length_remaining(src.length()),
+      values_left(n) {}
 
 Str::SplitN::SplitN(Str const& src, const char* delim, size_t n)
     : _remainder(src.raw()), _delimiter(delim), length_remaining(src.length()), values_left(n) {}
@@ -138,13 +143,15 @@ Str Str::SplitN::next(void) {
 
     // Additional logic for SplitN to return everything remaining if values_left == 1
     if (values_left == 1) {
-      values_left = 0;
-      if (this->is_from_slice()) {
-        slice = Str::newSliceWithLength(_remainder, length_remaining);
-      } else {
-        slice = Str::newSlice(_remainder);
-      }
-      return slice;
+        values_left = 0;
+        if (this->is_from_slice()) {
+            slice = Str::newSliceWithLength(_remainder, length_remaining);
+            length_remaining = 0;
+        } else {
+            slice = Str::newSlice(_remainder);
+        }
+        _remainder = 0;
+        return slice;
     }
 
     const char* nextDelim;
@@ -154,10 +161,10 @@ Str Str::SplitN::next(void) {
         nextDelim = Utils::strpbrk(_remainder, _delimiter);
 
     if (nextDelim == NULL) {
-      if (this->is_from_slice())
-        slice = Str::newSliceWithLength(_remainder, length_remaining);
-      else
-        slice = Str::newSlice(_remainder);
+        if (this->is_from_slice())
+            slice = Str::newSliceWithLength(_remainder, length_remaining);
+        else
+            slice = Str::newSlice(_remainder);
     } else
         slice = Str::newSliceWithLength(_remainder, nextDelim - _remainder);
     if (this->is_from_slice()) {
@@ -168,13 +175,19 @@ Str Str::SplitN::next(void) {
     return slice;
 }
 
-bool Str::SplitN::is_complete(void) const { return _remainder == NULL; }
+bool Str::SplitN::is_complete(void) const {
+    if (this->is_from_slice()) {
+        if (length_remaining == 0)
+            return true;
+    }
+    return _remainder == 0;
+}
 
 const char* Str::SplitN::_findFirstNotOf(const char* s, const char* reject) {
     size_t i = 0;
 
     if (s == 0)
-      return 0;
+        return 0;
     for (; s[i]; s++) {
         if (!Utils::strchr(reject, s[i]))
             break;
@@ -193,9 +206,7 @@ const char* Str::SplitN::_findFirstNotOf(const char* s, const char* reject) {
     return s;
 }
 
-bool Str::SplitN::is_from_slice(void) const {
-  return length_remaining != -1;
-}
+bool Str::SplitN::is_from_slice(void) const { return length_remaining != -1; }
 
 Str::iterator::iterator(const char* start, size_t len, size_t maxLen)
     : _p(start), _len(len), _maxLen(maxLen) {}
