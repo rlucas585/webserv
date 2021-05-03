@@ -4,6 +4,39 @@
 
 namespace http {
 
+// 'State' class. Essentially acts as an enum, but with additional functionality,
+// primarily the ability to be converted to a const char* with the enum name,
+// which allows the use of 'State' as an Error return value in Utils::result.
+
+Request::State::State(void) : inner(OK_200) {}
+
+Request::State::State(State_enum state) : inner(state) {}
+
+Request::State::~State(void) {}
+
+Request::State::State(State const& src) : inner(src.inner) {}
+
+Request::State &Request::State::operator=(State const& rhs) {
+  if (&rhs == this) { return *this; }
+  inner = rhs.inner;
+  return *this;
+}
+
+const char* Request::State::enum_strings[] = {
+        "OK_200",
+        "BadRequest_400",
+        "HeaderTooLarge_431",
+        "NotImplemented_501",
+        "HttpNotSupported_505",
+};
+
+Request::State::operator State_enum() const { return inner; }
+
+Request::State::operator const char*() const { return enum_strings[inner]; }
+
+// Below code dealing with enums is a little messy, and strongly coupled.
+// Strongly consider changing in future
+
 std::string stringify(Method const& method) {
     switch (method) {
     case GET:
@@ -64,7 +97,7 @@ std::ostream& operator<<(std::ostream& o, Version const& ver) {
 }
 
 Request::Builder::Builder(void)
-    : method_(GET), uri_("/"), version_(HTTP_11), headers(), state(OK_200) {}
+    : method_(GET), uri_("/"), version_(HTTP_11), headers() {}
 
 Request::Builder::~Builder(void) {}
 
@@ -78,7 +111,6 @@ Request::Builder& Request::Builder::operator=(Builder const& rhs) {
     uri_ = rhs.uri_;
     version_ = rhs.version_;
     headers = rhs.headers;
-    state = rhs.state;
 
     return *this;
 }
@@ -93,13 +125,10 @@ Request::Builder& Request::Builder::header(const char* key, const char* val) {
 }
 
 Request::Builder& Request::Builder::header(Str key, Str val) {
-    if (this->is_invalid())
-        return *this;
-
-    if (key.length() + val.length() + 1 > HEADER_SIZE_LIMIT) {
-        set_state(HeaderTooLarge_431);
-        return *this;
-    }
+    // if (key.length() + val.length() + 1 > HEADER_SIZE_LIMIT) {
+    //     set_state(HeaderTooLarge_431);
+    //     return *this;
+    // }
 
     std::map<std::string, std::string>::iterator search = headers.find(key);
 
@@ -114,13 +143,10 @@ Request::Builder& Request::Builder::header(Str key, Str val) {
 }
 
 Request::Builder& Request::Builder::header(std::string const& key, std::string const& val) {
-    if (this->is_invalid())
-        return *this;
-
-    if (key.length() + val.length() + 1 > HEADER_SIZE_LIMIT) {
-        set_state(HeaderTooLarge_431);
-        return *this;
-    }
+    // if (key.length() + val.length() + 1 > HEADER_SIZE_LIMIT) {
+    //     set_state(HeaderTooLarge_431);
+    //     return *this;
+    // }
     std::map<std::string, std::string>::iterator search = headers.find(key);
 
     if (search != headers.end()) {
@@ -134,30 +160,36 @@ Request::Builder& Request::Builder::header(std::string const& key, std::string c
 }
 
 Request::Builder& Request::Builder::uri(std::string const& new_uri) {
-    if (this->is_invalid())
-        return *this;
-
     uri_ = new_uri;
     return *this;
 }
 
 Request::Builder& Request::Builder::version(Version new_version) {
-    if (this->is_invalid())
-        return *this;
-
     version_ = new_version;
     return *this;
 }
 
-Request Request::Builder::build(void) { return Request(method_, uri_, version_, headers); }
-
-bool Request::Builder::is_invalid(void) const {
-    if (state != OK_200)
-        return true;
-    return false;
+Method const& Request::Builder::get_method(void) const {
+  return method_;
 }
 
-void Request::Builder::set_state(State new_state) { state = new_state; }
+std::string const& Request::Builder::get_uri(void) const {
+  return uri_;
+}
+
+Version const& Request::Builder::get_version(void) const {
+  return version_;
+}
+
+Utils::optional<std::string const*> Request::Builder::get_header(std::string const& key) const {
+    std::map<std::string, std::string>::const_iterator search = headers.find(key);
+    if (search == headers.end()) {
+      return Utils::nullopt;
+    }
+    return &search->second;
+}
+
+Request Request::Builder::build(void) { return Request(method_, uri_, version_, headers); }
 
 // Request::Parser
 //
@@ -211,9 +243,15 @@ bool Request::Parser::is_complete(void) const { return step == Complete || step 
 
 bool Request::Parser::is_error(void) const { return step == Error; }
 
-void Request::Parser::debug(void) const {
-    if (step == Error)
-        std::cout << "Error: " << error << std::endl;
+Request::Result Request::Parser::generate_request(void) {
+  if (error != OK_200) {
+    return Request::Result::Err(error);
+  } else if (step != Complete) {
+    // Message is incomplete, and therefore, badly formed
+    return Request::Result::Err(BadRequest_400);
+  } else {
+    return Request::Result::Ok(builder.build());
+  }
 }
 
 void Request::Parser::parse_method(Str line) {
@@ -257,11 +295,41 @@ void Request::Parser::parse_header(Str line) {
     (void)line;
 }
 
-void Request::Parser::process(void) {}
-
 void Request::Parser::parse_body(Str line) {
     // TODO implement this
     (void)line;
+}
+
+void Request::Parser::process(void) {
+  switch (builder.get_method()) {
+    case GET:
+      return process_get();
+    case HEAD:
+      return process_head();
+    case POST:
+      return process_post();
+    case PUT:
+      return process_put();
+  }
+}
+
+void Request::Parser::process_get(void) {
+  // Check that all is valid for a GET Request
+  // GET shouldn't have a Content-Length, for example, or a Transfer Encoding
+
+  step = Complete;
+}
+
+void Request::Parser::process_head(void) {
+
+}
+
+void Request::Parser::process_post(void) {
+
+}
+
+void Request::Parser::process_put(void) {
+
 }
 
 // Request Class
@@ -350,6 +418,27 @@ std::ostream& operator<<(std::ostream& o, Request const& req) {
     // Add body later
 
     return o;
+}
+
+std::ostream& operator<<(std::ostream& o, Request::State const& state) {
+  switch (state) {
+    case Request::OK_200:
+      o << "OK_200";
+      break ;
+    case Request::BadRequest_400:
+      o << "BadRequest_400";
+      break ;
+    case Request::HeaderTooLarge_431:
+      o << "HeaderTooLarge_431";
+      break ;
+    case Request::NotImplemented_501:
+      o << "NotImplemented_501";
+      break ;
+    case Request::HttpNotSupported_505:
+      o << "HttpNotSupported_505";
+      break ;
+  }
+  return o;
 }
 
 } // namespace http

@@ -1,6 +1,10 @@
 // An example using the TcpStream, together with the HTTP::Request class,
 // to send an HTTP Request to a website
 
+// HTTP Requests are built using the Request::Builder class.
+// They default to "GET / HTTP/1.1", but support additional methods.
+// In future, all methods should be supported by the Builder class.
+
 #include <iostream>
 
 #include <netdb.h>

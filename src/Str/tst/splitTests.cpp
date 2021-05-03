@@ -94,10 +94,51 @@ TEST(StrSplit, split) {
     EXPECT_EQ(vec.size(), 3);
 }
 
-TEST(StrSplit, split_char) {
-    Str::Split iter("GET / HTTP/1.1\r\n");
+TEST(StrSplit, double_split) {
+    Str str("Host: example.com\r\nAccept: Yes\r\nJunk: mess\r\n");
+    Str::Split iter = str.split("\r\n");
 
     std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    ASSERT_EQ(vec.size(), 3);
 
-    EXPECT_EQ(vec.size(), 3);
+    Str middle = vec[1].trim();
+    EXPECT_EQ(middle.length(), 11);
+
+    Str::Split iter2 = middle.split(":");
+
+    std::vector<Str> vec2 = iter2.collect<std::vector<Str> >();
+    ASSERT_EQ(vec2.size(), 2);
+    EXPECT_EQ(vec2[0].trim(), "Accept");
+    EXPECT_EQ(vec2[1].trim(), "Yes");
+}
+
+TEST(SplitN, double_split) {
+    Str str("Host: example.com\r\nAccept: Yes\r\nJunk: mess\r\n");
+    Str::Split iter = str.split("\r\n");
+
+    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    ASSERT_EQ(vec.size(), 3);
+
+    Str middle = vec[1].trim();
+    EXPECT_EQ(middle.length(), 11);
+
+    Str::SplitN iter2 = middle.splitn(1, ":");
+
+    std::vector<Str> vec2 = iter2.collect<std::vector<Str> >();
+    ASSERT_EQ(vec2.size(), 1);
+    EXPECT_EQ(vec2[0], "Accept: Yes");
+}
+
+TEST(SplitN, split_once) {
+  Str str("Host: example.com\r\nIpv6 address: 2001:0DB8:AC10:FE01::\r\nJunk: mess\r\n");
+
+  std::vector<Str> vec = str.split("\r\n").collect<std::vector<Str> >();
+  ASSERT_EQ(vec.size(), 3);
+
+  Str middle = vec[1].trim();
+  std::vector<Str> vec2 = middle.splitn(2, ":").collect<std::vector<Str> >();
+
+  ASSERT_EQ(vec2.size(), 2);
+  EXPECT_EQ(vec2[0].trim(), "Ipv6 address");
+  EXPECT_EQ(vec2[1].trim(), "2001:0DB8:AC10:FE01::");
 }

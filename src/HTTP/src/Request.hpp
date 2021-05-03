@@ -53,17 +53,35 @@ std::ostream& operator<<(std::ostream& o, Version const& ver);
 
 class Request {
   public:
-    typedef Utils::result<Request, std::string> Result;
-
-    friend std::ostream& operator<<(std::ostream&, Request const&);
-
-    enum State {
+    enum State_enum {
         OK_200,
         BadRequest_400,
         HeaderTooLarge_431,
         NotImplemented_501,
         HttpNotSupported_505,
     };
+
+    class State {
+      public:
+        State(void);
+        State(State_enum state);
+        ~State(void);
+        State(State const& src);
+        State &operator=(State const& rhs);
+
+        operator State_enum() const;
+        operator const char*() const;
+
+      private:
+        State_enum inner;
+
+        static const char* enum_strings[];
+    };
+
+    typedef Utils::result<Request, State> Result;
+
+    friend std::ostream& operator<<(std::ostream&, Request const&);
+
 
   public:
     class Builder {
@@ -80,6 +98,11 @@ class Request {
         Builder& uri(std::string const& new_uri);
         Builder& version(Version new_version);
 
+        Method const& get_method(void) const;
+        std::string const& get_uri(void) const;
+        Version const& get_version(void) const;
+        Utils::optional<std::string const*> get_header(std::string const& key) const;
+
         Request build(void);
 
       private:
@@ -87,10 +110,6 @@ class Request {
         std::string uri_; // Consider creating URI class
         Version version_;
         std::map<std::string, std::string> headers;
-        State state;
-
-        bool is_invalid(void) const;
-        void set_state(State new_state);
     };
 
   public:
@@ -114,8 +133,7 @@ class Request {
         bool is_complete(void) const;
         bool is_error(void) const;
 
-        // for development only, obviously
-        void debug(void) const;
+        Result generate_request(void);
 
       private:
         Step step;
@@ -127,6 +145,11 @@ class Request {
         void parse_body(Str line);
 
         void process(void);
+
+        void process_get(void);
+        void process_head(void);
+        void process_post(void);
+        void process_put(void);
     };
 
   public:
@@ -156,6 +179,9 @@ class Request {
     static const std::map<const Str, bool> valid_headers;
     static const std::map<const Str, Version> valid_versions;
 };
+
+std::string& operator+(std::string& lhs, Request::State const& rhs);
+std::ostream& operator<<(std::ostream& o, Request::State const& state);
 
 } // namespace http
 

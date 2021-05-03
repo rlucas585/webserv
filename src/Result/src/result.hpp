@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 21:15:23 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 13:35:27 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/03 08:49:20 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ class result {
     ok_type unwrap(void) { return this->expect(); }
     ok_type expect(const char* errmsg = "Called unwrap on an Err value: ") {
         if (stat == Error) {
-            throw Utils::runtime_error(std::string(errmsg) + "\"" + this->err() + "\"");
+            throw Utils::runtime_error(std::string(errmsg).append("\"").append(this->err()).append("\""));
         }
         ok_type ret = this->ok();
         this->set_as_default_error(); // Value is "removed", so type now err's if unwrap called
