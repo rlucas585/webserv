@@ -33,10 +33,31 @@ TcpStream& Client::stream(void) { return reader.as_inner(); }
 
 int Client::fd(void) const { return reader.as_inner().fd(); }
 
-Utils::RwResult Client::read_line(std::string& buf) { return reader.read_line(buf); }
+Utils::RwResult Client::read_line(std::string& buf) {
+    // If our Client has been triggered to Read, then the internal BufReader should consume the rest
+    // of it's contents, then continue reading
+    if (state == Read) {
+        reader.read_remaining(buf);
+        reader.fill_buf();
+        state = Processing;
+    }
+    return reader.read_line(buf);
+}
 
 Utils::RwResult Client::read_until(char delimiter, std::string& buf) {
+    if (state == Read) {
+        reader.read_remaining(buf);
+        reader.fill_buf();
+        state = Processing;
+    }
     return reader.read_until(delimiter, buf);
 }
 
 Utils::RwResult Client::write(std::string const& str) { return reader.as_inner().write(str); }
+
+bool Client::eof(void) {
+    if (state == Read) {
+        return false;
+    }
+    return reader.eof();
+}
