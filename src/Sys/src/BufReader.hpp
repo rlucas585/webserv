@@ -3,7 +3,7 @@
 
 #include "../../Option/src/optional.hpp"
 #include "../../Result/src/result.hpp"
-#include "../../Str/src/Str.hpp"
+#include "../../Slice/src/Slice.hpp"
 #include "FileDesc.hpp"
 
 #include "../../Net/src/TcpStream.hpp"
@@ -21,7 +21,7 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf,
 template <typename R>
 class BufReader {
   public:
-    typedef Utils::result<Str, std::string> FillResult;
+    typedef Utils::result<Slice, std::string> FillResult;
 
   public:
     BufReader(void)
@@ -70,7 +70,7 @@ class BufReader {
             position = 0;
         }
         return FillResult::Ok(
-            Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position));
+            Slice::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position));
     }
 
     bool eof(char delim = '\n') {
@@ -93,8 +93,8 @@ class BufReader {
         if (position >= capacity) {
             return Utils::RwResult::Ok(0);
         }
-        Str remaining =
-            Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position);
+        Slice remaining =
+            Slice::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position);
         size_t bytes_read = remaining.length();
         append_slice_to_string(buf, remaining);
 
@@ -112,9 +112,9 @@ class BufReader {
         if (capacity == buffer_size) // Read filled buffer completely, more available
             return false;
 
-        Str remaining =
-            Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position);
-        Utils::optional<Str> next_opt = remaining.strchr(delim);
+        Slice remaining =
+            Slice::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position);
+        Utils::optional<Slice> next_opt = remaining.strchr(delim);
         if (next_opt.has_value())
             return false;
         else
@@ -135,7 +135,7 @@ class BufReader {
         if (fill_res.is_err()) // If failure to read, return eof() == true
             return true;
 
-        Str available = fill_res.unwrap();
+        Slice available = fill_res.unwrap();
         if (available.length() == 0)
             return true;
         return false;
@@ -170,14 +170,14 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf, size_t r
         if (fill_res.is_err()) {
             return Utils::RwResult::Err(fill_res.unwrap_err());
         }
-        // Str slice points to unread data in buffer
-        Str available = fill_res.unwrap();
+        // Slice slice points to unread data in buffer
+        Slice available = fill_res.unwrap();
         // next is slice to same data as in available, but from the next delimiter
-        Utils::optional<Str> next_opt = available.strchr(delimiter);
+        Utils::optional<Slice> next_opt = available.strchr(delimiter);
         if (next_opt.has_value()) {
-            Str next = next_opt.unwrap();
+            Slice next = next_opt.unwrap();
             size_t length = next.raw() - available.raw();
-            Str extension = Str::newSliceWithLength(available.raw(), length + 1);
+            Slice extension = Slice::newSliceWithLength(available.raw(), length + 1);
             if (buf.size() + length + 1 > read_limit) {
                 return Utils::RwResult::Err(std::string("Over read_limit"));
             }

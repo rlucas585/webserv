@@ -3,7 +3,7 @@
 add_executable(Select.run Select.cpp)
 
 target_link_libraries(Select.run
-    PUBLIC Str_lib
+    PUBLIC Slice_lib
     PUBLIC Net_lib
     PUBLIC ASyncServer_lib
 	)

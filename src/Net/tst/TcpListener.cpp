@@ -25,7 +25,7 @@ TEST(TcpListener_tests, creation_test) {
 TEST(TcpListener_tests, crash_test1) {
     TcpListener::Result res = TcpListener::bind("127.2.1.1:::::7878");
 
-    EXPECT_EQ(res, TcpListener::Result::Err("Invalid Str used for SocketAddrV4"));
+    EXPECT_EQ(res, TcpListener::Result::Err("Invalid Slice used for SocketAddrV4"));
 }
 
 TEST(TcpListener_tests, crash_test2) {
@@ -37,7 +37,7 @@ TEST(TcpListener_tests, crash_test2) {
 TEST(TcpListener_tests, crash_test3) {
     TcpListener::Result res = TcpListener::bind("127.2.1.1.1:4242");
 
-    EXPECT_EQ(res, TcpListener::Result::Err("Invalid Str used for Ipv4Addr"));
+    EXPECT_EQ(res, TcpListener::Result::Err("Invalid Slice used for Ipv4Addr"));
 }
 
 TEST(TcpListener_tests, move_semantics_test) {

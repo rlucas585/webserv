@@ -132,10 +132,10 @@ Request::Builder& Request::Builder::method(Method new_method) {
 }
 
 Request::Builder& Request::Builder::header(const char* key, const char* val) {
-    return header(Str(key), Str(val));
+    return header(Slice(key), Slice(val));
 }
 
-Request::Builder& Request::Builder::header(Str key, Str val) {
+Request::Builder& Request::Builder::header(Slice key, Slice val) {
     std::map<std::string, std::string>::iterator search = headers.find(key);
 
     if (search != headers.end()) {
@@ -174,7 +174,7 @@ Request::Builder& Request::Builder::body(std::string new_body) {
     return *this;
 }
 
-Request::Builder& Request::Builder::append_to_body(Str const& slice) {
+Request::Builder& Request::Builder::append_to_body(Slice const& slice) {
     append_slice_to_string(body_, slice);
     return *this;
 }
@@ -227,7 +227,7 @@ Request::Parser& Request::Parser::operator=(Parser const& rhs) {
     return *this;
 }
 
-void Request::Parser::parse_line(Str line) {
+void Request::Parser::parse_line(Slice line) {
     // HTTP Request is invalid without \r\n at the end of each line, unless reading the Body
     if (line_should_have_CRLF() && !line_has_CRLF(line)) {
         return set_parser_state(Error, BadRequest_400);
@@ -276,11 +276,11 @@ Request::Result Request::Parser::generate_request(void) {
     }
 }
 
-void Request::Parser::parse_method(Str line) {
-    Str::Split iter = line.split();
-    Str method = iter.next();
-    Str uri = iter.next();
-    Str version = iter.next();
+void Request::Parser::parse_method(Slice line) {
+    Slice::Split iter = line.split();
+    Slice method = iter.next();
+    Slice uri = iter.next();
+    Slice version = iter.next();
 
     // Verify that only three whitespace-separated component have been sent
     if (!method.isInitialized() || !uri.isInitialized() || !version.isInitialized() ||
@@ -289,7 +289,8 @@ void Request::Parser::parse_method(Str line) {
     }
 
     // Check that 'method' is valid, then add to the Request::Builder
-    std::map<const Str, http::Method>::const_iterator search = Request::valid_methods.find(method);
+    std::map<const Slice, http::Method>::const_iterator search =
+        Request::valid_methods.find(method);
     if (search == Request::valid_methods.end())
         return set_parser_state(Error, NotImplemented_501);
     builder.method(search->second);
@@ -300,7 +301,7 @@ void Request::Parser::parse_method(Str line) {
     builder.uri(uri);
 
     // Verify that HTTP version is valid, then set HTTP version in Request::Builder.
-    std::map<const Str, http::Version>::const_iterator search2 =
+    std::map<const Slice, http::Version>::const_iterator search2 =
         Request::valid_versions.find(version);
     if (search2 == Request::valid_versions.end())
         return set_parser_state(Error, HttpNotSupported_505);
@@ -310,13 +311,13 @@ void Request::Parser::parse_method(Str line) {
     step = Headers;
 }
 
-void Request::Parser::parse_header(Str line) {
+void Request::Parser::parse_header(Slice line) {
     if (line.trim().length() > HEADER_SIZE_LIMIT)
         return set_parser_state(Error, HeaderTooLarge_431);
 
-    Str::SplitN iter = line.splitn(2, ":");
-    Str header_name = iter.next();
-    Str header_value = iter.next();
+    Slice::SplitN iter = line.splitn(2, ":");
+    Slice header_name = iter.next();
+    Slice header_value = iter.next();
 
     // Verify that there are two values, separated by ':'
     if (!header_name.isInitialized() || !header_value.isInitialized() || !iter.is_complete())
@@ -325,13 +326,13 @@ void Request::Parser::parse_header(Str line) {
     builder.header(header_name.trim(), header_value.trim());
 }
 
-void Request::Parser::parse_body(Str line) {
+void Request::Parser::parse_body(Slice line) {
     if (!content_length.has_value()) // This *should* be impossible.
         return set_parser_state(Error, BadRequest_400);
     size_t length_remaining = content_length.unwrap();
 
     if (length_remaining <= line.length()) {
-        builder.append_to_body(Str::newSliceWithLength(line, length_remaining));
+        builder.append_to_body(Slice::newSliceWithLength(line, length_remaining));
         content_length = Utils::make_optional<size_t>(0);
         step = Complete;
     } else {
@@ -340,15 +341,15 @@ void Request::Parser::parse_body(Str line) {
     }
 }
 
-static bool all_are_digits(Str const& s) {
-    for (Str::iterator c = s.begin(); c != s.end(); c++) {
+static bool all_are_digits(Slice const& s) {
+    for (Slice::iterator c = s.begin(); c != s.end(); c++) {
         if (!::isdigit(*c))
             return false;
     }
     return true;
 }
 
-void Request::Parser::parse_chunked(Str line) {
+void Request::Parser::parse_chunked(Slice line) {
     if (!content_length.has_value()) {
         line.trim(); // Remove whitespace if reading chunk length
         // New value should be a number denoting next chunk length
@@ -361,7 +362,7 @@ void Request::Parser::parse_chunked(Str line) {
     } else {
         // Next value is to be added to body. Anything beyond chunk limit is ignored
         size_t next_chunk_length = content_length.unwrap();
-        builder.append_to_body(Str::newSliceWithLength(line, next_chunk_length));
+        builder.append_to_body(Slice::newSliceWithLength(line, next_chunk_length));
         content_length = Utils::nullopt;
         if (next_chunk_length == 0) {
             step = Complete;
@@ -418,8 +419,8 @@ bool Request::Parser::line_should_have_CRLF(void) const {
     return step == Method || step == Headers || step == Processing || step == Chunked;
 }
 
-bool Request::Parser::line_has_CRLF(Str const& line) const {
-    return line.length() >= 2 && Str::newSliceWithOffset(line, line.length() - 2) == "\r\n";
+bool Request::Parser::line_has_CRLF(Slice const& line) const {
+    return line.length() >= 2 && Slice::newSliceWithOffset(line, line.length() - 2) == "\r\n";
 }
 
 // Request Class
@@ -470,18 +471,18 @@ std::map<std::string, std::string>& Request::get_headers(void) { return headers;
 
 // Map definitions - used for simple assignation of enums based on parsed values
 
-std::map<const Str, Method> Request::create_method_map(void) {
-    std::map<const Str, Method> m;
+std::map<const Slice, Method> Request::create_method_map(void) {
+    std::map<const Slice, Method> m;
     m["GET"] = GET;
     m["HEAD"] = HEAD;
     m["POST"] = POST;
     m["PUT"] = PUT;
     return m;
 }
-const std::map<const Str, Method> Request::valid_methods = Request::create_method_map();
+const std::map<const Slice, Method> Request::valid_methods = Request::create_method_map();
 
-std::map<const Str, bool> Request::create_header_map(void) {
-    std::map<const Str, bool> m;
+std::map<const Slice, bool> Request::create_header_map(void) {
+    std::map<const Slice, bool> m;
     m["Accept-Charset"] = true;
     m["Accept-Language"] = true;
     m["Authorization"] = true;
@@ -494,16 +495,16 @@ std::map<const Str, bool> Request::create_header_map(void) {
     m["User-Agent"] = true;
     return m;
 }
-const std::map<const Str, bool> Request::valid_headers = Request::create_header_map();
+const std::map<const Slice, bool> Request::valid_headers = Request::create_header_map();
 
-std::map<const Str, Version> Request::create_version_map(void) {
-    std::map<const Str, Version> m;
+std::map<const Slice, Version> Request::create_version_map(void) {
+    std::map<const Slice, Version> m;
     m["HTTP/0.9"] = HTTP_09;
     m["HTTP/1.0"] = HTTP_10;
     m["HTTP/1.1"] = HTTP_11;
     return m;
 }
-const std::map<const Str, Version> Request::valid_versions = Request::create_version_map();
+const std::map<const Slice, Version> Request::valid_versions = Request::create_version_map();
 
 std::ostream& operator<<(std::ostream& o, Request const& req) {
     o << req.method << " ";

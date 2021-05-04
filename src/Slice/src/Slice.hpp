@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   Str.hpp                                            :+:    :+:            */
+/*   Slice.hpp                                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
@@ -21,22 +21,22 @@
 
 #include "../../Option/src/optional.hpp"
 
-class Str {
+class Slice {
   public:
     class Split {
       public:
         Split(const char* start);
         Split(const char* start, const char* delim);
-        Split(Str const& str);
-        Split(Str const& str, const char* delim);
+        Split(Slice const& str);
+        Split(Slice const& str, const char* delim);
         ~Split(void);
         Split(Split const& src);
         Split& operator=(Split const& rhs);
-        Str next(void);
+        Slice next(void);
         template <typename Container>
         Container collect(void) {
             Container c;
-            Str item;
+            Slice item;
 
             while ((item = this->next())) {
                 c.push_back(item);
@@ -60,16 +60,16 @@ class Str {
       public:
         SplitN(const char* start, size_t n);
         SplitN(const char* start, const char* delim, size_t n);
-        SplitN(Str const& str, size_t n);
-        SplitN(Str const& str, const char* delim, size_t n);
+        SplitN(Slice const& str, size_t n);
+        SplitN(Slice const& str, const char* delim, size_t n);
         ~SplitN(void);
         SplitN(SplitN const& src);
         SplitN& operator=(SplitN const& rhs);
-        Str next(void);
+        Slice next(void);
         template <typename Container>
         Container collect(void) {
             Container c;
-            Str item;
+            Slice item;
 
             while ((item = this->next())) {
                 c.push_back(item);
@@ -112,33 +112,33 @@ class Str {
     };
 
   public:
-    Str(void);
-    Str(const char* data);
+    Slice(void);
+    Slice(const char* data);
 
-    Str(std::string const& src);
-    Str& operator=(std::string const& str);
-    static Str newSlice(std::string const& str);
-    static Str newSliceWithLength(std::string const& str, size_t len);
-    static Str newSliceWithOffset(std::string const& str, size_t offset);
-    static Str newSliceWithLengthAndOffset(std::string const& str, size_t len, size_t offset);
+    Slice(std::string const& src);
+    Slice& operator=(std::string const& str);
+    static Slice newSlice(std::string const& str);
+    static Slice newSliceWithLength(std::string const& str, size_t len);
+    static Slice newSliceWithOffset(std::string const& str, size_t offset);
+    static Slice newSliceWithLengthAndOffset(std::string const& str, size_t len, size_t offset);
     operator std::string() const;
-    std::string toString(void) const;
+    std::string toSliceing(void) const;
 
-    ~Str(void);
-    Str(Str const& src) { *this = src; }
-    Str& operator=(Str const& rhs);
-    Str& operator=(const char* data);
+    ~Slice(void);
+    Slice(Slice const& src) { *this = src; }
+    Slice& operator=(Slice const& rhs);
+    Slice& operator=(const char* data);
 
-    static Str newSlice(const char* data);
-    static Str newSliceWithLength(const char* data, size_t len);
-    static Str newSliceWithOffset(const char* data, size_t offset);
-    static Str newSliceWithOffset(Str const& src, size_t offset);
-    static Str newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset);
+    static Slice newSlice(const char* data);
+    static Slice newSliceWithLength(const char* data, size_t len);
+    static Slice newSliceWithOffset(const char* data, size_t offset);
+    static Slice newSliceWithOffset(Slice const& src, size_t offset);
+    static Slice newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset);
 
     size_t length(void) const;
     size_t count(char c) const;
-    Utils::optional<Str> strchr(char c);
-    Str& trim(const char* reject = " \f\n\r\t\v");
+    Utils::optional<Slice> strchr(char c);
+    Slice& trim(const char* reject = " \f\n\r\t\v");
     const char* raw(void) const;
     bool isInitialized(void) const;
     iterator begin(void) const;
@@ -147,12 +147,12 @@ class Str {
     Split split(const char* delim = " \f\n\r\t\v") const;
     SplitN splitn(size_t n, const char* delim = " \f\n\r\t\v") const;
 
-    bool operator==(Str const& rhs) const;
-    bool operator!=(Str const& rhs) const;
-    bool operator<(Str const& rhs) const;
-    bool operator<=(Str const& rhs) const;
-    bool operator>(Str const& rhs) const;
-    bool operator>=(Str const& rhs) const;
+    bool operator==(Slice const& rhs) const;
+    bool operator!=(Slice const& rhs) const;
+    bool operator<(Slice const& rhs) const;
+    bool operator<=(Slice const& rhs) const;
+    bool operator>(Slice const& rhs) const;
+    bool operator>=(Slice const& rhs) const;
 
     operator bool() const;
 
@@ -162,20 +162,20 @@ class Str {
 
     bool _throwIfUninitialized(void) const;
 
-    Str(const char* data, size_t len);
-    Str(const char* data, size_t len, size_t offset);
+    Slice(const char* data, size_t len);
+    Slice(const char* data, size_t len, size_t offset);
 };
 
-bool operator==(std::string lhs, Str const& rhs);
-bool operator!=(std::string lhs, Str const& rhs);
-bool operator<(std::string lhs, Str const& rhs);
-bool operator<=(std::string lhs, Str const& rhs);
-bool operator>(std::string lhs, Str const& rhs);
-bool operator>=(std::string lhs, Str const& rhs);
+bool operator==(std::string lhs, Slice const& rhs);
+bool operator!=(std::string lhs, Slice const& rhs);
+bool operator<(std::string lhs, Slice const& rhs);
+bool operator<=(std::string lhs, Slice const& rhs);
+bool operator>(std::string lhs, Slice const& rhs);
+bool operator>=(std::string lhs, Slice const& rhs);
 
-std::ostream& operator<<(std::ostream& o, Str const& str);
+std::ostream& operator<<(std::ostream& o, Slice const& str);
 
-void append_slice_to_vector(std::vector<char>& vec, Str slice);
-void append_slice_to_string(std::string& str, Str slice);
+void append_slice_to_vector(std::vector<char>& vec, Slice slice);
+void append_slice_to_string(std::string& str, Slice slice);
 
 #endif

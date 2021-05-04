@@ -1,4 +1,4 @@
-set(MODULE_NAME Str)
+set(MODULE_NAME Slice)
 
 include_directories(src)
 

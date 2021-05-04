@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 
-#include "../src/Str.hpp"
+#include "../src/Slice.hpp"
 
 #include <iostream>
 #include <vector>
 
-TEST(StrSplit, split_test_basic) {
-    Str str = "A few words\r\n";
-    Str::Split iter = str.split();
+TEST(SliceSplit, split_test_basic) {
+    Slice str = "A few words\r\n";
+    Slice::Split iter = str.split();
 
     ASSERT_EQ("A", iter.next());
     ASSERT_EQ("few", iter.next());
@@ -15,9 +15,9 @@ TEST(StrSplit, split_test_basic) {
     ASSERT_TRUE(iter.is_complete());
 }
 
-TEST(StrSplit, split_test_period_delim) {
-    Str str = "192.168.0.1";
-    Str::Split iter = str.split(".");
+TEST(SliceSplit, split_test_period_delim) {
+    Slice str = "192.168.0.1";
+    Slice::Split iter = str.split(".");
 
     ASSERT_EQ("192", iter.next());
     ASSERT_EQ("168", iter.next());
@@ -26,9 +26,9 @@ TEST(StrSplit, split_test_period_delim) {
     ASSERT_TRUE(iter.is_complete());
 }
 
-TEST(StrSplit, split_with_c_string) {
+TEST(SliceSplit, split_with_c_string) {
     const char* stack_str = "I am a stack string, on the stack.";
-    Str::Split iter(stack_str);
+    Slice::Split iter(stack_str);
 
     ASSERT_EQ("I", iter.next());
     ASSERT_EQ("am", iter.next());
@@ -41,10 +41,10 @@ TEST(StrSplit, split_with_c_string) {
     ASSERT_TRUE(iter.is_complete());
 }
 
-TEST(StrSplit, split_test_string_delim) {
-    Str str = "lionAXtigerXYmouseXXYXBBcat";
-    Str::Split iter = str.split("ABXY");
-    Str tmp;
+TEST(SliceSplit, split_test_string_delim) {
+    Slice str = "lionAXtigerXYmouseXXYXBBcat";
+    Slice::Split iter = str.split("ABXY");
+    Slice tmp;
 
     tmp = iter.next();
     ASSERT_EQ("lion", tmp);
@@ -60,7 +60,7 @@ TEST(StrSplit, split_test_string_delim) {
     ASSERT_EQ(3, tmp.length());
 }
 
-TEST(StrSplit, split_test_collect) {
+TEST(SliceSplit, split_test_collect) {
     std::vector<std::string> expected;
     expected.push_back("The");
     expected.push_back("quick");
@@ -73,70 +73,70 @@ TEST(StrSplit, split_test_collect) {
     expected.push_back("dog");
     std::vector<std::string>::iterator itFake;
 
-    Str str = "The quick brown fox jumps over the lazy dog";
+    Slice str = "The quick brown fox jumps over the lazy dog";
     std::vector<std::string> vec2 = str.split().collect<std::vector<std::string> >();
     itFake = expected.begin();
     for (std::vector<std::string>::iterator it = vec2.begin(); it != vec2.end(); it++, itFake++)
         ASSERT_EQ(*it, *itFake);
 
-    std::vector<Str> vec = str.split().collect<std::vector<Str> >();
+    std::vector<Slice> vec = str.split().collect<std::vector<Slice> >();
     itFake = expected.begin();
-    for (std::vector<Str>::iterator it = vec.begin(); it != vec.end(); it++, itFake++)
+    for (std::vector<Slice>::iterator it = vec.begin(); it != vec.end(); it++, itFake++)
         ASSERT_EQ(*it, *itFake);
 }
 
-TEST(StrSplit, split) {
-    Str str("GET / HTTP/1.1\r\n");
-    Str::Split iter = str.split();
+TEST(SliceSplit, split) {
+    Slice str("GET / HTTP/1.1\r\n");
+    Slice::Split iter = str.split();
 
-    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    std::vector<Slice> vec = iter.collect<std::vector<Slice> >();
 
     EXPECT_EQ(vec.size(), 3);
 }
 
-TEST(StrSplit, double_split) {
-    Str str("Host: example.com\r\nAccept: Yes\r\nJunk: mess\r\n");
-    Str::Split iter = str.split("\r\n");
+TEST(SliceSplit, double_split) {
+    Slice str("Host: example.com\r\nAccept: Yes\r\nJunk: mess\r\n");
+    Slice::Split iter = str.split("\r\n");
 
-    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    std::vector<Slice> vec = iter.collect<std::vector<Slice> >();
     ASSERT_EQ(vec.size(), 3);
 
-    Str middle = vec[1].trim();
+    Slice middle = vec[1].trim();
     EXPECT_EQ(middle.length(), 11);
 
-    Str::Split iter2 = middle.split(":");
+    Slice::Split iter2 = middle.split(":");
 
-    std::vector<Str> vec2 = iter2.collect<std::vector<Str> >();
+    std::vector<Slice> vec2 = iter2.collect<std::vector<Slice> >();
     ASSERT_EQ(vec2.size(), 2);
     EXPECT_EQ(vec2[0].trim(), "Accept");
     EXPECT_EQ(vec2[1].trim(), "Yes");
 }
 
 TEST(SplitN, double_split) {
-    Str str("Host: example.com\r\nAccept: Yes\r\nJunk: mess\r\n");
-    Str::Split iter = str.split("\r\n");
+    Slice str("Host: example.com\r\nAccept: Yes\r\nJunk: mess\r\n");
+    Slice::Split iter = str.split("\r\n");
 
-    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    std::vector<Slice> vec = iter.collect<std::vector<Slice> >();
     ASSERT_EQ(vec.size(), 3);
 
-    Str middle = vec[1].trim();
+    Slice middle = vec[1].trim();
     EXPECT_EQ(middle.length(), 11);
 
-    Str::SplitN iter2 = middle.splitn(1, ":");
+    Slice::SplitN iter2 = middle.splitn(1, ":");
 
-    std::vector<Str> vec2 = iter2.collect<std::vector<Str> >();
+    std::vector<Slice> vec2 = iter2.collect<std::vector<Slice> >();
     ASSERT_EQ(vec2.size(), 1);
     EXPECT_EQ(vec2[0], "Accept: Yes");
 }
 
 TEST(SplitN, split_once) {
-    Str str("Host: example.com\r\nIpv6 address: 2001:0DB8:AC10:FE01::\r\nJunk: mess\r\n");
+    Slice str("Host: example.com\r\nIpv6 address: 2001:0DB8:AC10:FE01::\r\nJunk: mess\r\n");
 
-    std::vector<Str> vec = str.split("\r\n").collect<std::vector<Str> >();
+    std::vector<Slice> vec = str.split("\r\n").collect<std::vector<Slice> >();
     ASSERT_EQ(vec.size(), 3);
 
-    Str middle = vec[1].trim();
-    std::vector<Str> vec2 = middle.splitn(2, ":").collect<std::vector<Str> >();
+    Slice middle = vec[1].trim();
+    std::vector<Slice> vec2 = middle.splitn(2, ":").collect<std::vector<Slice> >();
 
     ASSERT_EQ(vec2.size(), 2);
     EXPECT_EQ(vec2[0].trim(), "Ipv6 address");
@@ -144,10 +144,10 @@ TEST(SplitN, split_once) {
 }
 
 TEST(SplitN, split_header) {
-    Str str("Host: example.com\r\n");
-    Str::SplitN iter = str.splitn(2, ":");
-    Str header_name = iter.next();
-    Str header_value = iter.next();
+    Slice str("Host: example.com\r\n");
+    Slice::SplitN iter = str.splitn(2, ":");
+    Slice header_name = iter.next();
+    Slice header_value = iter.next();
 
     ASSERT_TRUE(iter.is_complete());
 }

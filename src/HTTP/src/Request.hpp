@@ -7,7 +7,7 @@
 
 #include "../../Option/src/optional.hpp"
 #include "../../Result/src/result.hpp"
-#include "../../Str/src/Str.hpp"
+#include "../../Slice/src/Slice.hpp"
 #include "../../Utils/src/Utils.hpp"
 
 #define URI_SIZE_LIMIT 2048
@@ -121,12 +121,12 @@ class Request {
 
         Builder& method(Method new_method);
         Builder& header(const char* key, const char* val);
-        Builder& header(Str key, Str val);
+        Builder& header(Slice key, Slice val);
         Builder& header(std::string const& key, std::string const& val);
         Builder& uri(std::string const& new_uri);
         Builder& version(Version new_version);
         Builder& body(std::string new_body);
-        Builder& append_to_body(Str const& slice);
+        Builder& append_to_body(Slice const& slice);
 
         // TODO remove as many of these as possible, when server is ready
         Method const& get_method(void) const;
@@ -164,7 +164,7 @@ class Request {
         Parser(Parser const& src);
         Parser& operator=(Parser const& rhs);
 
-        void parse_line(Str line);
+        void parse_line(Slice line);
         bool is_complete(void) const;
         bool is_error(void) const;
 
@@ -178,17 +178,17 @@ class Request {
         Builder builder;
         Utils::optional<size_t> content_length;
 
-        void parse_method(Str line);
-        void parse_header(Str line);
-        void parse_body(Str line);
-        void parse_chunked(Str line);
+        void parse_method(Slice line);
+        void parse_header(Slice line);
+        void parse_body(Slice line);
+        void parse_chunked(Slice line);
 
         void process(void);
 
         void set_parser_state(Step new_step, State new_state);
 
         bool line_should_have_CRLF(void) const;
-        bool line_has_CRLF(Str const& line) const;
+        bool line_has_CRLF(Slice const& line) const;
     };
 
   public:
@@ -210,14 +210,14 @@ class Request {
     Request(Method new_method, std::string& new_uri, Version new_version,
             std::map<std::string, std::string>& new_headers, std::string& new_body);
 
-    static std::map<const Str, Method> create_method_map(void);
-    static std::map<const Str, bool> create_header_map(void);
-    static std::map<const Str, Version> create_version_map(void);
+    static std::map<const Slice, Method> create_method_map(void);
+    static std::map<const Slice, bool> create_header_map(void);
+    static std::map<const Slice, Version> create_version_map(void);
 
   public:
-    static const std::map<const Str, Method> valid_methods;
-    static const std::map<const Str, bool> valid_headers;
-    static const std::map<const Str, Version> valid_versions;
+    static const std::map<const Slice, Method> valid_methods;
+    static const std::map<const Slice, bool> valid_headers;
+    static const std::map<const Slice, Version> valid_versions;
 };
 
 std::string& operator+(std::string& lhs, Request::State const& rhs);

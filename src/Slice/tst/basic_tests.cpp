@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../../Utils/src/Utils.hpp"
-#include "../src/Str.hpp"
+#include "../src/Slice.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -20,23 +20,23 @@
         Utils::runtime_error);
 // clang-format on
 
-TEST(StrCreation, default_construction) {
-    Str str;
+TEST(SliceCreation, default_construction) {
+    Slice str;
 
     ASSERT_FALSE(str.isInitialized());
-    TEST_THROW(str.length();, "Operation called using Uninitialized Str");
+    TEST_THROW(str.length();, "Operation called using Uninitialized Slice");
 }
 
-TEST(StrCreation, construction_of_empty_str) {
-    Str str("");
+TEST(SliceCreation, construction_of_empty_str) {
+    Slice str("");
 
     ASSERT_TRUE(str.isInitialized());
     ASSERT_EQ(str.length(), 0);
 }
 
-TEST(StrCreation, construction_from_char_pointer) {
-    Str str("hello there");
-    Str str2 = "hello there";
+TEST(SliceCreation, construction_from_char_pointer) {
+    Slice str("hello there");
+    Slice str2 = "hello there";
 
     ASSERT_TRUE(str.isInitialized());
     ASSERT_EQ(str.length(), 11);
@@ -44,10 +44,10 @@ TEST(StrCreation, construction_from_char_pointer) {
     ASSERT_EQ(str2.length(), 11);
 }
 
-TEST(StrCreation, construction_from_string) {
+TEST(SliceCreation, construction_from_string) {
     std::string hi("hello there");
-    Str str(hi);
-    Str str2 = hi;
+    Slice str(hi);
+    Slice str2 = hi;
 
     ASSERT_TRUE(str.isInitialized());
     ASSERT_EQ(str.length(), 11);
@@ -55,13 +55,13 @@ TEST(StrCreation, construction_from_string) {
     ASSERT_EQ(str2.length(), 11);
 }
 
-TEST(StrCreation, output_test) {
+TEST(SliceCreation, output_test) {
     std::stringstream stream1;
     std::stringstream stream2;
     std::stringstream stream3;
-    Str str("hello there");
-    Str str2;
-    Str str3("");
+    Slice str("hello there");
+    Slice str2;
+    Slice str3("");
 
     stream1 << str;
     ASSERT_EQ(stream1.str(), "hello there");
@@ -71,9 +71,9 @@ TEST(StrCreation, output_test) {
     ASSERT_EQ(stream3.str(), "");
 }
 
-TEST(StrCreation, construction_of_partial_slice) {
-    Str str = Str::newSliceWithLength("hello there", 5);
-    Str str2 = Str::newSliceWithLengthAndOffset("hello there", 5, 6);
+TEST(SliceCreation, construction_of_partial_slice) {
+    Slice str = Slice::newSliceWithLength("hello there", 5);
+    Slice str2 = Slice::newSliceWithLengthAndOffset("hello there", 5, 6);
     std::stringstream stream1;
     std::stringstream stream2;
 
@@ -85,16 +85,16 @@ TEST(StrCreation, construction_of_partial_slice) {
     ASSERT_EQ(stream2.str(), "there");
 }
 
-TEST(StrCreation, construction_of_slices_from_others_with_offset) {
-    Str str("I am a string slice");
-    Str str2 = Str::newSliceWithOffset(str, 7);
+TEST(SliceCreation, construction_of_slices_from_others_with_offset) {
+    Slice str("I am a string slice");
+    Slice str2 = Slice::newSliceWithOffset(str, 7);
 
     ASSERT_EQ(str2, "string slice");
 }
 
-TEST(Str_tests, count_test) {
-    Str str = "count the number of e's in this Str please";
+TEST(Slice_tests, count_test) {
+    Slice str = "count the number of e's in this Slice please";
 
-    EXPECT_EQ(str.count('e'), 5);
+    EXPECT_EQ(str.count('e'), 6);
     EXPECT_EQ(str.count('u'), 2);
 }

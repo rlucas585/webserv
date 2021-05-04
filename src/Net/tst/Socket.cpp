@@ -32,7 +32,7 @@ TEST(Socket_tests, crash_test1) {
 TEST(Socket_tests, crash_test2) {
     Socket::Result sock_res = Socket::init("127.2.1.1.1:4242", SOCK_STREAM);
 
-    EXPECT_EQ(sock_res, Socket::Result::Err("Invalid Str used for Ipv4Addr"));
+    EXPECT_EQ(sock_res, Socket::Result::Err("Invalid Slice used for Ipv4Addr"));
 }
 
 TEST(Socket_tests, move_semantics_test) {

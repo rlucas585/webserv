@@ -39,8 +39,8 @@ void handle_client(TcpStream& client) {
     std::cout << "client fd: " << client.fd() << ", message received = " << message_received
               << ", message size: " << message_received.size() << std::endl;
 
-    Str::Split iter(message_received.c_str(), "|");
-    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    Slice::Split iter(message_received.c_str(), "|");
+    std::vector<Slice> vec = iter.collect<std::vector<Slice> >();
 
     EXPECT_EQ(vec.size(), 2);
     if (vec[0] == "1") {

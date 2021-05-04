@@ -16,7 +16,7 @@
 #include <iostream>
 #include <vector>
 
-// Struct that enforces usage of the heap, to test Utils::optional manages
+// Sliceuct that enforces usage of the heap, to test Utils::optional manages
 // memory correctly
 struct HeapMemData {
     HeapMemData(void) : data(new char[100]) {}

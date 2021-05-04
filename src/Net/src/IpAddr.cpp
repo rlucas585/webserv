@@ -133,25 +133,25 @@ Ipv4Addr Ipv4Addr::init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t 
 }
 
 Ipv4Addr::Result Ipv4Addr::init_from_string(const char* str) {
-    return Ipv4Addr::init_from_string(Str(str));
+    return Ipv4Addr::init_from_string(Slice(str));
 }
 
-Ipv4Addr::Result Ipv4Addr::init_from_string(Str const& ip_str) {
-    std::string buf; // Used to isolate and null terminate the Str
+Ipv4Addr::Result Ipv4Addr::init_from_string(Slice const& ip_str) {
+    std::string buf; // Used to isolate and null terminate the Slice
     in_addr address;
 
     if (!ip_str.isInitialized() || ip_str.length() > 15) {
-        return Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr");
+        return Ipv4Addr::Result::Err("Invalid Slice used for Ipv4Addr");
     }
     if (ip_str == "localhost") {
         address.s_addr = inet_addr("127.0.0.1");
         return Ipv4Addr::Result::Ok(Ipv4Addr(address));
     }
-    buf = ip_str.toString();
+    buf = ip_str.toSliceing();
     buf.push_back('\0');
     address.s_addr = inet_addr(buf.c_str());
     if (address.s_addr == INADDR_NONE) {
-        return Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr");
+        return Ipv4Addr::Result::Err("Invalid Slice used for Ipv4Addr");
     }
     return Ipv4Addr::Result::Ok(Ipv4Addr(address));
 }

@@ -2,7 +2,7 @@
 #define IPADDR_HPP
 
 #include "../../Result/src/result.hpp"
-#include "../../Str/src/Str.hpp"
+#include "../../Slice/src/Slice.hpp"
 #include <netinet/in.h>
 
 class IpAddr {
@@ -33,7 +33,7 @@ class Ipv4Addr : public IpAddr {
     static Ipv4Addr init_from_bytes(u_int8_t bytes[4]);
     static Ipv4Addr init_from_bytes(u_int8_t a, u_int8_t b, u_int8_t c, u_int8_t d);
     static Result init_from_string(const char* str);
-    static Result init_from_string(Str const& str);
+    static Result init_from_string(Slice const& str);
 
     void octets(u_int8_t bytes[4]) const;
     bool is_unspecified(void) const;

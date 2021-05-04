@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../src/IpAddr.hpp"
-#include "../../Str/src/Str.hpp"
+#include "../../Slice/src/Slice.hpp"
 #include "../../Utils/src/Utils.hpp"
 #include <arpa/inet.h>
 #include <cstdio>
@@ -112,9 +112,9 @@ TEST(IpAddr_tests, creation_with_bytes_test) {
 }
 
 TEST(IpAddr_tests, creation_with_slice_test) {
-    Str total_str = "127.2.1.1:80";
-    Str::Split iter = total_str.split(":");
-    Str ip_str = iter.next();
+    Slice total_str = "127.2.1.1:80";
+    Slice::Split iter = total_str.split(":");
+    Slice ip_str = iter.next();
     Ipv4Addr addr = Ipv4Addr::init_from_string(ip_str).unwrap();
     u_int8_t expected_bytes[] = {127, 2, 1, 1};
     u_int8_t actual_bytes[4];
@@ -135,13 +135,13 @@ TEST(IpAddr_tests, creation_with_localhost_test) {
 TEST(IpAddr_tests, crash_test1) {
     Ipv4Addr::Result res = Ipv4Addr::init_from_string("hello");
     EXPECT_TRUE(res.is_err());
-    EXPECT_EQ(res, Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr"));
+    EXPECT_EQ(res, Ipv4Addr::Result::Err("Invalid Slice used for Ipv4Addr"));
 }
 
 TEST(IpAddr_tests, crash_test2) {
     Ipv4Addr::Result res = Ipv4Addr::init_from_string("127.0.0.1.5");
     EXPECT_TRUE(res.is_err());
-    EXPECT_EQ(res, Ipv4Addr::Result::Err("Invalid Str used for Ipv4Addr"));
+    EXPECT_EQ(res, Ipv4Addr::Result::Err("Invalid Slice used for Ipv4Addr"));
 }
 
 TEST(IpAddr_tests, into_inner_test) {

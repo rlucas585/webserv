@@ -1,5 +1,5 @@
 include_directories(../src/Utils)
-include_directories(../src/Str)
+include_directories(../src/Slice)
 include_directories(../src/Sys)
 include_directories(../src/Net)
 include_directories(../src/Option)

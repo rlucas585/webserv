@@ -66,7 +66,7 @@ TEST(SocketAddr_tests, string_creation_test2) {
 TEST(SocketAddr_tests, crash_test1) {
     SocketAddrV4::Result res = SocketAddrV4::init("127.0.0.1.5:1500");
 
-    EXPECT_EQ(res, SocketAddrV4::Result::Err("Invalid Str used for Ipv4Addr"));
+    EXPECT_EQ(res, SocketAddrV4::Result::Err("Invalid Slice used for Ipv4Addr"));
 }
 
 TEST(SocketAddr_tests, crash_test2) {
