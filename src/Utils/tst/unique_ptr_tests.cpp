@@ -16,6 +16,10 @@
 #include <iostream>
 #include <string>
 
+#include <algorithm>
+#include <type_traits>
+#include <vector>
+
 // Run with valgrind to confirm unique_ptr capabilities
 
 TEST(Utils_tests, unique_ptr_test) {
@@ -60,3 +64,32 @@ TEST(Utils_tests, unique_ptr_reset) {
 }
 
 TEST(Utils_tests, unique_ptr_array) { Utils::array_unique_ptr<char> ptr(new char[1000]); }
+
+TEST(Utils_tests, unique_ptr_in_vector) {
+    std::vector<Utils::unique_ptr<int> > vec;
+
+    static_assert(std::is_copy_assignable<Utils::unique_ptr<int> >(),
+                  "unique_ptr is not copy_assignable and therefore unusable in vector");
+    vec.push_back(Utils::unique_ptr<int>(new int(1)));
+    vec.push_back(Utils::unique_ptr<int>(new int(2)));
+    vec.push_back(Utils::unique_ptr<int>(new int(3)));
+
+    std::vector<Utils::unique_ptr<int> >::iterator iter =
+        std::find(vec.begin(), vec.end(), Utils::unique_ptr<int>(new int(2)));
+    EXPECT_NE(iter, vec.end());
+    EXPECT_EQ(**iter, 2);
+}
+
+TEST(reference_test, unique_ptr_in_vector) {
+    std::vector<std::unique_ptr<int> > vec;
+
+    static_assert(!std::is_copy_assignable<std::unique_ptr<int> >(),
+                  "unique_ptr is not copy_assignable and therefore unusable in vector");
+    vec.push_back(std::unique_ptr<int>(new int(1)));
+    vec.push_back(std::unique_ptr<int>(new int(2)));
+    vec.push_back(std::unique_ptr<int>(new int(3)));
+
+    std::vector<std::unique_ptr<int> >::iterator iter =
+        std::find(vec.begin(), vec.end(), std::unique_ptr<int>(new int(2)));
+    EXPECT_EQ(iter, vec.end());
+}
