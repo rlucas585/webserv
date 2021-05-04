@@ -22,6 +22,9 @@ class BufReader {
     typedef Utils::result<Str, std::string> FillResult;
 
   public:
+    BufReader(void)
+        : inner(R()), buffer(new char[DEFAULT_BUF_SIZE]), position(0), capacity(0),
+          buffer_size(DEFAULT_BUF_SIZE) {}
     ~BufReader(void) {}
     BufReader(BufReader const& other) { *this = other; }
     BufReader& operator=(BufReader const& rhs) {
@@ -68,6 +71,17 @@ class BufReader {
             Str::newSliceWithLengthAndOffset(buffer.get(), capacity - position, position));
     }
 
+    bool requires_fill(void) const { return position >= capacity; }
+
+    bool ready_to_read(void) {
+        char c;
+        Utils::RwResult peek_res = inner.peek(&c, 1);
+
+        if (peek_res.is_err() || peek_res.unwrap() == 0)
+            return false;
+        return true;
+    }
+
     void consume(size_t amount) { position = Utils::min(position + amount, capacity); }
 
     Utils::RwResult read_until(char delimiter, std::string& buf, size_t read_limit = STRING_LIMIT) {
@@ -78,17 +92,21 @@ class BufReader {
         return ::read_until(*this, '\n', buf, read_limit);
     }
 
+    R& as_inner(void) { return inner; }
+    R const& as_inner(void) const { return inner; }
+
   private:
     R inner;
-    Utils::unique_ptr<char> buffer;
+    Utils::array_unique_ptr<char> buffer;
     size_t position;
     size_t capacity;
     size_t buffer_size;
 
-    BufReader(void);
     BufReader(size_t capacity, R new_inner)
         : inner(new_inner), buffer(new char[capacity]), position(0), capacity(0),
-          buffer_size(capacity) {}
+          buffer_size(capacity) {
+        Utils::memset(reinterpret_cast<void*>(&*buffer), '\0', capacity);
+    }
 
     static const size_t DEFAULT_BUF_SIZE = 1024;
 };
@@ -101,6 +119,8 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf, size_t r
         bool done;
         size_t used;
 
+        if (reader.requires_fill() && !reader.ready_to_read())
+            return Utils::RwResult::Ok(bytes_read);
         // First, fill the buffer (may or may not require read, see fill_buf impl)
         typename R::FillResult fill_res = reader.fill_buf();
         if (fill_res.is_err()) {

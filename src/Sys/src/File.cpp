@@ -43,6 +43,19 @@ Utils::RwResult File::write(const char* str) const { return inner.write(str); }
 
 Utils::RwResult File::write(const void* buf, size_t count) const { return inner.write(buf, count); }
 
+Utils::RwResult File::write(std::string const& str) const {
+    return write(reinterpret_cast<const void*>(str.c_str()), str.size());
+}
+
+// Always returns as ready to read
+Utils::RwResult File::peek(void* buf, size_t len) const {
+    (void)buf;
+    (void)len;
+    return Utils::RwResult::Ok(len);
+}
+
 Utils::RwResult File::read(void* buf, size_t len) const { return inner.read(buf, len); }
 
 Utils::RwResult File::read(std::string& str, size_t len) const { return inner.read(str, len); }
+
+int File::fd(void) const { return inner.raw(); }

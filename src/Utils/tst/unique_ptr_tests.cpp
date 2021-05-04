@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/23 21:26:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/23 22:47:26 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/22 01:16:37 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,3 +58,5 @@ TEST(Utils_tests, unique_ptr_reset) {
     ptr.reset(rawptr);
     EXPECT_EQ(*ptr, "goodbye");
 }
+
+TEST(Utils_tests, unique_ptr_array) { Utils::array_unique_ptr<char> ptr(new char[1000]); }

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/28 22:32:29 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/05 11:26:54 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/04/26 14:09:00 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@ TcpStream::~TcpStream(void) {}
 TcpStream::TcpStream(Socket sock) : inner(sock) {}
 
 TcpStream::TcpStream(TcpStream const& other) { *this = other; }
+
+TcpStream& TcpStream::operator=(TcpStream const& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    inner = rhs.inner; // Move semantics preserved from FileDesc
+    return *this;
+}
 
 // Requires updating for Ipv6
 TcpStream::Result TcpStream::connect(const char* str) {
@@ -52,6 +60,8 @@ TcpStream::Result TcpStream::connect(SocketAddr const& addr) {
     return TcpStream(sock);
 }
 
+TcpStream TcpStream::init_from_socket(Socket sock) { return TcpStream(sock); }
+
 Utils::RwResult TcpStream::read(void* buf, size_t len) { return inner.read(buf, len); }
 
 // I'm not positive on the most efficient way to Read into a string from a
@@ -77,6 +87,8 @@ Utils::RwResult TcpStream::read(std::string& str) {
     return ret;
 }
 
+Utils::RwResult TcpStream::peek(void* buf, size_t len) { return inner.peek(buf, len); }
+
 Utils::RwResult TcpStream::write(const void* buf, size_t len) { return inner.send(buf, len); }
 
 Utils::RwResult TcpStream::write(const char* str) {
@@ -87,10 +99,4 @@ Utils::RwResult TcpStream::write(std::string const& str) {
     return inner.send(reinterpret_cast<const void*>(str.c_str()), str.size());
 }
 
-TcpStream& TcpStream::operator=(TcpStream const& rhs) {
-    if (this == &rhs) {
-        return *this;
-    }
-    inner = rhs.inner; // Move semantics preserved from FileDesc
-    return *this;
-}
+int TcpStream::fd(void) const { return inner.into_inner(); }
