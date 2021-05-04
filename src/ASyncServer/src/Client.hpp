@@ -4,8 +4,6 @@
 #include "../../Net/src/TcpStream.hpp"
 #include "../../Sys/src/BufReader.hpp"
 
-#define CLIENT_BUFFER_SIZE 1024
-
 class Client {
   public:
     enum Status { Connected, Read, Processing, RequestReady, Write, Inactive };
@@ -34,7 +32,6 @@ class Client {
 
   private:
     BufReader<TcpStream> reader;
-    std::string data;
 };
 
 #endif

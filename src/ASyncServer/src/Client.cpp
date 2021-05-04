@@ -1,8 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(void) : state(Client::Inactive), reader(), data() {
-    data.reserve(CLIENT_BUFFER_SIZE);
-}
+Client::Client(void) : state(Client::Inactive), reader() {}
 
 Client::~Client(void) {}
 
