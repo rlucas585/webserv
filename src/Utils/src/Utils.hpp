@@ -66,13 +66,19 @@ class unique_ptr {
         }
     }
     unique_ptr(pointer p) : _p(p) {}
-    unique_ptr(unique_ptr& other) : _p(other._p) { other._p = 0; }
-    unique_ptr& operator=(unique_ptr& rhs) {
+    unique_ptr(const unique_ptr& other) : _p(other._p) {
+        // pretty is different
+        unique_ptr& mut_other = const_cast<unique_ptr&>(other);
+        mut_other._p = 0;
+    }
+    unique_ptr& operator=(const unique_ptr& rhs) {
         if (_p != 0) {
             delete _p;
         }
+        // pretty is different
+        unique_ptr& mut_rhs = const_cast<unique_ptr&>(rhs);
         _p = rhs._p;
-        rhs._p = 0;
+        mut_rhs._p = 0;
         return *this;
     }
 
@@ -101,6 +107,11 @@ class unique_ptr {
     reference operator*() { return *_p; }
 
     pointer operator->() { return _p; }
+
+    bool operator==(const unique_ptr& other) const {
+        return ((!_p && !other._p) || (_p && other._p && *_p == *other._p));
+    }
+    bool operator!=(const unique_ptr& other) const { return !(*this == other); }
 
   private:
     pointer _p;
