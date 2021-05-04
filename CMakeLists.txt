@@ -37,7 +37,7 @@ endif()
 add_subdirectory(external/googletest)
 
 add_subdirectory(src)
-# add_subdirectory(tst) # TODO complete this later
+add_subdirectory(tst)
 
 # include_directories(src)
 # include_directories(tst)

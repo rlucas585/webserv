@@ -139,13 +139,9 @@ TEST(Server, multiple_addresses) {
         server.select(clients);
 
         connections_received += clients.size();
-        // std::cout << "connections_received = " << connections_received << std::endl;
         for (client_it client = clients.begin(); client != clients.end(); client++) {
             handle_client((*client)->stream());
         }
-        // This is 6, because we expect two messages from each client:
-        // 1. Actual message
-        // 2. Nul message, indicating closure of connection from client side
         if (connections_received >= 3) {
             break;
         }

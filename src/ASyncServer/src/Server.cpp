@@ -18,6 +18,8 @@ Server::SelectConfig& Server::SelectConfig::operator=(SelectConfig const& rhs) {
     return *this;
 }
 
+Server::Server(void) {}
+
 Server::Server(std::vector<TcpListener>& tcp_listeners)
     : listeners(tcp_listeners), config(), clients() {
     FD_ZERO(&config.current_sockets);
@@ -40,9 +42,10 @@ Server& Server::operator=(Server const& rhs) {
     if (this == &rhs) {
         return *this;
     }
-    listeners = rhs.listeners;
+    Server& ref = const_cast<Server&>(rhs); // move semantics
+    listeners.swap(ref.listeners);
     config = rhs.config;
-    clients = rhs.clients;
+    clients.swap(ref.clients);
     return *this;
 }
 
