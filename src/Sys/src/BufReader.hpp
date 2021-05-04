@@ -165,8 +165,6 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf, size_t r
         bool done;
         size_t used;
 
-        if (reader.requires_fill() && !reader.ready_to_read())
-            return Utils::RwResult::Ok(bytes_read);
         // First, fill the buffer (may or may not require read, see fill_buf impl)
         typename R::FillResult fill_res = reader.fill_buf();
         if (fill_res.is_err()) {

@@ -28,6 +28,7 @@ class Client {
     Utils::RwResult write(std::string const& str);
 
     bool eof(void);
+
   public:
     Client::Status state;
 
