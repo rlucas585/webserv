@@ -23,9 +23,9 @@ TEST(Tree_tests, basics) {
 
 TEST(Tree_tests, find) {
     {
-		typedef std::string K;
-		typedef std::string V;
-		typedef Tree<K, V> Tree;
+        typedef std::string K;
+        typedef std::string V;
+        typedef Tree<K, V> Tree;
         Tree tree;
 
         tree.insert("key", "value");
@@ -38,15 +38,15 @@ TEST(Tree_tests, find) {
         tree.insert("key2", "key21", "value21");
         tree.insert("key2", "key22", "value22");
 
-		Tree::iterator iter;
+        Tree::iterator iter;
 
-		iter = tree.find("key1");
-		EXPECT_EQ((*iter)->get_value(), "value1");
+        iter = tree.find("key1");
+        EXPECT_EQ((*iter)->get_value(), "value1");
 
-		iter = tree.find("key11");
-		EXPECT_EQ((*iter)->get_value(), "value11");
+        iter = tree.find("key11");
+        EXPECT_EQ((*iter)->get_value(), "value11");
 
-		iter = tree.find("key22");
-		EXPECT_EQ((*iter)->get_value(), "value22");
+        iter = tree.find("key22");
+        EXPECT_EQ((*iter)->get_value(), "value22");
     }
 }
