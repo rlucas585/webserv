@@ -2,13 +2,14 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+#include <fcntl.h>
 #include <vector>
 
 TcpStream::TcpStream(void) : inner() {}
 
 TcpStream::~TcpStream(void) {}
 
-TcpStream::TcpStream(Socket sock) : inner(sock) {}
+TcpStream::TcpStream(Socket sock) : inner(sock) { fcntl(sock.into_inner(), F_SETFL, O_NONBLOCK); }
 
 TcpStream::TcpStream(TcpStream const& other) { *this = other; }
 

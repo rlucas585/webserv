@@ -2,6 +2,7 @@
 #include "../../Utils/src/Utils.hpp"
 #include <cerrno>
 #include <cstring>
+#include <fcntl.h>
 
 size_t Socket::READ_LIMIT = 512;
 

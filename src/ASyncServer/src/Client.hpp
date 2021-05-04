@@ -1,12 +1,13 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+#include "../../HTTP/src/Request.hpp"
 #include "../../Net/src/TcpStream.hpp"
 #include "../../Sys/src/BufReader.hpp"
 
 class Client {
   public:
-    enum Status { Connected, Read, Processing, RequestReady, Write, Inactive };
+    enum Status { Connected, Read, Processing, RequestReady, Write, Close, Inactive };
 
   public:
     Client(void);
@@ -27,11 +28,15 @@ class Client {
 
     bool eof(void);
 
+    bool parse_http(void);
+    http::Request::Result generate_request(void);
+
   public:
     Client::Status state;
 
   private:
     BufReader<TcpStream> reader;
+    http::Request::Parser parser;
 };
 
 #endif

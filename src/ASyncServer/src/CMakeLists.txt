@@ -9,4 +9,5 @@ target_link_libraries(${MODULE_NAME}_lib
   PUBLIC Utils_lib
   PUBLIC Sys_lib
   PUBLIC Net_lib
+  PUBLIC HTTP_lib
   )

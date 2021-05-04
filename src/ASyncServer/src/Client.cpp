@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(void) : state(Client::Inactive), reader() {}
+Client::Client(void) : state(Client::Inactive), reader(), parser() {}
 
 Client::~Client(void) {}
 
@@ -59,3 +59,44 @@ bool Client::eof(void) {
     }
     return reader.eof();
 }
+
+bool Client::parse_http(void) {
+    std::string line;
+    size_t lines_read = 0;
+
+    while (!eof()) {
+        Utils::RwResult read_result = read_line(line);
+        if (read_result.is_err()) {
+            // TODO indicates failure of ::read. Should be unlikely, but if it does occur
+            // then 500 Internal Server Error should be set as Response
+        } else {
+            size_t bytes_read = read_result.unwrap();
+            if (bytes_read == 0)
+                break;
+            parser.parse_line(Slice(line));
+            line.clear();
+            lines_read += 1;
+        }
+
+        if (lines_read == 0) {
+            state = Close; // If select is triggered with 0 bytes to send, the client has closed
+                           // connection
+            break;
+        }
+    }
+    return parser.is_complete();
+}
+
+http::Request::Result Client::generate_request(void) { return parser.generate_request(); }
+
+// if (parser.is_complete()) {
+//   http::Request::Result req_res = parser.generate_request();
+//   if (req_res.is_err()) {
+//     std::cout << "Invalid request:" << std::endl;
+//     std::cout << req_res.unwrap_err() << std::endl;
+//   } else {
+//     std::cout << "Valid request: " << std::endl;
+//     std::cout << req_res.unwrap();
+//   }
+//   parser = http::Request::Parser();
+// }
