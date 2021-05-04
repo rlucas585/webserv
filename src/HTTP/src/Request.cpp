@@ -4,13 +4,76 @@
 
 namespace http {
 
+Method::Method(void) : inner(GET) {}
+
+Method::Method(e_Method state) : inner(state) {}
+
+Method::~Method(void) {}
+
+Method::Method(Method const& src) : inner(src.inner) {}
+
+Method& Method::operator=(Method const& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    inner = rhs.inner;
+    return *this;
+}
+
+const char* Method::enum_strings[] = {
+    "GET",
+    "HEAD",
+    "POST",
+    "PUT",
+};
+
+Method::operator e_Method() const { return inner; }
+
+Method::operator const char*() const { return enum_strings[inner]; }
+
+std::ostream& operator<<(std::ostream& o, Method const& method) {
+    o << static_cast<const char*>(method);
+    return o;
+}
+
+Version::Version(void) : inner(HTTP_11) {}
+
+Version::Version(e_Version state) : inner(state) {}
+
+Version::~Version(void) {}
+
+Version::Version(Version const& src) : inner(src.inner) {}
+
+Version& Version::operator=(Version const& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    inner = rhs.inner;
+    return *this;
+}
+
+const char* Version::enum_strings[] = {
+    "HTTP/0.9",
+    "HTTP/1.0",
+    "HTTP/1.1",
+};
+
+Version::operator e_Version() const { return inner; }
+
+Version::operator const char*() const { return enum_strings[inner]; }
+
+std::ostream& operator<<(std::ostream& o, Version const& ver) {
+    o << static_cast<const char*>(ver);
+    return o;
+}
+
 // 'State' class. Essentially acts as an enum, but with additional functionality,
 // primarily the ability to be converted to a const char* with the enum name,
 // which allows the use of 'State' as an Error return value in Utils::result.
 
 Request::State::State(void) : inner(OK_200) {}
 
-Request::State::State(State_enum state) : inner(state) {}
+Request::State::State(e_State state) : inner(state) {}
 
 Request::State::~State(void) {}
 
@@ -34,69 +97,12 @@ const char* Request::State::enum_strings[] = {
     "HttpNotSupported_505",
 };
 
-Request::State::operator State_enum() const { return inner; }
+Request::State::operator e_State() const { return inner; }
 
 Request::State::operator const char*() const { return enum_strings[inner]; }
 
-// Below code dealing with enums is a little messy, and strongly coupled.
-// Strongly consider changing in future
-
-std::string stringify(Method const& method) {
-    switch (method) {
-    case GET:
-        return "GET";
-    case HEAD:
-        return "HEAD";
-    case POST:
-        return "POST";
-    default:
-        return "";
-    }
-}
-
-std::ostream& operator<<(std::ostream& o, Method const& method) {
-    switch (method) {
-    case GET:
-        o << "GET";
-        break;
-    case HEAD:
-        o << "HEAD";
-        break;
-    case POST:
-        o << "POST";
-        break;
-    default:;
-    }
-    return o;
-}
-
-std::string stringify(Version const& version) {
-    switch (version) {
-    case HTTP_09:
-        return "HTTP/0.9";
-    case HTTP_10:
-        return "HTTP/1.0";
-    case HTTP_11:
-        return "HTTP/1.1";
-    default:
-        return "";
-        ;
-    }
-}
-
-std::ostream& operator<<(std::ostream& o, Version const& ver) {
-    switch (ver) {
-    case HTTP_09:
-        o << "HTTP/0.9";
-        break;
-    case HTTP_10:
-        o << "HTTP/1.0";
-        break;
-    case HTTP_11:
-        o << "HTTP/1.1";
-        break;
-    default:;
-    }
+std::ostream& operator<<(std::ostream& o, Request::State const& state) {
+    o << static_cast<const char*>(state);
     return o;
 }
 
@@ -447,7 +453,8 @@ Request& Request::operator=(Request const& rhs) {
 }
 
 std::string Request::to_string(void) const {
-    std::string output = stringify(method) + " " + uri + " " + stringify(version) + "\r\n";
+    std::string output = static_cast<std::string>(method) + " " + uri + " " +
+                         static_cast<std::string>(version) + "\r\n";
 
     for (std::map<std::string, std::string>::const_iterator header = headers.begin();
          header != headers.end(); header++) {
@@ -509,11 +516,6 @@ std::ostream& operator<<(std::ostream& o, Request const& req) {
     o << "\r\n";
     o << req.body;
 
-    return o;
-}
-
-std::ostream& operator<<(std::ostream& o, Request::State const& state) {
-    o << static_cast<const char*>(state);
     return o;
 }
 

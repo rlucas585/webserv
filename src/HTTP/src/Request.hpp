@@ -15,29 +15,55 @@
 
 namespace http {
 
-enum Method {
+enum e_Method {
     GET,
     HEAD,
     POST,
     PUT,
 };
 
-std::string stringify(Method const& method);
-std::ostream& operator<<(std::ostream& o, Method const& method);
+class Method {
+  public:
+    Method(void);
+    Method(e_Method method);
+    ~Method(void);
+    Method(Method const& src);
+    Method& operator=(Method const& rhs);
 
-// More encodings exist, until these are implemented, respond with 501
-enum Encoding {
-    Chunked,
-    Identity,
+    operator e_Method() const;
+    operator const char*() const;
+
+  private:
+    e_Method inner;
+
+    static const char* enum_strings[];
 };
 
-enum Version {
+std::ostream& operator<<(std::ostream& o, Method const& method);
+
+enum e_Version {
     HTTP_09,
     HTTP_10,
     HTTP_11,
 };
 
-std::string stringify(Version const& version);
+class Version {
+  public:
+    Version(void);
+    Version(e_Version version);
+    ~Version(void);
+    Version(Version const& src);
+    Version& operator=(Version const& rhs);
+
+    operator e_Version() const;
+    operator const char*() const;
+
+  private:
+    e_Version inner;
+
+    static const char* enum_strings[];
+};
+
 std::ostream& operator<<(std::ostream& o, Version const& ver);
 
 // Required Request Headers:
@@ -54,7 +80,7 @@ std::ostream& operator<<(std::ostream& o, Version const& ver);
 
 class Request {
   public:
-    enum State_enum {
+    enum e_State {
         OK_200,
         BadRequest_400,
         LengthRequired_411,
@@ -67,16 +93,16 @@ class Request {
     class State {
       public:
         State(void);
-        State(State_enum state);
+        State(e_State state);
         ~State(void);
         State(State const& src);
         State& operator=(State const& rhs);
 
-        operator State_enum() const;
+        operator e_State() const;
         operator const char*() const;
 
       private:
-        State_enum inner;
+        e_State inner;
 
         static const char* enum_strings[];
     };
