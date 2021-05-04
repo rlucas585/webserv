@@ -128,7 +128,6 @@ class Request {
             Processing,
             Body,
             Chunked,
-            EndOfChunk,
             Complete,
             Error,
         };
@@ -161,6 +160,9 @@ class Request {
         void process(void);
 
         void set_parser_state(Step new_step, State new_state);
+
+        bool line_should_have_CRLF(void) const;
+        bool line_has_CRLF(Str const& line) const;
     };
 
   public:

@@ -223,19 +223,12 @@ Request::Parser& Request::Parser::operator=(Parser const& rhs) {
 
 void Request::Parser::parse_line(Str line) {
     // HTTP Request is invalid without \r\n at the end of each line, unless reading the Body
-    if ((step != Error && step != Body && step != Complete) &&
-        (line.length() < 2 || Str::newSliceWithOffset(line, line.length() - 2) != "\r\n")) {
-        step = Error;
-        error = BadRequest_400;
+    if (line_should_have_CRLF() && !line_has_CRLF(line)) {
+        return set_parser_state(Error, BadRequest_400);
     }
     if (step == Headers && line.length() == 2) {
         step = Processing;
     }
-    if (step == EndOfChunk && line.length() == 2) {
-        step = Complete;
-    }
-
-    line.trim(); // Remove whitespace from either end of line (including CRLF)
 
     switch (step) {
     case Method:
@@ -248,8 +241,6 @@ void Request::Parser::parse_line(Str line) {
         return parse_body(line);
     case Chunked:
         return parse_chunked(line);
-    case EndOfChunk:
-        return;
     case Complete:
         return;
     case Error:
@@ -321,6 +312,7 @@ void Request::Parser::parse_header(Str line) {
     Str header_name = iter.next();
     Str header_value = iter.next();
 
+    // Verify that there are two values, separated by ':'
     if (!header_name.isInitialized() || !header_value.isInitialized() || !iter.is_complete())
         return set_parser_state(Error, BadRequest_400);
 
@@ -352,22 +344,28 @@ static bool all_are_digits(Str const& s) {
 
 void Request::Parser::parse_chunked(Str line) {
     if (!content_length.has_value()) {
+        line.trim(); // Remove whitespace if reading chunk length
         // New value should be a number denoting next chunk length
         if (!all_are_digits(line)) {
             return set_parser_state(Error, BadRequest_400);
         }
         long next_chunk_length = Utils::atol_length(line.raw(), line.length());
         (void)next_chunk_length;
-        // TODO 03/05/2021 up to here: Next step is to save the chunk value, then parse
-        // in the below else block
-
+        content_length = Utils::make_optional(static_cast<size_t>(next_chunk_length));
     } else {
-        // Next value is to be added to body
+        // Next value is to be added to body. Anything beyond chunk limit is ignored
+        size_t next_chunk_length = content_length.unwrap();
+        builder.append_to_body(Str::newSliceWithLength(line, next_chunk_length));
+        content_length = Utils::nullopt;
+        if (next_chunk_length == 0) {
+            step = Complete;
+        }
     }
-    // TODO implement this
-    (void)line;
 }
 
+// The 'process()' function is called when an HTTP Parser receives a CRLF
+// that either signals the termination of the Request (e.g. GET/HEAD), or
+// separates the Headers and the Message Body (e.g. POST).
 void Request::Parser::process(void) {
     Utils::optional<std::string const*> content_length_opt = builder.get_header("Content-Length");
     Utils::optional<std::string const*> transfer_encoding_opt =
@@ -391,7 +389,13 @@ void Request::Parser::process(void) {
 
         step = Body;
     } else if (transfer_encoding_opt.has_value()) {
-        step = Body; // TODO Differentiate between transfer encoding and content length
+        // TODO Use a mask for different transfer encodings:
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
+        std::string const& transfer_encoding_str = *(transfer_encoding_opt.unwrap());
+        if (transfer_encoding_str.find("chunked") != std::string::npos) {
+            step = Chunked;
+        } else
+            step = Body;
     } else {
         if (builder.get_method() == POST)
             return set_parser_state(Error, LengthRequired_411);
@@ -402,6 +406,14 @@ void Request::Parser::process(void) {
 void Request::Parser::set_parser_state(Step new_step, State new_state) {
     step = new_step;
     error = new_state;
+}
+
+bool Request::Parser::line_should_have_CRLF(void) const {
+    return step == Method || step == Headers || step == Processing || step == Chunked;
+}
+
+bool Request::Parser::line_has_CRLF(Str const& line) const {
+    return line.length() >= 2 && Str::newSliceWithOffset(line, line.length() - 2) == "\r\n";
 }
 
 // Request Class
@@ -501,7 +513,7 @@ std::ostream& operator<<(std::ostream& o, Request const& req) {
 }
 
 std::ostream& operator<<(std::ostream& o, Request::State const& state) {
-    o << state;
+    o << static_cast<const char*>(state);
     return o;
 }
 

@@ -102,6 +102,17 @@ TEST(RequestParser, invalid_http) {
     EXPECT_EQ(req_res.unwrap_err(), Request::HttpNotSupported_505);
 }
 
+TEST(RequestParser, no_crlf) {
+    Request::Parser parser;
+
+    parser.parse_line("GET / HTTP/1.0");
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+    EXPECT_TRUE(req_res.is_err());
+    EXPECT_EQ(req_res.unwrap_err(), Request::BadRequest_400);
+}
+
 TEST(RequestParser, empty) {
     Request::Parser parser;
 
@@ -155,7 +166,8 @@ TEST(RequestParser, body) {
     parser.parse_line("\r\n");
     EXPECT_FALSE(parser.is_complete());
 
-    parser.parse_line("data=hello");
+    parser.parse_line("data=hellothere");  // Data after Content-Length is ignored
+    parser.parse_line("moredata=iammore"); // Data after Content-Length is ignored
 
     EXPECT_TRUE(parser.is_complete());
 
@@ -170,4 +182,65 @@ TEST(RequestParser, body) {
                                    "User-Agent: Mozilla Firefox\r\n"
                                    "\r\n"
                                    "data=hello");
+}
+
+TEST(RequestParser, body_chunked) {
+    Request::Parser parser;
+
+    parser.parse_line("POST / HTTP/1.1\r\n");
+    parser.parse_line("Host: example.com\r\n");
+    parser.parse_line("User-Agent:Mozilla Firefox\r\n");
+    parser.parse_line("Transfer-Encoding: chunked\r\n");
+    parser.parse_line("\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("11\r\n");           // Data after Content-Length is ignored
+    parser.parse_line("data=hello\n\r\n"); // Data after Content-Length is ignored
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("17\r\n");
+    parser.parse_line("moredata=goodbye\n\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("0\r\n");
+    parser.parse_line("\r\n");
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+
+    ASSERT_TRUE(req_res.is_ok());
+
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(), "POST / HTTP/1.1\r\n"
+                                   "Host: example.com\r\n"
+                                   "Transfer-Encoding: chunked\r\n"
+                                   "User-Agent: Mozilla Firefox\r\n"
+                                   "\r\n"
+                                   "data=hello\n"
+                                   "moredata=goodbye\n");
+}
+
+TEST(RequestParser, body_chunked_no_crlf) {
+    Request::Parser parser;
+
+    parser.parse_line("POST / HTTP/1.1\r\n");
+    parser.parse_line("Host: example.com\r\n");
+    parser.parse_line("User-Agent:Mozilla Firefox\r\n");
+    parser.parse_line("Transfer-Encoding: chunked\r\n");
+    parser.parse_line("\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("data=hellothere");  // Data after Content-Length is ignored
+    parser.parse_line("moredata=iammore"); // Data after Content-Length is ignored
+
+    parser.parse_line("0\r\n");
+    parser.parse_line("\r\n");
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+
+    ASSERT_TRUE(req_res.is_err());
+
+    EXPECT_EQ(req_res.unwrap_err(), Request::BadRequest_400);
 }
