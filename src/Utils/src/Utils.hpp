@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   Utils.hpp                                          :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rlucas <marvin@codam.nl>                     +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2021/03/17 19:05:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/22 01:15:28 by rlucas        ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
@@ -67,7 +55,7 @@ class unique_ptr {
     }
     unique_ptr(pointer p) : _p(p) {}
     unique_ptr(const unique_ptr& other) : _p(other._p) {
-        // pretty is different
+        // "move" semantics
         unique_ptr& mut_other = const_cast<unique_ptr&>(other);
         mut_other._p = 0;
     }
@@ -75,7 +63,7 @@ class unique_ptr {
         if (_p != 0) {
             delete _p;
         }
-        // pretty is different
+        // "move" semantics
         unique_ptr& mut_rhs = const_cast<unique_ptr&>(rhs);
         _p = rhs._p;
         mut_rhs._p = 0;

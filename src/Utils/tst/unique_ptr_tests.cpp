@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   unique_ptr_tests.cpp                               :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rlucas <marvin@codam.nl>                     +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2021/03/23 21:26:07 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/22 01:16:37 by rlucas        ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../src/Utils.hpp"
 #include <gtest/gtest.h>
 
@@ -69,11 +57,12 @@ TEST(Utils_tests, unique_ptr_in_vector) {
     std::vector<Utils::unique_ptr<int> > vec;
 
     static_assert(std::is_copy_assignable<Utils::unique_ptr<int> >(),
-                  "unique_ptr is not copy_assignable and therefore unusable in vector");
+                  "Utils::unique_ptr is copy-assignable due to no move semantics in C++98");
     vec.push_back(Utils::unique_ptr<int>(new int(1)));
     vec.push_back(Utils::unique_ptr<int>(new int(2)));
     vec.push_back(Utils::unique_ptr<int>(new int(3)));
 
+    // Utils::unique_ptr compares value of another Utils::unique_ptr with ==
     std::vector<Utils::unique_ptr<int> >::iterator iter =
         std::find(vec.begin(), vec.end(), Utils::unique_ptr<int>(new int(2)));
     EXPECT_NE(iter, vec.end());
@@ -83,12 +72,14 @@ TEST(Utils_tests, unique_ptr_in_vector) {
 TEST(reference_test, unique_ptr_in_vector) {
     std::vector<std::unique_ptr<int> > vec;
 
-    static_assert(!std::is_copy_assignable<std::unique_ptr<int> >(),
-                  "unique_ptr is not copy_assignable and therefore unusable in vector");
+    static_assert(
+        !std::is_copy_assignable<std::unique_ptr<int> >(),
+        "std::unique_ptr is correctly not copy-assignable as move semantics exist in C++11");
     vec.push_back(std::unique_ptr<int>(new int(1)));
     vec.push_back(std::unique_ptr<int>(new int(2)));
     vec.push_back(std::unique_ptr<int>(new int(3)));
 
+    // std::unique_ptr compares address of pointer with ==
     std::vector<std::unique_ptr<int> >::iterator iter =
         std::find(vec.begin(), vec.end(), std::unique_ptr<int>(new int(2)));
     EXPECT_EQ(iter, vec.end());
