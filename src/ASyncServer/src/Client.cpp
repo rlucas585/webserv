@@ -87,7 +87,25 @@ bool Client::parse_http(void) {
     return parser.is_complete();
 }
 
-http::Request::Result Client::generate_request(void) { return parser.generate_request(); }
+http::Request::Result Client::generate_request(void) {
+    // If the parser is still waiting to read a body, this function will read all
+    // remaining data.
+    std::string line;
+
+    while (parser.ready_for_body().has_value()) {
+        size_t amount_left = parser.ready_for_body().unwrap();
+
+        if (amount_left == 0)
+            break;
+        reader.read_remaining(line);
+        parser.parse_line(Slice(line));
+        if (line.size() == 0) // If there is simply nothing left to read, then exit
+            break;
+        line.clear();
+    }
+
+    return parser.generate_request();
+}
 
 // if (parser.is_complete()) {
 //   http::Request::Result req_res = parser.generate_request();

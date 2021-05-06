@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 13:18:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/26 15:57:00 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/06 13:17:22 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ TEST(Socket_tests, bind_test) {
 TEST(Socket_tests, connection_test) {
     SocketAddrV4 addr = SocketAddrV4::init("localhost:4243").unwrap();
     Socket server = Socket::init(addr, SOCK_STREAM).unwrap();
-    int ret;
+    int ret = 1;
 
     // sockaddr* and socklen_t are required for socket functions
     Utils::pair<const sockaddr*, socklen_t> addr_info = addr.into_inner();
@@ -76,8 +76,8 @@ TEST(Socket_tests, connection_test) {
 
     // Ensure quick rebinding
     ret = 1;
-    if (setsockopt(server.into_inner(), SOL_SOCKET, SO_REUSEADDR, &ret, sizeof(sockaddr_in)) ==
-        -1) {
+    if (setsockopt(server.into_inner(), SOL_SOCKET, SO_REUSEADDR, &ret,
+                   static_cast<socklen_t>(sizeof(int))) == -1) {
         throw Utils::runtime_error(std::string("Error in setsockopt(): ") + strerror(errno));
     }
 
@@ -91,9 +91,9 @@ TEST(Socket_tests, connection_test) {
     }
     std::thread server_thread = std::thread([&server](void) {
         size_t max_buf = 512;
-        socklen_t server_len;
+        socklen_t server_len = 0;
         sockaddr_storage storage;
-        Utils::memset(&storage, 0, sizeof(storage));
+        Utils::memset(reinterpret_cast<void*>(&storage), 0, sizeof(storage));
         Socket client;
         client = server.accept(reinterpret_cast<sockaddr*>(&storage), &server_len)
                      .expect("Some error in accept?");

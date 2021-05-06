@@ -18,13 +18,12 @@ class RequestTests : public ::testing::Test {
   public:
     Server server;
     std::vector<Client*> clients;
-    const char* address_info;
+    static constexpr const char* address_info = "localhost:4250";
 
     std::thread message_send(const char* request_message) {
-        const char* address_copy = address_info;
-        return std::thread([&address_copy, &request_message](void) {
+        return std::thread([request_message](void) {
             std::this_thread::sleep_for(std::chrono::milliseconds(30));
-            client_func(address_copy, request_message);
+            client_func(address_info, request_message);
         });
     }
 
@@ -44,7 +43,6 @@ class RequestTests : public ::testing::Test {
     }
 
     void SetUp(void) override {
-        address_info = "localhost:4250";
         TcpListener listener = TcpListener::bind(address_info).unwrap();
         std::vector<TcpListener> listeners;
 
@@ -112,6 +110,24 @@ TEST_F(RequestTests, post_message_too_much_data) {
 TEST_F(RequestTests, post_message_no_length) {
     std::thread client_thread = message_send("POST / HTTP/1.1\r\n\r\ndata=hello\r\n");
     expected_request("LengthRequired_411");
+    client_thread.join();
+}
+
+TEST_F(RequestTests, post_chunked_parse) {
+    std::thread client_thread = message_send("POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\n"
+                                             "10\r\n"
+                                             "data=hello\r\n"
+                                             "0\r\n"
+                                             "\r\n");
+    expected_request("POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\ndata=hello");
+    client_thread.join();
+}
+
+TEST_F(RequestTests, post_chunked_incomplete) {
+    std::thread client_thread = message_send("POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\n"
+                                             "10\r\n"
+                                             "data=hello\r\n");
+    expected_request("BadRequest_400");
     client_thread.join();
 }
 
