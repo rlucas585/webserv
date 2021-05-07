@@ -36,8 +36,16 @@ TEST(Response, headers) {
                                     "\r\n");
 }
 
-// TEST(Response, body) {
-//   Response response = Response::Builder()
-//     .header("Age", "86415")
-//     .build();
-// }
+TEST(Response, body) {
+    Response response = Response::Builder()
+                            .header("Age", "86415")
+                            .header("Content-Length", "40")
+                            .append_to_body("This is a message body from an http resp")
+                            .build();
+
+    EXPECT_EQ(response.to_string(), "HTTP/1.1 200 OK\r\n"
+                                    "Age: 86415\r\n"
+                                    "Content-Length: 40\r\n"
+                                    "\r\n"
+                                    "This is a message body from an http resp");
+}

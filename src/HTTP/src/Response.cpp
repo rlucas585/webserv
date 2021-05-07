@@ -101,6 +101,7 @@ std::string Response::to_string(void) const {
         output += header->first + ": " + header->second + "\r\n";
     }
     output += "\r\n";
+    output += body;
 
     return output;
 }

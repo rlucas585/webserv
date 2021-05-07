@@ -106,15 +106,3 @@ http::Request::Result Client::generate_request(void) {
 
     return parser.generate_request();
 }
-
-// if (parser.is_complete()) {
-//   http::Request::Result req_res = parser.generate_request();
-//   if (req_res.is_err()) {
-//     std::cout << "Invalid request:" << std::endl;
-//     std::cout << req_res.unwrap_err() << std::endl;
-//   } else {
-//     std::cout << "Valid request: " << std::endl;
-//     std::cout << req_res.unwrap();
-//   }
-//   parser = http::Request::Parser();
-// }
