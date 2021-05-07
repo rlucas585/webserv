@@ -67,45 +67,6 @@ std::ostream& operator<<(std::ostream& o, Version const& ver) {
     return o;
 }
 
-// 'State' class. Essentially acts as an enum, but with additional functionality,
-// primarily the ability to be converted to a const char* with the enum name,
-// which allows the use of 'State' as an Error return value in Utils::result.
-
-Request::State::State(void) : inner(OK_200) {}
-
-Request::State::State(e_State state) : inner(state) {}
-
-Request::State::~State(void) {}
-
-Request::State::State(State const& src) : inner(src.inner) {}
-
-Request::State& Request::State::operator=(State const& rhs) {
-    if (&rhs == this) {
-        return *this;
-    }
-    inner = rhs.inner;
-    return *this;
-}
-
-const char* Request::State::enum_strings[] = {
-    "OK_200",
-    "BadRequest_400",
-    "LengthRequired_411",
-    "URITooLong_414",
-    "HeaderTooLarge_431",
-    "NotImplemented_501",
-    "HttpNotSupported_505",
-};
-
-Request::State::operator e_State() const { return inner; }
-
-Request::State::operator const char*() const { return enum_strings[inner]; }
-
-std::ostream& operator<<(std::ostream& o, Request::State const& state) {
-    o << static_cast<const char*>(state);
-    return o;
-}
-
 Request::Builder::Builder(void) : method_(GET), uri_("/"), version_(HTTP_11), headers() {}
 
 Request::Builder::~Builder(void) {}
@@ -139,7 +100,6 @@ Request::Builder& Request::Builder::header(Slice key, Slice val) {
     std::map<std::string, std::string>::iterator search = headers.find(key);
 
     if (search != headers.end()) {
-        // If header exists, append new value to end, separated by comma
         search->second.append(", ").append(val);
     } else {
         headers.insert(std::make_pair(key, val));
@@ -151,7 +111,6 @@ Request::Builder& Request::Builder::header(std::string const& key, std::string c
     std::map<std::string, std::string>::iterator search = headers.find(key);
 
     if (search != headers.end()) {
-        // If header exists, append new value to end, separated by comma
         search->second += ", " + val;
     } else {
         headers.insert(std::make_pair(key, val));

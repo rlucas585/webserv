@@ -6,14 +6,17 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/03 17:18:57 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/07 17:15:08 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Utils.hpp"
+#include "../../Slice/src/Slice.hpp"
 
 // Uncomment to show src files are compiled with std=c++98
 // #include <array>
+
+#include <iostream>
 
 namespace Utils {
 // Uncomment to show src files are compiled with std=c++98
@@ -188,6 +191,8 @@ long atol_length(const char* str, size_t length) {
     return static_cast<long>(result * sign);
 }
 
+// runtime_error class
+
 runtime_error::runtime_error(void) : _msg("Undefined error") {}
 
 runtime_error::~runtime_error(void) throw() {}
@@ -207,4 +212,72 @@ runtime_error& runtime_error::operator=(runtime_error const& rhs) {
 }
 
 const char* runtime_error::what(void) const throw() { return (_msg.c_str()); }
+
+// Time class
+
+Time::Time(time_t time_val) : inner(time_val) {}
+
+Time::~Time(void) {}
+
+Time::Time(Time const& src) : inner(src.inner) {}
+
+Time& Time::operator=(Time const& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    inner = rhs.inner;
+    return *this;
+}
+
+Time Time::now(void) {
+    time_t timer;
+
+    ::time(&timer);
+    return Time(timer);
+}
+
+std::string Time::to_string(void) {
+    struct tm* timeinfo;
+    std::string output;
+
+    Utils::memset(buf, '\0', 26);
+
+    timeinfo = localtime(&inner);
+    asctime_r(timeinfo, buf);
+    std::cout << buf << std::endl;
+    for (size_t i = 0; i < 26; i++) {
+        if (buf[i])
+            output += buf[i];
+    }
+    return output;
+}
+
+std::string Time::to_http_string(void) {
+    to_string();
+    Slice original = Slice::newSlice(buf);
+
+    Slice::Split iter = original.split();
+    std::string output;
+
+    Slice day_name = iter.next();
+    Slice month = iter.next();
+    Slice day_num = iter.next();
+    Slice time = iter.next();
+    Slice year = iter.next();
+
+    output.append(day_name)
+        .append(", ")
+        .append(day_num)
+        .append(" ")
+        .append(month)
+        .append(" ")
+        .append(year)
+        .append(" ")
+        .append(time)
+        .append(" ")
+        .append("GMT+2");
+
+    return output;
+}
+
 } // namespace Utils
