@@ -9,6 +9,9 @@ add_executable(${MODULE_NAME}.test ${TEST_SOURCES})
 
 add_test(NAME ${MODULE_NAME}.test COMMAND ${MODULE_NAME}.test)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.txt
+  ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
 target_link_libraries(${MODULE_NAME}.test
  PUBLIC gtest
  PUBLIC ${MODULE_NAME}_lib

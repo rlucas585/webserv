@@ -6,11 +6,12 @@
 #include "../../Slice/src/Slice.hpp"
 #include "FileDesc.hpp"
 
+#include <fcntl.h>
 #include <string>
 
 class File {
   public:
-    typedef Utils::result<File, std::string> Result;
+    typedef Utils::result<File, const char*> Result;
 
   public:
     File(void);

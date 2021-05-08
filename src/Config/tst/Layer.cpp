@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "../src/Layer.hpp"
+#include "../src/Parser.hpp"
 
 class LayerTester : public ::testing::Test {
   public:
@@ -83,4 +84,14 @@ TEST_F(LayerTester, Location) {
     EXPECT_EQ(root_layer.get_layer(locations[0]).unwrap()->get_name(), "server");
     EXPECT_EQ(root_layer.get_layer(locations[1]).unwrap()->get_name(), "server");
     EXPECT_EQ(root_layer.get_layer(locations[2]).unwrap()->get_name(), "random");
+}
+
+TEST(Layer, parsing) {
+    config::Parser parser;
+
+    config::Parser::Result result = parser.generate_config_from_file("config.txt");
+
+    if (result.is_err()) {
+        std::cout << result.unwrap_err() << std::endl;
+    }
 }

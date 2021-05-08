@@ -9,8 +9,10 @@
 #include "../../Option/src/optional.hpp"
 #include "../../Result/src/result.hpp"
 #include "../../Slice/src/Slice.hpp"
+#include "../../Sys/src/BufReader.hpp"
+#include "../../Sys/src/File.hpp"
 
-#define LAYER_DEPTH_LIMIT 3
+#define LAYER_DEPTH_LIMIT 5
 
 typedef unsigned char uint8_t;
 
@@ -114,20 +116,5 @@ class Layer {
 
 std::ostream& operator<<(std::ostream& o, Layer::Location const& location);
 std::ostream& operator<<(std::ostream& o, Layer const& layer);
-
-// ConfigParser - Whereas the Layer class is somewhat generic - the ConfigParser
-// is specific to a certain type of configuration file.
-
-class ConfigParser {
-  public:
-    ~ConfigParser(void);
-    ConfigParser(ConfigParser const& src);
-    ConfigParser& operator=(ConfigParser const& rhs);
-
-  private:
-    ConfigParser(void);
-
-    Layer root;
-};
 
 #endif
