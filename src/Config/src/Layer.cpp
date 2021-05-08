@@ -1,5 +1,25 @@
 #include "Layer.hpp"
 
+// Layer Location - Specifies the location of a Layer in a Layer data structure
+
+bool Layer::Location::operator==(Location const& rhs) {
+    if (depth != rhs.depth)
+        return false;
+    for (size_t i = 0; i < depth; i++) {
+        if (id_at_depth[i] != rhs.id_at_depth[i])
+            return false;
+    }
+    return true;
+}
+
+size_t Layer::Location::last_common_depth(Location const& rhs) {
+    for (size_t i = 0; i < Utils::min(depth, rhs.depth); i++) {
+        if (id_at_depth[i] != rhs.id_at_depth[i])
+            return i;
+    }
+    return depth;
+}
+
 // Layer Iterator - uses an identifier to iterate through child blocks that have
 // the specified name
 
@@ -31,8 +51,8 @@ Layer::Iterator& Layer::Iterator::operator=(Iterator const& rhs) {
 }
 
 Layer::Iterator& Layer::Iterator::operator++(void) {
-    ++it;
     if (identifier.has_value()) {
+        ++it;
         while (it != end && it->uid.name != *identifier)
             ++it;
     } else {
@@ -86,20 +106,45 @@ Layer Layer::init(std::string layer_name, uint8_t layer_depth, uint8_t layer_id_
     return Layer(layer_name, layer_depth, layer_id_num);
 }
 
-Layer::PushResult Layer::push_layer(std::string name) {
+Layer::Result Layer::push_layer(std::string name) {
     uint8_t id = static_cast<uint8_t>(children.size());
     return push_layer(Layer::init(name, uid.depth + 1, id));
 }
 
-Layer::PushResult Layer::push_layer(Layer new_layer) {
+Layer::Result Layer::push_layer(Layer new_layer) {
     new_layer.parent = this;
     new_layer.uid.depth = uid.depth + 1;
     if (new_layer.uid.depth >= LAYER_DEPTH_LIMIT) {
-        return PushResult::Err("Attempt to add layer beyond depth limit");
+        return Result::Err("Attempt to add layer beyond depth limit");
     }
     new_layer.uid.id_num = static_cast<uint8_t>(children.size());
     children.push_back(new_layer);
-    return PushResult::Ok(&children.back());
+    Layer& layer_ref = children.back();
+    layer_ref.parent = this;
+    return Result::Ok(&children.back());
+}
+
+Layer::Result Layer::get_layer(Location location) {
+    size_t last_common = get_location().last_common_depth(location);
+
+    if (get_location() == location)
+        return Layer::Result::Ok(this);
+    else if (last_common > uid.depth) {
+        // Move deeper in tree
+        return children[location.id_at_depth[uid.depth]].get_layer(location);
+    } else if (last_common < uid.depth) {
+        // Move up in tree
+        if (parent == NULL)
+            return Layer::Result::Err("Invalid location in get_layer: no parent");
+        else
+            return parent->get_layer(location);
+    } else {
+        if (children.size() > static_cast<size_t>(location.id_at_depth[uid.depth + 1])) {
+            return &children[static_cast<size_t>(location.id_at_depth[uid.depth + 1])];
+        } else {
+            return Layer::Result::Err("Invalid location in get_layer");
+        }
+    }
 }
 
 Layer::Location Layer::get_location(void) const {
@@ -119,6 +164,8 @@ void Layer::add_value(std::string key, std::string value) {
 }
 
 void Layer::add_value(std::pair<std::string, std::string> value) { values.insert(value); }
+
+std::string const& Layer::get_name(void) const { return uid.name; }
 
 Utils::optional<std::string*> Layer::get_value(Slice key) {
     std::map<std::string, std::string>::iterator search = values.find(key);

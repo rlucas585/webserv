@@ -21,6 +21,10 @@ class Layer {
     struct Location {
         uint8_t depth;
         uint8_t id_at_depth[LAYER_DEPTH_LIMIT];
+
+        bool operator==(Location const& rhs);
+
+        size_t last_common_depth(Location const& rhs);
     };
 
     struct UID {
@@ -57,7 +61,7 @@ class Layer {
     };
 
   public:
-    typedef Utils::result<Layer*, const char*> PushResult;
+    typedef Utils::result<Layer*, const char*> Result;
     typedef Utils::result<Location, const char*> LocationRes;
 
   public:
@@ -75,13 +79,15 @@ class Layer {
 
     static Layer init(std::string layer_name, uint8_t layer_depth, uint8_t layer_id_num);
 
-    PushResult push_layer(std::string name);
-    PushResult push_layer(Layer new_layer);
+    Result push_layer(std::string name);
+    Result push_layer(Layer new_layer);
+    Result get_layer(Location location);
     Location get_location(void) const;
 
     void add_value(std::string key, std::string value);
     void add_value(std::pair<std::string, std::string> value);
 
+    std::string const& get_name(void) const;
     Utils::optional<std::string*> get_value(Slice key);
 
     value_iterator begin_values(void);
@@ -98,7 +104,7 @@ class Layer {
     UID uid;
     std::map<std::string, std::string> values;
     std::vector<Layer> children;
-    Layer* parent; // Change to optional in future
+    Layer* parent;
 
     Layer(void);
     Layer(std::string layer_name, uint8_t layer_depth, uint8_t layer_id_num);

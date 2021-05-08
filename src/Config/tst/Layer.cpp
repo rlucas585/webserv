@@ -7,7 +7,7 @@ class LayerTester : public ::testing::Test {
     Layer root_layer = Layer::init("http", 0, 0);
 
     void SetUp(void) override {
-        Layer::PushResult first_server_res = root_layer.push_layer("server");
+        Layer::Result first_server_res = root_layer.push_layer("server");
         if (first_server_res.is_ok()) {
             Layer& first_server = *(first_server_res.unwrap());
 
@@ -15,15 +15,23 @@ class LayerTester : public ::testing::Test {
             first_server.add_value("time", "place");
         }
 
-        Layer::PushResult second_server_res = root_layer.push_layer("server");
+        Layer::Result second_server_res = root_layer.push_layer("server");
         if (second_server_res.is_ok()) {
             Layer& second_server = *(second_server_res.unwrap());
 
             second_server.add_value("time", "place");
             second_server.add_value("somewhere", "beyond");
+
+            Layer::Result second_server_location_result = second_server.push_layer("location");
+            if (second_server_location_result.is_ok()) {
+                Layer& location = *(second_server_location_result.unwrap());
+
+                location.add_value("more", "values");
+                location.add_value("further", "beyond");
+            }
         }
 
-        Layer::PushResult random_block_res = root_layer.push_layer("random");
+        Layer::Result random_block_res = root_layer.push_layer("random");
         if (random_block_res.is_ok()) {
             Layer& random_block = *(random_block_res.unwrap());
 
@@ -61,4 +69,18 @@ TEST_F(LayerTester, iteration) {
         EXPECT_EQ(*filtered2->get_value("ice").value(), "articuno");
         EXPECT_FALSE(filtered2->get_value("key").has_value());
     }
+}
+
+// Layer::Location values can be used to reach any point of the data structure
+// from any other. (Pointers may have been sufficient for this project however)
+TEST_F(LayerTester, Location) {
+    std::vector<Layer::Location> locations;
+
+    Layer::Iterator block = root_layer.begin_children();
+    for (; block != root_layer.end_children(); block++) {
+        locations.push_back(block->get_location());
+    }
+    EXPECT_EQ(root_layer.get_layer(locations[0]).unwrap()->get_name(), "server");
+    EXPECT_EQ(root_layer.get_layer(locations[1]).unwrap()->get_name(), "server");
+    EXPECT_EQ(root_layer.get_layer(locations[2]).unwrap()->get_name(), "random");
 }
