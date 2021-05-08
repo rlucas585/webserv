@@ -8,6 +8,7 @@
 
 #include "../../Option/src/optional.hpp"
 #include "../../Result/src/result.hpp"
+#include "../../Slice/src/Slice.hpp"
 
 #define LAYER_DEPTH_LIMIT 3
 
@@ -31,7 +32,9 @@ class Layer {
   public:
     class Iterator {
       public:
+        Iterator(std::vector<Layer>& vec);
         Iterator(std::vector<Layer>& vec, std::string name);
+        Iterator(std::vector<Layer>::iterator new_it);
         ~Iterator(void);
         Iterator(Iterator const& src);
         Iterator& operator=(Iterator const& rhs);
@@ -48,7 +51,7 @@ class Layer {
       private:
         std::vector<Layer>::iterator it;
         std::vector<Layer>::iterator end;
-        std::string identifier;
+        Utils::optional<std::string> identifier;
 
         Iterator(void);
     };
@@ -79,10 +82,13 @@ class Layer {
     void add_value(std::string key, std::string value);
     void add_value(std::pair<std::string, std::string> value);
 
+    Utils::optional<std::string*> get_value(Slice key);
+
     value_iterator begin_values(void);
     value_iterator end_values(void);
-    layer_iterator begin_children(void);
-    layer_iterator end_children(void);
+    Iterator begin_children(void);
+    Iterator end_children(void);
+    Iterator filter_children(std::string filter);
 
     std::string to_string(void) const;
 

@@ -22,22 +22,43 @@ class LayerTester : public ::testing::Test {
             second_server.add_value("time", "place");
             second_server.add_value("somewhere", "beyond");
         }
+
+        Layer::PushResult random_block_res = root_layer.push_layer("random");
+        if (random_block_res.is_ok()) {
+            Layer& random_block = *(random_block_res.unwrap());
+
+            random_block.add_value("fire", "moltres");
+            random_block.add_value("electric", "zapdos");
+            random_block.add_value("ice", "articuno");
+        }
     }
 };
 
-TEST_F(LayerTester, initialization) {
-    std::cout << root_layer;
-    EXPECT_EQ(root_layer.to_string(), "http {\n"
-                                      "\n"
-                                      "  server {\n"
-                                      "    key value;\n"
-                                      "    time place;\n"
-                                      "\n"
-                                      "  }\n"
-                                      "  server {\n"
-                                      "    somewhere beyond;\n"
-                                      "    time place;\n"
-                                      "\n"
-                                      "  }\n"
-                                      "}\n");
+// Test iteration over values filtered by an identifier - and access of map
+// values from within a Layer
+TEST_F(LayerTester, iteration) {
+    size_t count = 0;
+
+    Layer::Iterator filtered = root_layer.filter_children("server");
+    for (; filtered != root_layer.end_children(); filtered++) {
+        if (count == 0) {
+            EXPECT_EQ(*filtered->get_value("key").value(), "value");
+            EXPECT_EQ(*filtered->get_value("time").value(), "place");
+            EXPECT_FALSE(filtered->get_value("somewhere").has_value());
+        }
+        if (count == 1) {
+            EXPECT_EQ(*filtered->get_value("time").value(), "place");
+            EXPECT_EQ(*filtered->get_value("somewhere").value(), "beyond");
+            EXPECT_FALSE(filtered->get_value("key").has_value());
+        }
+        count += 1;
+    }
+
+    Layer::Iterator filtered2 = root_layer.filter_children("random");
+    for (; filtered2 != root_layer.end_children(); filtered2++) {
+        EXPECT_EQ(*filtered2->get_value("electric").value(), "zapdos");
+        EXPECT_EQ(*filtered2->get_value("fire").value(), "moltres");
+        EXPECT_EQ(*filtered2->get_value("ice").value(), "articuno");
+        EXPECT_FALSE(filtered2->get_value("key").has_value());
+    }
 }

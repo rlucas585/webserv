@@ -3,8 +3,17 @@
 // Layer Iterator - uses an identifier to iterate through child blocks that have
 // the specified name
 
+Layer::Iterator::Iterator(std::vector<Layer>& vec)
+    : it(vec.begin()), end(vec.end()), identifier(Utils::nullopt) {}
+
 Layer::Iterator::Iterator(std::vector<Layer>& vec, std::string name)
-    : it(vec.begin()), end(vec.end()), identifier(name) {}
+    : it(vec.begin()), end(vec.end()), identifier(Utils::make_optional(name)) {
+    while (it->uid.name != *identifier && it != end)
+        ++it;
+}
+
+Layer::Iterator::Iterator(std::vector<Layer>::iterator new_it)
+    : it(new_it), end(new_it), identifier(Utils::nullopt) {}
 
 Layer::Iterator::~Iterator(void) {}
 
@@ -23,8 +32,12 @@ Layer::Iterator& Layer::Iterator::operator=(Iterator const& rhs) {
 
 Layer::Iterator& Layer::Iterator::operator++(void) {
     ++it;
-    while (it->uid.name != identifier && it != end)
+    if (identifier.has_value()) {
+        while (it != end && it->uid.name != *identifier)
+            ++it;
+    } else {
         ++it;
+    }
     return *this;
 }
 
@@ -44,13 +57,16 @@ bool Layer::Iterator::operator!=(Iterator const& rhs) { return !(*this == rhs); 
 
 // Layer Class
 
-Layer::Layer(UID layer_uid) : uid(layer_uid) {}
+Layer::Layer(UID layer_uid) : uid(layer_uid), values(), children(), parent(NULL) {
+    children.reserve(4);
+}
 
 Layer::Layer(std::string new_layer_name, uint8_t new_layer_depth, uint8_t new_layer_id_num)
-    : uid(), parent(NULL) {
+    : uid(), values(), children(), parent(NULL) {
     uid.name = new_layer_name;
     uid.depth = new_layer_depth;
     uid.id_num = new_layer_id_num;
+    children.reserve(4);
 }
 
 Layer::~Layer(void) {}
@@ -104,13 +120,25 @@ void Layer::add_value(std::string key, std::string value) {
 
 void Layer::add_value(std::pair<std::string, std::string> value) { values.insert(value); }
 
+Utils::optional<std::string*> Layer::get_value(Slice key) {
+    std::map<std::string, std::string>::iterator search = values.find(key);
+
+    if (search == values.end())
+        return Utils::nullopt;
+    return &search->second;
+}
+
 Layer::value_iterator Layer::begin_values(void) { return values.begin(); }
 
 Layer::value_iterator Layer::end_values(void) { return values.end(); }
 
-Layer::layer_iterator Layer::begin_children(void) { return children.begin(); }
+Layer::Iterator Layer::begin_children(void) { return Layer::Iterator(children); }
 
-Layer::layer_iterator Layer::end_children(void) { return children.end(); }
+Layer::Iterator Layer::end_children(void) { return Layer::Iterator(children.end()); }
+
+Layer::Iterator Layer::filter_children(std::string filter) {
+    return Layer::Iterator(children, filter);
+}
 
 std::ostream& Layer::indent(std::ostream& o, size_t spaces) {
     for (size_t i = 0; i < spaces; i++)
