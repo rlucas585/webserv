@@ -7,7 +7,10 @@ enable_testing()
 # Set Project Scoped definitions
 
 set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-noexcept-type")
+# -Wno-noexcept-type: Warning is only relevant if project was compiled with another project
+# using C++17 compilation
+# Link: https://stackoverflow.com/questions/46798456/handling-gccs-noexcept-type-warning
 
 # DOWNLOAD ALL GIT SUBMODULES
 find_package(Git QUIET)
