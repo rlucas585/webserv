@@ -2,7 +2,7 @@
 #define SOCKETADDR_HPP
 
 #include "../../Result/src/result.hpp"
-#include "../../Str/src/Str.hpp"
+#include "../../Slice/src/Slice.hpp"
 #include "../../Utils/src/pair.hpp"
 #include "IpAddr.hpp"
 #include <arpa/inet.h>
@@ -24,7 +24,7 @@ class SocketAddrV4 : public SocketAddr {
     SocketAddrV4 operator=(SocketAddrV4 const& rhs);
 
     static SocketAddrV4 init(Ipv4Addr ip, u_int16_t port);
-    static Result init(Str const& socket_addr_str);
+    static Result init(Slice const& socket_addr_str);
     static SocketAddrV4 init(sockaddr_in const& storage);
 
     Ipv4Addr const& ip(void) const;

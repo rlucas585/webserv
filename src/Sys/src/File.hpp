@@ -3,7 +3,7 @@
 
 #include "../../Option/src/optional.hpp"
 #include "../../Result/src/result.hpp"
-#include "../../Str/src/Str.hpp"
+#include "../../Slice/src/Slice.hpp"
 #include "FileDesc.hpp"
 
 #include <string>

@@ -39,8 +39,8 @@ void handle_client(TcpStream& client) {
     std::cout << "client fd: " << client.fd() << ", message received = " << message_received
               << ", message size: " << message_received.size() << std::endl;
 
-    Str::Split iter(message_received.c_str(), "|");
-    std::vector<Str> vec = iter.collect<std::vector<Str> >();
+    Slice::Split iter(message_received.c_str(), "|");
+    std::vector<Slice> vec = iter.collect<std::vector<Slice> >();
 
     EXPECT_EQ(vec.size(), 2);
     if (vec[0] == "1") {
@@ -139,13 +139,9 @@ TEST(Server, multiple_addresses) {
         server.select(clients);
 
         connections_received += clients.size();
-        // std::cout << "connections_received = " << connections_received << std::endl;
         for (client_it client = clients.begin(); client != clients.end(); client++) {
             handle_client((*client)->stream());
         }
-        // This is 6, because we expect two messages from each client:
-        // 1. Actual message
-        // 2. Nul message, indicating closure of connection from client side
         if (connections_received >= 3) {
             break;
         }

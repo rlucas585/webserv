@@ -12,5 +12,4 @@ add_test(NAME ${MODULE_NAME}.test COMMAND ${MODULE_NAME}.test)
 target_link_libraries(${MODULE_NAME}.test
  PUBLIC gtest
  PUBLIC ${MODULE_NAME}_lib
- PUBLIC Slice_lib
  )

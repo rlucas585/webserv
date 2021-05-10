@@ -1,10 +1,10 @@
-#include "Str/src/Str.hpp"
+#include "Slice/src/Slice.hpp"
 #include <iostream>
 
 int main(void) {
-    Str::Split iter("Project Compilation Successful");
+    Slice::Split iter("Project Compilation Successful");
 
-    for (Str slice = iter.next(); slice.isInitialized(); slice = iter.next()) {
+    for (Slice slice = iter.next(); slice.isInitialized(); slice = iter.next()) {
         std::cout << slice << std::endl;
     }
 

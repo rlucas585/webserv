@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 
 #include "../../Utils/src/Utils.hpp"
-#include "../src/Str.hpp"
+#include "../src/Slice.hpp"
 
 // clang-format off
 #define TEST_THROW(FUNC, ERRMSG) \
@@ -29,20 +29,20 @@
         Utils::runtime_error);
 // clang-format on
 
-TEST(StrIteration, basic_iteration) {
-    const char* staticStr = "hello there";
-    Str str(staticStr);
+TEST(SliceIteration, basic_iteration) {
+    const char* staticSlice = "hello there";
+    Slice str(staticSlice);
 
     size_t i = 0;
-    for (Str::iterator it = str.begin(); it != str.end(); it++, i++) {
-        ASSERT_EQ(staticStr[i], *it);
+    for (Slice::iterator it = str.begin(); it != str.end(); it++, i++) {
+        ASSERT_EQ(staticSlice[i], *it);
     }
 }
 
-TEST(StrIteration, iteration_throw) {
-    const char* staticStr = "hello there";
-    Str str(staticStr);
+TEST(SliceIteration, iteration_throw) {
+    const char* staticSlice = "hello there";
+    Slice str(staticSlice);
 
-    Str::iterator it = str.end();
-    TEST_THROW(*it;, "Dereferencing iterator past end of Str");
+    Slice::iterator it = str.end();
+    TEST_THROW(*it;, "Dereferencing iterator past end of Slice");
 }

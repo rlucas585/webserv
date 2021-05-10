@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:08:10 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/03/31 20:54:13 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/03 17:14:19 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,12 @@ TEST(Utils_tests, atoi) {
     int num = Utils::atoi("15");
 
     ASSERT_EQ(num, 15);
+}
+
+TEST(Utils_tests, atol) {
+    long num = Utils::atol("3147483648");
+
+    ASSERT_EQ(num, 3147483648);
 }
 
 TEST(Utils_tests, min) {

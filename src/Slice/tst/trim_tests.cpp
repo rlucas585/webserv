@@ -13,12 +13,12 @@
 #include <gtest/gtest.h>
 
 #include "../../Utils/src/Utils.hpp"
-#include "../src/Str.hpp"
+#include "../src/Slice.hpp"
 
 #include <iostream>
 
-TEST(Str, trim) {
-    Str str = "     Vim      ";
+TEST(Slice, trim) {
+    Slice str = "     Vim      ";
 
     EXPECT_EQ(str.length(), 14);
     EXPECT_EQ(str, "     Vim      ");
@@ -29,8 +29,8 @@ TEST(Str, trim) {
     EXPECT_EQ(str, "Vim");
 }
 
-TEST(Str, trim_all_whitespace) {
-    Str str = " \t\t\r    Vim    \v\v\n\n  ";
+TEST(Slice, trim_all_whitespace) {
+    Slice str = " \t\t\r    Vim    \v\v\n\n  ";
 
     EXPECT_EQ(str.length(), 21);
     EXPECT_EQ(str, " \t\t\r    Vim    \v\v\n\n  ");
@@ -41,8 +41,8 @@ TEST(Str, trim_all_whitespace) {
     EXPECT_EQ(str, "Vim");
 }
 
-TEST(Str, trim_with_parameter) {
-    Str str = "XXXXXVimXXXXXX";
+TEST(Slice, trim_with_parameter) {
+    Slice str = "XXXXXVimXXXXXX";
 
     EXPECT_EQ(str.length(), 14);
     EXPECT_EQ(str, "XXXXXVimXXXXXX");
@@ -53,8 +53,8 @@ TEST(Str, trim_with_parameter) {
     EXPECT_EQ(str, "Vim");
 }
 
-TEST(Str, trim_string) {
-    Str str = "XxXxXxWoxrdsXxXxXx";
+TEST(Slice, trim_string) {
+    Slice str = "XxXxXxWoxrdsXxXxXx";
 
     EXPECT_EQ(str.length(), 18);
     EXPECT_EQ(str, "XxXxXxWoxrdsXxXxXx");

@@ -26,17 +26,17 @@ SocketAddrV4::SocketAddrV4(sockaddr_in const& storage) { inner = storage; }
 
 SocketAddrV4 SocketAddrV4::init(Ipv4Addr ip, u_int16_t port) { return SocketAddrV4(ip, port); }
 
-SocketAddrV4::Result SocketAddrV4::init(Str const& socket_addr_str) {
-    Str::Split iter = socket_addr_str.split(":");
-    Str ip_str = iter.next();
-    Str port_str = iter.next();
+SocketAddrV4::Result SocketAddrV4::init(Slice const& socket_addr_str) {
+    Slice::Split iter = socket_addr_str.split(":");
+    Slice ip_str = iter.next();
+    Slice port_str = iter.next();
     int port;
 
     if (socket_addr_str.count(':') != 1)
-        return SocketAddrV4::Result::Err("Invalid Str used for SocketAddrV4");
+        return SocketAddrV4::Result::Err("Invalid Slice used for SocketAddrV4");
 
     if (!ip_str.isInitialized() || !port_str.isInitialized() || !iter.is_complete()) {
-        return SocketAddrV4::Result::Err("Invalid Str used for SocketAddrV4");
+        return SocketAddrV4::Result::Err("Invalid Slice used for SocketAddrV4");
     }
     Ipv4Addr::Result addr = Ipv4Addr::init_from_string(ip_str);
     if (addr.is_err())
