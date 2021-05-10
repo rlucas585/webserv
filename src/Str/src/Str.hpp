@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/08 13:27:05 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/03 10:44:46 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
 #include <vector>
 
 #include "../../Option/src/optional.hpp"
@@ -26,6 +27,8 @@ class Str {
       public:
         Split(const char* start);
         Split(const char* start, const char* delim);
+        Split(Str const& str);
+        Split(Str const& str, const char* delim);
         ~Split(void);
         Split(Split const& src);
         Split& operator=(Split const& rhs);
@@ -45,10 +48,46 @@ class Str {
       private:
         const char* _remainder;
         const char* _delimiter;
+        ssize_t length_remaining;
 
         Split(void) {}
 
-        const char* _findFirstNotOf(const char* s, const char* reject) const;
+        const char* _findFirstNotOf(const char* s, const char* reject);
+        bool is_from_slice(void) const;
+    };
+
+    class SplitN {
+      public:
+        SplitN(const char* start, size_t n);
+        SplitN(const char* start, const char* delim, size_t n);
+        SplitN(Str const& str, size_t n);
+        SplitN(Str const& str, const char* delim, size_t n);
+        ~SplitN(void);
+        SplitN(SplitN const& src);
+        SplitN& operator=(SplitN const& rhs);
+        Str next(void);
+        template <typename Container>
+        Container collect(void) {
+            Container c;
+            Str item;
+
+            while ((item = this->next())) {
+                c.push_back(item);
+            }
+            return c;
+        }
+        bool is_complete(void) const;
+
+      private:
+        const char* _remainder;
+        const char* _delimiter;
+        ssize_t length_remaining;
+        size_t values_left;
+
+        SplitN(void) {}
+
+        const char* _findFirstNotOf(const char* s, const char* reject);
+        bool is_from_slice(void) const;
     };
 
   public:
@@ -99,13 +138,14 @@ class Str {
     size_t length(void) const;
     size_t count(char c) const;
     Utils::optional<Str> strchr(char c);
-    void trim(const char* reject = " \f\n\r\t\v");
+    Str& trim(const char* reject = " \f\n\r\t\v");
     const char* raw(void) const;
     bool isInitialized(void) const;
     iterator begin(void) const;
     iterator end(void) const;
 
     Split split(const char* delim = " \f\n\r\t\v") const;
+    SplitN splitn(size_t n, const char* delim = " \f\n\r\t\v") const;
 
     bool operator==(Str const& rhs) const;
     bool operator!=(Str const& rhs) const;

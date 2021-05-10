@@ -10,6 +10,7 @@ add_subdirectory(Option)
 add_subdirectory(Result)
 add_subdirectory(Traits)
 add_subdirectory(ASyncServer)
+add_subdirectory(HTTP)
 
 # Only for testing
 add_subdirectory(Examples)
@@ -22,6 +23,7 @@ include_directories(Option)
 include_directories(Result)
 include_directories(Traits)
 include_directories(ASyncServer)
+include_directories(HTTP)
 
 add_executable(${BINARY}.run ${SOURCES})
 

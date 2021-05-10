@@ -28,6 +28,7 @@ class Server {
     };
 
   public:
+    Server(void);
     ~Server(void);
     Server(Server const& other);
     Server& operator=(Server const& rhs);
@@ -42,7 +43,6 @@ class Server {
     SelectConfig config;
     std::vector<Client> clients;
 
-    Server(void);
     Server(std::vector<TcpListener>& tcp_listeners);
 
     AcceptResult accept_new_client(int listener_fd);

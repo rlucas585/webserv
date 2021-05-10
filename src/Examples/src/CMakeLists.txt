@@ -13,3 +13,10 @@ add_executable(BufReader.run BufReader.cpp)
 target_link_libraries(BufReader.run
     PUBLIC Sys_lib
 	)
+
+add_executable(HttpRequest.run HttpRequest.cpp)
+
+target_link_libraries(HttpRequest.run
+  PUBLIC Net_lib
+  PUBLIC HTTP_lib
+	)

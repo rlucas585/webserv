@@ -13,9 +13,13 @@ int strcmp(const char* str1, const char* str2);
 int strncmp(const char* s1, const char* s2, size_t n);
 char* strpbrk(char* s, const char* accept);
 const char* strpbrk(const char* s, const char* accept);
+char* strpbrklen(char* s, const char* accept, size_t len);
+const char* strpbrklen(const char* s, const char* accept, size_t len);
 void* memset(void* b, int c, size_t len);
 void* memcpy(void* dest, const void* src, size_t n);
 int atoi(const char* str);
+long atol(const char* str);
+long atol_length(const char* str, size_t length);
 template <typename T>
 T const& min(T const& lhs, T const& rhs) {
     return (rhs < lhs) ? rhs : lhs;
