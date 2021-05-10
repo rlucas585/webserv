@@ -2,6 +2,7 @@
 #define UTILS_HPP
 
 #include <cstddef>
+#include <ctime>
 #include <exception>
 #include <string>
 
@@ -160,6 +161,25 @@ class array_unique_ptr {
 
   private:
     pointer _p;
+};
+
+class Time {
+  public:
+    ~Time(void);
+    Time(Time const& src);
+    Time& operator=(Time const& rhs);
+
+    static Time now(void);
+
+    std::string to_string(void);
+    std::string to_http_string(void);
+
+  private:
+    time_t inner;
+    char buf[26];
+
+    Time(void);
+    Time(time_t time_val);
 };
 
 } // namespace Utils

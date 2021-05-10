@@ -88,7 +88,7 @@ TEST_F(RequestTests, basic_message_parse) {
 
 TEST_F(RequestTests, empty_message_parse) {
     std::thread client_thread = message_send("aaaaaaa");
-    expected_request("BadRequest_400");
+    expected_request("400 Bad Request");
     client_thread.join();
 }
 
@@ -109,7 +109,7 @@ TEST_F(RequestTests, post_message_too_much_data) {
 
 TEST_F(RequestTests, post_message_no_length) {
     std::thread client_thread = message_send("POST / HTTP/1.1\r\n\r\ndata=hello\r\n");
-    expected_request("LengthRequired_411");
+    expected_request("411 Length Required");
     client_thread.join();
 }
 
@@ -127,7 +127,7 @@ TEST_F(RequestTests, post_chunked_incomplete) {
     std::thread client_thread = message_send("POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\n"
                                              "10\r\n"
                                              "data=hello\r\n");
-    expected_request("BadRequest_400");
+    expected_request("400 Bad Request");
     client_thread.join();
 }
 

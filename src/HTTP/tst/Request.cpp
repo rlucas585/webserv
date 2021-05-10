@@ -56,18 +56,18 @@ TEST(Request, with_body) {
 }
 
 TEST(RequestParser, state) {
-    Request::State state = Request::OK_200;
-    EXPECT_EQ(state, Request::OK_200);
-    EXPECT_STREQ(state, "OK_200");
+    State state = OK_200;
+    EXPECT_EQ(state, OK_200);
+    EXPECT_STREQ(state, "200 OK");
 
-    state = Request::BadRequest_400;
-    EXPECT_EQ(state, Request::BadRequest_400);
-    EXPECT_STREQ(state, "BadRequest_400");
+    state = BadRequest_400;
+    EXPECT_EQ(state, BadRequest_400);
+    EXPECT_STREQ(state, "400 Bad Request");
 
     std::string str("State is: ");
 
     str.append(state);
-    EXPECT_EQ(str, "State is: BadRequest_400");
+    EXPECT_EQ(str, "State is: 400 Bad Request");
 }
 
 TEST(RequestParser, method) {
@@ -99,7 +99,7 @@ TEST(RequestParser, invalid_http) {
     Request::Result req_res = parser.generate_request();
 
     EXPECT_TRUE(req_res.is_err());
-    EXPECT_EQ(req_res.unwrap_err(), Request::HttpNotSupported_505);
+    EXPECT_EQ(req_res.unwrap_err(), HttpNotSupported_505);
 }
 
 TEST(RequestParser, no_crlf) {
@@ -110,7 +110,7 @@ TEST(RequestParser, no_crlf) {
 
     Request::Result req_res = parser.generate_request();
     EXPECT_TRUE(req_res.is_err());
-    EXPECT_EQ(req_res.unwrap_err(), Request::BadRequest_400);
+    EXPECT_EQ(req_res.unwrap_err(), BadRequest_400);
 }
 
 TEST(RequestParser, empty) {
@@ -119,9 +119,9 @@ TEST(RequestParser, empty) {
     Request::Result req_res = parser.generate_request();
 
     EXPECT_FALSE(req_res.is_ok());
-    Request::State request_state = req_res.unwrap_err();
+    State request_state = req_res.unwrap_err();
 
-    EXPECT_EQ(request_state, Request::BadRequest_400);
+    EXPECT_EQ(request_state, BadRequest_400);
 }
 
 TEST(RequestParser, ignore_leading_crlf) {
@@ -253,5 +253,5 @@ TEST(RequestParser, body_chunked_no_crlf) {
 
     ASSERT_TRUE(req_res.is_err());
 
-    EXPECT_EQ(req_res.unwrap_err(), Request::BadRequest_400);
+    EXPECT_EQ(req_res.unwrap_err(), BadRequest_400);
 }

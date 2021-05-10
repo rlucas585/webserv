@@ -9,6 +9,7 @@
 #include "../../Result/src/result.hpp"
 #include "../../Slice/src/Slice.hpp"
 #include "../../Utils/src/Utils.hpp"
+#include "State.hpp"
 
 #define URI_SIZE_LIMIT 2048
 #define HEADER_SIZE_LIMIT 4096
@@ -80,33 +81,6 @@ std::ostream& operator<<(std::ostream& o, Version const& ver);
 
 class Request {
   public:
-    enum e_State {
-        OK_200,
-        BadRequest_400,
-        LengthRequired_411,
-        URITooLong_414,
-        HeaderTooLarge_431,
-        NotImplemented_501,
-        HttpNotSupported_505,
-    };
-
-    class State {
-      public:
-        State(void);
-        State(e_State state);
-        ~State(void);
-        State(State const& src);
-        State& operator=(State const& rhs);
-
-        operator e_State() const;
-        operator const char*() const;
-
-      private:
-        e_State inner;
-
-        static const char* enum_strings[];
-    };
-
     typedef Utils::result<Request, State> Result;
 
     friend std::ostream& operator<<(std::ostream&, Request const&);
@@ -219,9 +193,6 @@ class Request {
     static const std::map<const Slice, bool> valid_headers;
     static const std::map<const Slice, Version> valid_versions;
 };
-
-std::string& operator+(std::string& lhs, Request::State const& rhs);
-std::ostream& operator<<(std::ostream& o, Request::State const& state);
 
 } // namespace http
 
