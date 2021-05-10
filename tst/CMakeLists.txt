@@ -1,9 +1,5 @@
 include_directories(../src/Utils)
-<<<<<<< HEAD
 include_directories(../src/Slice)
-=======
-include_directories(../src/Str)
->>>>>>> d1b0db0ed98f0fb136b3f096db37f2b9bfc279ae
 include_directories(../src/Sys)
 include_directories(../src/Net)
 include_directories(../src/Option)
