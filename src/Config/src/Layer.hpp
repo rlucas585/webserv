@@ -98,6 +98,8 @@ class Layer {
     Iterator end_children(void);
     Iterator filter_children(std::string filter);
 
+    Layer* get_parent(void);
+
     std::string to_string(void) const;
 
     friend std::ostream& operator<<(std::ostream& o, Layer const& layer);
@@ -111,6 +113,7 @@ class Layer {
     Layer(void);
     Layer(std::string layer_name, uint8_t layer_depth, uint8_t layer_id_num);
 
+    Result increase_depth(void);
     static std::ostream& indent(std::ostream& o, size_t spaces);
 };
 

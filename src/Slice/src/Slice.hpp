@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/03 10:44:46 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/09 23:34:59 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,10 @@ class Slice {
 
     size_t length(void) const;
     size_t count(char c) const;
+    Utils::optional<char> front(void) const;
     Utils::optional<Slice> strchr(char c);
     Slice& trim(const char* reject = " \f\n\r\t\v");
+    Utils::optional<Slice> find(Slice needle);
     const char* raw(void) const;
     bool isInitialized(void) const;
     iterator begin(void) const;

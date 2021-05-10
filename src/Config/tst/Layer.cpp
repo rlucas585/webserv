@@ -86,7 +86,7 @@ TEST_F(LayerTester, Location) {
     EXPECT_EQ(root_layer.get_layer(locations[2]).unwrap()->get_name(), "random");
 }
 
-TEST(Layer, parsing) {
+TEST(Layer, basic_parsing) {
     config::Parser parser;
 
     config::Parser::Result result = parser.generate_config_from_file("config.txt");
@@ -94,4 +94,20 @@ TEST(Layer, parsing) {
     if (result.is_err()) {
         std::cout << result.unwrap_err() << std::endl;
     }
+    ASSERT_FALSE(result.is_err());
+    Layer config = result.unwrap();
+    // std::cout << config; // TODO change to actual test
+}
+
+TEST(Layer, complex_parsing) {
+    config::Parser parser;
+
+    config::Parser::Result result = parser.generate_config_from_file("nginx_example.txt");
+
+    if (result.is_err()) {
+        std::cout << result.unwrap_err() << std::endl;
+    }
+    ASSERT_FALSE(result.is_err());
+    Layer config = result.unwrap();
+    std::cout << config;
 }

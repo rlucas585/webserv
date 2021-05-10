@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/08 16:34:53 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/10 10:18:58 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,8 @@ std::string to_string(size_t val) {
         output.insert(0, 1, static_cast<char>((val % 10) + '0'));
     return output;
 }
+
+bool isspace(char c) { return Utils::strchr(" \f\n\r\t\v", c) != 0; }
 
 // runtime_error class
 

@@ -108,13 +108,12 @@ Layer Layer::init(std::string layer_name, uint8_t layer_depth, uint8_t layer_id_
 
 Layer::Result Layer::push_layer(std::string name) {
     uint8_t id = static_cast<uint8_t>(children.size());
-    return push_layer(Layer::init(name, uid.depth + 1, id));
+    return push_layer(Layer::init(name, uid.depth, id));
 }
 
 Layer::Result Layer::push_layer(Layer new_layer) {
     new_layer.parent = this;
-    new_layer.uid.depth = uid.depth + 1;
-    if (new_layer.uid.depth >= LAYER_DEPTH_LIMIT) {
+    if (new_layer.increase_depth().is_err()) {
         return Result::Err("Attempt to add layer beyond depth limit");
     }
     new_layer.uid.id_num = static_cast<uint8_t>(children.size());
@@ -185,6 +184,19 @@ Layer::Iterator Layer::end_children(void) { return Layer::Iterator(children.end(
 
 Layer::Iterator Layer::filter_children(std::string filter) {
     return Layer::Iterator(children, filter);
+}
+
+Layer* Layer::get_parent(void) { return parent; }
+
+Layer::Result Layer::increase_depth(void) {
+    uid.depth += 1;
+    if (uid.depth > LAYER_DEPTH_LIMIT)
+        return Layer::Result::Err("Attempt to add layer beyond depth limit");
+    for (std::vector<Layer>::iterator child = children.begin(); child != children.end(); child++) {
+        if (child->increase_depth().is_err())
+            return Layer::Result::Err("Attempt to add layer beyond depth limit");
+    }
+    return Layer::Result::Ok(this);
 }
 
 std::ostream& Layer::indent(std::ostream& o, size_t spaces) {

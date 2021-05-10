@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/03 11:36:06 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/10 18:27:23 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,9 +357,6 @@ Slice Slice::newSliceWithOffset(Slice const& src, size_t offset) {
 Slice Slice::newSliceWithLengthAndOffset(const char* data, size_t len, size_t offset) {
     if (!data)
         throw Utils::runtime_error("Initializing Slice with offset + length, but null pointer");
-    if (offset + len > Utils::strlen(data))
-        throw Utils::runtime_error(
-            "Initializing Slice with offset + length greater than length of data");
     return Slice(data, len, offset);
 }
 
@@ -379,6 +376,12 @@ size_t Slice::count(char c) const {
             count += 1;
     }
     return count;
+}
+
+Utils::optional<char> Slice::front(void) const {
+    if (_len > 0)
+        return Utils::make_optional(*_data);
+    return Utils::nullopt;
 }
 
 Utils::optional<Slice> Slice::strchr(char c) {
@@ -405,6 +408,18 @@ Slice& Slice::trim(const char* reject) {
         _len -= 1;
     }
     return *this;
+}
+
+Utils::optional<Slice> Slice::find(Slice needle) {
+    Utils::optional<Slice> ret = Utils::nullopt;
+
+    for (size_t i = 0; i < _len && i + needle.length() < _len; i++) {
+        if (Utils::strncmp(_data + i, needle._data, needle.length()) == 0) {
+            ret = Utils::make_optional(Slice::newSliceWithLength(_data + i, needle.length()));
+            break;
+        }
+    }
+    return ret;
 }
 
 const char* Slice::raw(void) const { return _data; }
