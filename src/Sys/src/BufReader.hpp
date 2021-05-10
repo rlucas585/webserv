@@ -8,8 +8,11 @@
 
 #include "../../Net/src/TcpStream.hpp"
 
+// Prototypes
 template <typename R>
 Utils::RwResult read_until(R& reader, char delimiter, std::string& buf);
+template <typename R>
+Utils::RwResult read_char(R& reader, char& c);
 
 // R must be some sort of Reader, such as a file, or a socket.
 // They must have the read(void* buf, size_t len) member function.
@@ -81,6 +84,8 @@ class BufReader {
     }
 
     Utils::RwResult read_line(std::string& buf) { return ::read_until(*this, '\n', buf); }
+
+    Utils::RwResult read_char(char& c) { return ::read_char(*this, c); }
 
     Utils::RwResult read_remaining(std::string& buf) {
         if (position >= capacity) {
@@ -186,6 +191,20 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf) {
             return Utils::RwResult::Ok(bytes_read);
         }
     }
+}
+
+template <typename R>
+Utils::RwResult read_char(R& reader, char& c) {
+    typename R::FillResult fill_res = reader.fill_buf();
+    if (fill_res.is_err()) {
+        return Utils::RwResult::Err(fill_res.unwrap_err());
+    }
+    Slice available = fill_res.unwrap();
+    if (available.length() == 0)
+        return Utils::RwResult::Ok(0);
+    c = available.front().unwrap(); // TODO Could add front() to Slice.
+    reader.consume(1);
+    return Utils::RwResult::Ok(1);
 }
 
 #endif

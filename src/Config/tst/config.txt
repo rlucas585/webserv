@@ -1,0 +1,9 @@
+http {
+# commented lines are ignored by the parser
+  key value;
+  other value; # Comments at the end of lines are also ignored
+
+  server {
+    more value;
+  }
+}

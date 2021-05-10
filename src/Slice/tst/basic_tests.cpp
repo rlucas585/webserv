@@ -98,3 +98,30 @@ TEST(Slice_tests, count_test) {
     EXPECT_EQ(str.count('e'), 6);
     EXPECT_EQ(str.count('u'), 2);
 }
+
+TEST(Slice_tests, find_test) {
+    Slice haystack = "This string has a lot of needle's to find";
+
+    Utils::optional<Slice> search = haystack.find("string");
+
+    ASSERT_TRUE(search.has_value());
+    EXPECT_EQ(search.unwrap(), "string");
+
+    search = haystack.find("of need");
+
+    ASSERT_TRUE(search.has_value());
+    EXPECT_EQ(search.unwrap(), "of need");
+
+    search = haystack.find("spiderman");
+
+    ASSERT_FALSE(search.has_value());
+}
+
+TEST(Slice_tests, front_test) {
+    Slice str;
+    Slice str2 = "actual slice";
+
+    EXPECT_FALSE(str.front().has_value());
+    ASSERT_TRUE(str2.front().has_value());
+    EXPECT_EQ(str2.front().unwrap(), 'a');
+}

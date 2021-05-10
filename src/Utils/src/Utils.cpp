@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/07 17:15:08 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/10 10:18:58 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,20 @@ long atol_length(const char* str, size_t length) {
     }
     return static_cast<long>(result * sign);
 }
+
+std::string to_string(size_t val) {
+    std::string output;
+    size_t len = 0;
+    for (size_t copy = val; copy > 0; copy /= 10)
+        len += 1;
+    if (val == 0)
+        return std::string("0");
+    for (; val > 0; val /= 10)
+        output.insert(0, 1, static_cast<char>((val % 10) + '0'));
+    return output;
+}
+
+bool isspace(char c) { return Utils::strchr(" \f\n\r\t\v", c) != 0; }
 
 // runtime_error class
 

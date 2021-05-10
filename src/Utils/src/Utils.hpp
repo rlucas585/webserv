@@ -21,6 +21,8 @@ void* memcpy(void* dest, const void* src, size_t n);
 int atoi(const char* str);
 long atol(const char* str);
 long atol_length(const char* str, size_t length);
+std::string to_string(size_t val);
+bool isspace(char c);
 template <typename T>
 T const& min(T const& lhs, T const& rhs) {
     return (rhs < lhs) ? rhs : lhs;
