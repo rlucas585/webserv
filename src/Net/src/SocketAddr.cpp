@@ -5,7 +5,7 @@ SocketAddrV4::SocketAddrV4(void) {}
 
 SocketAddrV4::~SocketAddrV4(void) {}
 
-SocketAddrV4::SocketAddrV4(SocketAddrV4 const& other) : inner(other.inner) {}
+SocketAddrV4::SocketAddrV4(SocketAddrV4 const& other) { inner = other.inner; }
 
 SocketAddrV4 SocketAddrV4::operator=(SocketAddrV4 const& rhs) {
     if (this == &rhs) {

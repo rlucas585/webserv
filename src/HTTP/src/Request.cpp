@@ -247,8 +247,11 @@ void Request::Parser::parse_line(Str line) {
     if (line_should_have_CRLF() && !line_has_CRLF(line)) {
         return set_parser_state(Error, BadRequest_400);
     }
-    if (step == Headers && line.length() == 2) {
-        step = Processing;
+    if (line.length() == 2) {
+        if (step == Headers)
+            step = Processing;
+        else if (step == Method) // Ignore leading CRLF's
+            return;
     }
 
     switch (step) {
@@ -280,14 +283,20 @@ Utils::optional<size_t> Request::Parser::ready_for_body(void) const {
     return content_length;
 }
 
+// generate_request() will also reset the Parser
 Request::Result Request::Parser::generate_request(void) {
     if (error != OK_200) {
-        return Request::Result::Err(error);
+        State return_error = error;
+        *this = Request::Parser();
+        return Request::Result::Err(return_error);
     } else if (step != Complete) {
+        *this = Request::Parser();
         // Message is incomplete, and therefore, badly formed
         return Request::Result::Err(BadRequest_400);
     } else {
-        return Request::Result::Ok(builder.build());
+        Request request = builder.build();
+        *this = Request::Parser();
+        return Request::Result::Ok(request);
     }
 }
 

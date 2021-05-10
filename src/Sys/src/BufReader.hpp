@@ -8,13 +8,8 @@
 
 #include "../../Net/src/TcpStream.hpp"
 
-#ifndef STRING_LIMIT
-#define STRING_LIMIT 1024
-#endif
-
 template <typename R>
-Utils::RwResult read_until(R& reader, char delimiter, std::string& buf,
-                           size_t read_limit = STRING_LIMIT);
+Utils::RwResult read_until(R& reader, char delimiter, std::string& buf);
 
 // R must be some sort of Reader, such as a file, or a socket.
 // They must have the read(void* buf, size_t len) member function.
@@ -81,13 +76,11 @@ class BufReader {
 
     void consume(size_t amount) { position = Utils::min(position + amount, capacity); }
 
-    Utils::RwResult read_until(char delimiter, std::string& buf, size_t read_limit = STRING_LIMIT) {
-        return ::read_until(*this, delimiter, buf, read_limit);
+    Utils::RwResult read_until(char delimiter, std::string& buf) {
+        return ::read_until(*this, delimiter, buf);
     }
 
-    Utils::RwResult read_line(std::string& buf, size_t read_limit = STRING_LIMIT) {
-        return ::read_until(*this, '\n', buf, read_limit);
-    }
+    Utils::RwResult read_line(std::string& buf) { return ::read_until(*this, '\n', buf); }
 
     Utils::RwResult read_remaining(std::string& buf) {
         if (position >= capacity) {
@@ -159,7 +152,7 @@ class BufReader {
 
 // R should be a BufReader or similar
 template <typename R>
-Utils::RwResult read_until(R& reader, char delimiter, std::string& buf, size_t read_limit) {
+Utils::RwResult read_until(R& reader, char delimiter, std::string& buf) {
     size_t bytes_read = 0;
     while (true) {
         bool done;
@@ -178,9 +171,6 @@ Utils::RwResult read_until(R& reader, char delimiter, std::string& buf, size_t r
             Slice next = next_opt.unwrap();
             size_t length = next.raw() - available.raw();
             Slice extension = Slice::newSliceWithLength(available.raw(), length + 1);
-            if (buf.size() + length + 1 > read_limit) {
-                return Utils::RwResult::Err(std::string("Over read_limit"));
-            }
             append_slice_to_string(buf, extension);
             done = true;
             used = length + 1;

@@ -1,22 +1,36 @@
 # Add new executable targets here to serve as examples
 
-add_executable(Select.run Select.cpp)
+set(BINARY Select)
 
-target_link_libraries(Select.run
+add_executable(${BINARY}.run ${BINARY}.cpp)
+
+target_link_libraries(${BINARY}.run
     PUBLIC Slice_lib
     PUBLIC Net_lib
     PUBLIC ASyncServer_lib
 	)
 
-add_executable(BufReader.run BufReader.cpp)
+set(BINARY BufReader)
 
-target_link_libraries(BufReader.run
+add_executable(${BINARY}.run ${BINARY}.cpp)
+
+target_link_libraries(${BINARY}.run
     PUBLIC Sys_lib
 	)
 
-add_executable(HttpRequest.run HttpRequest.cpp)
+set(BINARY HttpRequest)
 
-target_link_libraries(HttpRequest.run
+add_executable(${BINARY}.run ${BINARY}.cpp)
+
+target_link_libraries(${BINARY}.run
   PUBLIC Net_lib
   PUBLIC HTTP_lib
+	)
+
+set(BINARY ClientParsing)
+
+add_executable(${BINARY}.run ${BINARY}.cpp)
+
+target_link_libraries(${BINARY}.run
+  PUBLIC ASyncServer_lib
 	)

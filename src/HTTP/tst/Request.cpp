@@ -124,6 +124,17 @@ TEST(RequestParser, empty) {
     EXPECT_EQ(request_state, Request::BadRequest_400);
 }
 
+TEST(RequestParser, ignore_leading_crlf) {
+    Request::Parser parser;
+
+    parser.parse_line("\r\n");
+    EXPECT_FALSE(parser.is_complete());
+
+    parser.parse_line("GET / HTTP/1.0\r\n");
+    parser.parse_line("\r\n");
+    EXPECT_TRUE(parser.is_complete());
+}
+
 TEST(RequestParser, headers) {
     Request::Parser parser;
 
