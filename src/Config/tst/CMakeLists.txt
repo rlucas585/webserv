@@ -17,6 +17,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/nginx_example.txt
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/additional_conf.txt
   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mime.types
+  ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 target_link_libraries(${MODULE_NAME}.test
  PUBLIC gtest
