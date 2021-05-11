@@ -1,9 +1,14 @@
+# WebServ configuration file (basic)
+
 http {
-# commented lines are ignored by the parser
-  key value;
-  other value; # Comments at the end of lines are also ignored
+  root /tmp/www;
+
+  autoindex off;
 
   server {
-    more value;
+    limit_except GET {
+      allow 192.168.1.0/32;
+      deny all;
+    }
   }
 }
