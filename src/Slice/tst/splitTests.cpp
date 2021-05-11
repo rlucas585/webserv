@@ -26,10 +26,23 @@ TEST(SliceSplit, split_test_period_delim) {
     ASSERT_TRUE(iter.is_complete());
 }
 
+TEST(SliceSplit, count) {
+    Slice str = "192.168.0.1";
+    Slice::Split iter = str.split(".");
+
+    ASSERT_EQ(iter.count_remaining(), 4);
+    ASSERT_EQ("192", iter.next());
+    ASSERT_EQ("168", iter.next());
+    ASSERT_EQ("0", iter.next());
+    ASSERT_EQ("1", iter.next());
+    ASSERT_TRUE(iter.is_complete());
+}
+
 TEST(SliceSplit, split_with_c_string) {
     const char* stack_str = "I am a stack string, on the stack.";
     Slice::Split iter(stack_str);
 
+    ASSERT_EQ(iter.count_remaining(), 8);
     ASSERT_EQ("I", iter.next());
     ASSERT_EQ("am", iter.next());
     ASSERT_EQ("a", iter.next());
@@ -46,6 +59,7 @@ TEST(SliceSplit, split_test_string_delim) {
     Slice::Split iter = str.split("ABXY");
     Slice tmp;
 
+    ASSERT_EQ(iter.count_remaining(), 4);
     tmp = iter.next();
     ASSERT_EQ("lion", tmp);
     ASSERT_EQ(4, tmp.length());
@@ -106,6 +120,7 @@ TEST(SliceSplit, double_split) {
 
     Slice::Split iter2 = middle.split(":");
 
+    ASSERT_EQ(iter2.count_remaining(), 2);
     std::vector<Slice> vec2 = iter2.collect<std::vector<Slice> >();
     ASSERT_EQ(vec2.size(), 2);
     EXPECT_EQ(vec2[0].trim(), "Accept");

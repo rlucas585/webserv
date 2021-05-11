@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/09 23:34:59 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/11 10:35:26 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Slice {
             }
             return c;
         }
+        size_t count_remaining(void) const;
         bool is_complete(void) const;
 
       private:

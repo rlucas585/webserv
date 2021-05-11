@@ -6,6 +6,8 @@ namespace config {
 
 bool ERROR = true;
 bool SUCCESS = false;
+bool IS_BLOCK = true;
+bool IS_KEY = false;
 
 Parser::Parser(void)
     : root_layer(Layer::init("global", 0, 0)), state(DIRECTIVE), prev_state(DIRECTIVE), line_num(1),
@@ -141,13 +143,16 @@ bool Parser::parse_comment(char c) {
 bool Parser::add_new_layer(void) {
     if (directive_data.size() == 0)
         return set_error("Invalid \'{\'");
-    if (value_data.size() > 0)
-        return set_error("Invalid \'{\'");
     Layer::Result new_layer_res = active_layer->push_layer(directive_data);
     if (new_layer_res.is_err())
         return set_error(new_layer_res.unwrap_err());
     directive_data.clear();
     active_layer = new_layer_res.unwrap();
+    if (value_data.size() > 0) {
+        active_layer->add_value("Block-Information",
+                                value_data); // Add additional info preceding '{'
+        value_data.clear();
+    }
     state = DIRECTIVE;
     return SUCCESS; // New scope was entered
 }
@@ -188,5 +193,65 @@ bool Parser::read_internal_file(const char* include_name) {
     state = DIRECTIVE;
     return SUCCESS;
 }
+
+// Range helper struct - helps validating if number of values for a directive
+// is correct
+
+Parser::Range::Range(void) : min(Utils::nullopt), max(Utils::nullopt) {}
+
+Parser::Range::Range(Utils::optional<size_t> min_val, Utils::optional<size_t> max_val)
+    : min(min_val), max(max_val) {}
+
+Parser::Range Parser::Range::init(Utils::optional<size_t> min_val,
+                                  Utils::optional<size_t> max_val) {
+    return Range(min_val, max_val);
+}
+
+Parser::Range& Parser::Range::set_min(size_t new_min) {
+    min = Utils::make_optional(new_min);
+    return *this;
+}
+
+Parser::Range& Parser::Range::set_max(size_t new_max) {
+    max = Utils::make_optional(new_max);
+    return *this;
+}
+
+bool Parser::Range::contains(size_t val) {
+    if (min.has_value() && val < *min)
+        return false;
+    if (max.has_value() && val > *max)
+        return false;
+    return true;
+}
+
+// Validator helper struct - To check if a config value is valid or not.
+
+Parser::Validator::Validator(void) : is_block(false), valid_value_range() {}
+
+Parser::Validator::Validator(bool is_block_value, Range num_values)
+    : is_block(is_block_value), valid_value_range(num_values) {}
+
+Parser::Validator Parser::Validator::init(bool is_block_value, Range num_values) {
+    return Validator(is_block_value, num_values);
+}
+
+// Parser's valid values map contains information to validate whether a directive/value is
+// valid, given its number of values and whether it is a block or a key.
+// There is potential to add further validation in future by use of an optional predicate
+// function pointer - but this is not currently implemented.
+std::map<const Slice, Parser::Validator> Parser::create_valid_values_map(void) {
+    std::map<const Slice, Validator> m;
+    m["http"] = Validator::init(IS_BLOCK, Range().set_max(0));
+    m["listen"] = Validator::init(IS_KEY, Range().set_min(1));
+    m["server"] = Validator::init(IS_BLOCK, Range().set_max(0));
+    m["root"] = Validator::init(IS_KEY, Range().set_min(0).set_max(1));
+    m["server_name"] = Validator::init(IS_KEY, Range().set_min(1));
+
+    return m;
+}
+
+const std::map<const Slice, Parser::Validator> Parser::valid_values =
+    Parser::create_valid_values_map();
 
 } // namespace config
