@@ -166,11 +166,24 @@ void Layer::add_value(std::pair<std::string, std::string> value) { values.insert
 
 std::string const& Layer::get_name(void) const { return uid.name; }
 
+Utils::optional<std::string*> Layer::get_local_value(Slice key) {
+    std::map<std::string, std::string>::iterator search = values.find(key);
+
+    if (search == values.end()) {
+        return Utils::nullopt;
+    }
+    return &search->second;
+}
+
 Utils::optional<std::string*> Layer::get_value(Slice key) {
     std::map<std::string, std::string>::iterator search = values.find(key);
 
-    if (search == values.end())
-        return Utils::nullopt;
+    if (search == values.end()) {
+        if (parent == 0)
+            return Utils::nullopt;
+        else
+            return parent->get_value(key);
+    }
     return &search->second;
 }
 

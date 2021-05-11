@@ -122,7 +122,7 @@ Server::AcceptResult Server::accept_new_client(int listener_fd) {
         // print error to stderr and continue, (no need to crash for one failed client)
         std::cerr << "accept_raw() error: " << res.unwrap_err() << std::endl;
     }
-    return Server::AcceptResult::Ok(0); // Return value unused, would be () if in C++
+    return Server::AcceptResult::Ok(0); // Return value unused
 }
 
 void Server::process_read_client(int client_fd, std::vector<Client*>& output_clients) {

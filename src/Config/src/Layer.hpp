@@ -90,6 +90,7 @@ class Layer {
     void add_value(std::pair<std::string, std::string> value);
 
     std::string const& get_name(void) const;
+    Utils::optional<std::string*> get_local_value(Slice key);
     Utils::optional<std::string*> get_value(Slice key);
 
     value_iterator begin_values(void);

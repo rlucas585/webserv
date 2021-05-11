@@ -4,15 +4,11 @@
 #include <cstring>
 #include <sys/select.h>
 
-TcpListener::TcpListener(void) : inner(), config() { FD_ZERO(&config.current_sockets); }
+TcpListener::TcpListener(void) : inner() {}
 
 TcpListener::~TcpListener(void) {}
 
-TcpListener::TcpListener(Socket sock) : inner(sock), config() {
-    FD_ZERO(&config.current_sockets);
-    FD_SET(inner.into_inner(), &config.current_sockets);
-    config.max_fd = inner.into_inner();
-}
+TcpListener::TcpListener(Socket sock) : inner(sock) {}
 
 TcpListener::TcpListener(TcpListener const& other) { *this = other; }
 
@@ -21,7 +17,6 @@ TcpListener& TcpListener::operator=(TcpListener const& rhs) {
         return *this;
     }
     inner = rhs.inner; // Move semantics preserved from FileDesc
-    config = rhs.config;
     return *this;
 }
 
@@ -101,11 +96,17 @@ Utils::result<int, std::string> TcpListener::accept_raw(void) const {
     return Utils::result<int, std::string>::Ok(fd);
 }
 
+// TODO Unit test
+SocketAddrV4 TcpListener::get_sock_name(void) const {
+    struct sockaddr_in server_address;
+    socklen_t len = sizeof(sockaddr_in);
+
+    Utils::memset(&server_address, '\0', sizeof(sockaddr_in));
+
+    ::getsockname(inner.into_inner(), reinterpret_cast<sockaddr*>(&server_address), &len);
+    return SocketAddrV4::init(server_address);
+}
+
 bool TcpListener::operator==(TcpListener const& other) const { return inner == other.inner; }
 
 bool TcpListener::operator!=(TcpListener const& other) const { return !(*this == other); }
-
-// SelectConfig is a simple data structure for TcpListener::select calls
-TcpListener::SelectConfig::SelectConfig(void) : current_sockets(), max_fd(0) {}
-
-TcpListener::SelectConfig::~SelectConfig(void) {}
