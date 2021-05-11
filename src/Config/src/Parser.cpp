@@ -113,14 +113,14 @@ bool Parser::parse_value(char c) {
         value_data.push_back(' ');
         return SUCCESS;
     } else if (c == '{') {
+        if (validate_block_directive())
+            return ERROR;
         return add_new_layer();
     } else if (c == '}') {
         return set_error("Unexpected \'}\'");
     } else if (c == ';') {
-        if (value_data.size() == 0)
-            return set_error("Expected value, found ';'"); // ';' found without any value
-        if (directive_data == "include")
-            return read_internal_file(value_data.c_str());
+        if (validate_key_directive())
+            return ERROR;
         active_layer->add_value(directive_data, value_data);
         directive_data.clear();
         value_data.clear();
@@ -141,8 +141,6 @@ bool Parser::parse_comment(char c) {
 }
 
 bool Parser::add_new_layer(void) {
-    if (directive_data.size() == 0)
-        return set_error("Invalid \'{\'");
     Layer::Result new_layer_res = active_layer->push_layer(directive_data);
     if (new_layer_res.is_err())
         return set_error(new_layer_res.unwrap_err());
@@ -162,6 +160,55 @@ bool Parser::set_error(const char* msg) {
     error_msg += msg;
     error_msg += " at line ";
     return ERROR;
+}
+
+bool Parser::set_error(std::string msg) {
+    error_msg = "Error: ";
+    error_msg += msg;
+    error_msg += " at line ";
+    return ERROR;
+}
+
+bool Parser::validate_block_directive(void) {
+    if (directive_data.size() == 0)
+        return set_error("Invalid \'{\'");
+    std::map<Slice, Validator>::const_iterator search = valid_values.find(directive_data);
+
+    if (search == valid_values.end())
+        return set_error("Invalid directive: " + directive_data);
+
+    Validator const& validator = search->second;
+    if (!validator.is_block)
+        return set_error("Invalid directive for block: " + directive_data);
+
+    size_t argc = Slice(value_data).split().count_remaining();
+    if (!validator.valid_value_range.contains(argc))
+        return set_error("Invalid number of values for block: " + directive_data);
+
+    return SUCCESS;
+}
+
+bool Parser::validate_key_directive(void) {
+    if (value_data.size() == 0)
+        return set_error("Expected value for " + directive_data + ", found ';'");
+
+    if (directive_data == "include")
+        return read_internal_file(value_data.c_str());
+
+    std::map<Slice, Validator>::const_iterator search = valid_values.find(directive_data);
+
+    if (search == valid_values.end())
+        return set_error("Invalid directive: " + directive_data);
+
+    Validator const& validator = search->second;
+    if (validator.is_block)
+        return set_error(directive_data + " is a block value (requiring {}), not a key value");
+
+    size_t argc = Slice(value_data).split().count_remaining();
+    if (!validator.valid_value_range.contains(argc))
+        return set_error("Invalid number of values for key: " + directive_data);
+
+    return SUCCESS;
 }
 
 bool Parser::read_internal_file(const char* include_name) {
@@ -217,7 +264,7 @@ Parser::Range& Parser::Range::set_max(size_t new_max) {
     return *this;
 }
 
-bool Parser::Range::contains(size_t val) {
+bool Parser::Range::contains(size_t val) const {
     if (min.has_value() && val < *min)
         return false;
     if (max.has_value() && val > *max)
@@ -245,8 +292,15 @@ std::map<const Slice, Parser::Validator> Parser::create_valid_values_map(void) {
     m["http"] = Validator::init(IS_BLOCK, Range().set_max(0));
     m["listen"] = Validator::init(IS_KEY, Range().set_min(1));
     m["server"] = Validator::init(IS_BLOCK, Range().set_max(0));
-    m["root"] = Validator::init(IS_KEY, Range().set_min(0).set_max(1));
+    m["root"] = Validator::init(IS_KEY, Range().set_min(1).set_max(1));
     m["server_name"] = Validator::init(IS_KEY, Range().set_min(1));
+    m["location"] = Validator::init(IS_BLOCK, Range().set_min(1));
+    m["client_max_body_size"] = Validator::init(IS_KEY, Range().set_min(1).set_max(1));
+    m["limit_except"] = Validator::init(IS_BLOCK, Range().set_min(1));
+    m["allow"] = Validator::init(IS_KEY, Range().set_min(1));
+    m["deny"] = Validator::init(IS_KEY, Range().set_min(1));
+    m["index"] = Validator::init(IS_KEY, Range().set_min(1));
+    m["autoindex"] = Validator::init(IS_KEY, Range().set_min(1).set_max(1));
 
     return m;
 }

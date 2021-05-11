@@ -52,6 +52,10 @@ class Parser {
     bool parse_value(char c);
     bool add_new_layer(void);
     bool set_error(const char* msg);
+    bool set_error(std::string msg);
+
+    bool validate_block_directive(void);
+    bool validate_key_directive(void);
 
     bool read_internal_file(const char* include_name);
 
@@ -68,7 +72,7 @@ class Parser {
         Range& set_min(size_t new_min);
         Range& set_max(size_t new_max);
 
-        bool contains(size_t val);
+        bool contains(size_t val) const;
     };
 
     struct Validator {

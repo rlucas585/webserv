@@ -38,6 +38,13 @@ TEST(SliceSplit, count) {
     ASSERT_TRUE(iter.is_complete());
 }
 
+TEST(SliceSplit, empty_count) {
+    Slice str = "";
+    Slice::Split iter = str.split();
+
+    ASSERT_EQ(iter.count_remaining(), 0);
+}
+
 TEST(SliceSplit, split_with_c_string) {
     const char* stack_str = "I am a stack string, on the stack.";
     Slice::Split iter(stack_str);
