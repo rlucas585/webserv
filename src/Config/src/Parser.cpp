@@ -172,7 +172,7 @@ bool Parser::set_error(std::string msg) {
 bool Parser::validate_block_directive(void) {
     if (directive_data.size() == 0)
         return set_error("Invalid \'{\'");
-    std::map<Slice, Validator>::const_iterator search = valid_values.find(directive_data);
+    std::map<const Slice, Validator>::const_iterator search = valid_values.find(directive_data);
 
     if (search == valid_values.end())
         return set_error("Invalid directive: " + directive_data);
@@ -195,7 +195,7 @@ bool Parser::validate_key_directive(void) {
     if (directive_data == "include")
         return read_internal_file(value_data.c_str());
 
-    std::map<Slice, Validator>::const_iterator search = valid_values.find(directive_data);
+    std::map<const Slice, Validator>::const_iterator search = valid_values.find(directive_data);
 
     if (search == valid_values.end())
         return set_error("Invalid directive: " + directive_data);
