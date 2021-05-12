@@ -22,7 +22,7 @@ class SocketAddrV4 : public SocketAddr {
 
   public:
     SocketAddrV4(void);
-    ~SocketAddrV4(void);
+    virtual ~SocketAddrV4(void);
     SocketAddrV4(SocketAddrV4 const& other);
     SocketAddrV4 operator=(SocketAddrV4 const& rhs);
 
