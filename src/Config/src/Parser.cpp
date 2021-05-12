@@ -290,7 +290,7 @@ Parser::Validator Parser::Validator::init(bool is_block_value, Range num_values)
 std::map<const Slice, Parser::Validator> Parser::create_valid_values_map(void) {
     std::map<const Slice, Validator> m;
     m["http"] = Validator::init(IS_BLOCK, Range().set_max(0));
-    m["listen"] = Validator::init(IS_KEY, Range().set_min(1));
+    m["listen"] = Validator::init(IS_KEY, Range().set_min(1).set_max(2));
     m["server"] = Validator::init(IS_BLOCK, Range().set_max(0));
     m["root"] = Validator::init(IS_KEY, Range().set_min(1).set_max(1));
     m["server_name"] = Validator::init(IS_KEY, Range().set_min(1));

@@ -69,6 +69,11 @@ Utils::pair<const sockaddr*, socklen_t> SocketAddrV4::into_inner(void) const {
 
 int SocketAddrV4::family(void) const { return AF_INET; }
 
+std::string SocketAddrV4::to_string(void) const {
+    return IpAddr::network_to_presentation(reinterpret_cast<const void*>(&inner.sin_addr)) + ":" +
+           Utils::to_string(IpAddr::network_to_host_short(inner.sin_port));
+}
+
 bool SocketAddrV4::operator==(SocketAddrV4 const& other) const { return inner == other.inner; }
 
 bool SocketAddrV4::operator!=(SocketAddrV4 const& other) const { return !(*this == other); }
@@ -92,3 +97,11 @@ bool operator==(sockaddr_in const& lhs, sockaddr_in const& rhs) {
 }
 
 bool operator!=(sockaddr_in const& lhs, sockaddr_in const& rhs) { return !(lhs == rhs); }
+
+std::ostream& operator<<(std::ostream& o, SocketAddrV4 const& socket_address) {
+    o << IpAddr::network_to_presentation(
+        reinterpret_cast<const void*>(&socket_address.inner.sin_addr));
+    o << ":";
+    o << Utils::to_string(IpAddr::network_to_host_short(socket_address.inner.sin_port));
+    return o;
+}

@@ -10,21 +10,24 @@ class VirtualServer {
     typedef Utils::result<Utils::pair<TcpStream, SocketAddrV4>, std::string> AcceptResult;
 
   public:
-    VirtualServer(void);
     ~VirtualServer(void);
     VirtualServer(VirtualServer const& other);
     VirtualServer& operator=(VirtualServer const& rhs);
 
-    static Result bind(Layer* server_configuration);
+    static Result create(Layer const* server_configuration);
 
-    Socket const& socket(void) const;
-    int socket_fd(void) const;
-    AcceptResult accept(void) const;
-    Utils::result<int, std::string> accept_raw(void) const;
+    SocketAddrV4 address(void) const;
 
   private:
-    SocketAddrV4 address;
+    VirtualServer(void);
+    VirtualServer(Layer const* server_configuration);
+
     Layer const* config;
+
+    static bool validate_listen(Slice listen);
+
+    static bool INVALID;
+    static bool VALID;
 };
 
 #endif

@@ -18,6 +18,8 @@ class SocketAddrV4 : public SocketAddr {
   public:
     typedef Utils::result<SocketAddrV4, std::string> Result;
 
+    friend std::ostream& operator<<(std::ostream&, SocketAddrV4 const&);
+
   public:
     ~SocketAddrV4(void);
     SocketAddrV4(SocketAddrV4 const& other);
@@ -34,6 +36,8 @@ class SocketAddrV4 : public SocketAddr {
 
     Utils::pair<const sockaddr*, socklen_t> into_inner(void) const;
     int family(void) const;
+
+    std::string to_string(void) const;
 
     bool operator==(SocketAddrV4 const& other) const;
     bool operator!=(SocketAddrV4 const& other) const;
@@ -53,5 +57,7 @@ bool operator==(sockaddr_in const& lhs, SocketAddrV4 const& rhs);
 bool operator!=(sockaddr_in const& lhs, SocketAddrV4 const& rhs);
 bool operator==(sockaddr_in const& lhs, sockaddr_in const& rhs);
 bool operator!=(sockaddr_in const& lhs, sockaddr_in const& rhs);
+
+std::ostream& operator<<(std::ostream& o, SocketAddrV4 const& socket_address);
 
 #endif

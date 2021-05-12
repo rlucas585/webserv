@@ -73,6 +73,7 @@ class Layer {
     typedef std::vector<Layer>::const_iterator const_layer_iterator;
 
   public:
+    Layer(void);
     ~Layer(void);
     Layer(UID layer_uid);
     Layer(Layer const& src)
@@ -91,7 +92,9 @@ class Layer {
 
     std::string const& get_name(void) const;
     Utils::optional<std::string*> get_local_value(Slice key);
+    Utils::optional<std::string const*> get_local_value(Slice key) const;
     Utils::optional<std::string*> get_value(Slice key);
+    Utils::optional<std::string const*> get_value(Slice key) const;
 
     value_iterator begin_values(void);
     value_iterator end_values(void);
@@ -111,7 +114,6 @@ class Layer {
     std::vector<Layer> children;
     Layer* parent;
 
-    Layer(void);
     Layer(std::string layer_name, uint8_t layer_depth, uint8_t layer_id_num);
 
     Result increase_depth(void);

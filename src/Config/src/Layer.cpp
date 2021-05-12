@@ -89,6 +89,8 @@ Layer::Layer(std::string new_layer_name, uint8_t new_layer_depth, uint8_t new_la
     children.reserve(4);
 }
 
+Layer::Layer(void) : uid(), values(), children(), parent(0) {}
+
 Layer::~Layer(void) {}
 
 Layer& Layer::operator=(Layer const& rhs) {
@@ -175,6 +177,15 @@ Utils::optional<std::string*> Layer::get_local_value(Slice key) {
     return &search->second;
 }
 
+Utils::optional<std::string const*> Layer::get_local_value(Slice key) const {
+    std::map<std::string, std::string>::const_iterator search = values.find(key);
+
+    if (search == values.end()) {
+        return Utils::nullopt;
+    }
+    return &search->second;
+}
+
 Utils::optional<std::string*> Layer::get_value(Slice key) {
     std::map<std::string, std::string>::iterator search = values.find(key);
 
@@ -183,6 +194,18 @@ Utils::optional<std::string*> Layer::get_value(Slice key) {
             return Utils::nullopt;
         else
             return parent->get_value(key);
+    }
+    return &search->second;
+}
+
+Utils::optional<std::string const*> Layer::get_value(Slice key) const {
+    std::map<std::string, std::string>::const_iterator search = values.find(key);
+
+    if (search == values.end()) {
+        if (parent == 0)
+            return Utils::nullopt;
+        else
+            return reinterpret_cast<Layer const*>(parent)->get_value(key);
     }
     return &search->second;
 }
