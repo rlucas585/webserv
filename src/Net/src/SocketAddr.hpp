@@ -21,6 +21,7 @@ class SocketAddrV4 : public SocketAddr {
     friend std::ostream& operator<<(std::ostream&, SocketAddrV4 const&);
 
   public:
+    SocketAddrV4(void);
     ~SocketAddrV4(void);
     SocketAddrV4(SocketAddrV4 const& other);
     SocketAddrV4 operator=(SocketAddrV4 const& rhs);
@@ -47,7 +48,6 @@ class SocketAddrV4 : public SocketAddr {
   private:
     sockaddr_in inner;
 
-    SocketAddrV4(void);
     SocketAddrV4(Ipv4Addr ip, u_int16_t port);
     SocketAddrV4(sockaddr_in const& storage);
 };

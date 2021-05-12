@@ -25,7 +25,7 @@ File::Result File::open(const char* path, int flags) {
     int fd = ::open(path, flags);
 
     if (fd == -1) {
-        return File::Result::Err(strerror(errno));
+        return File::Result::Err(std::string(path) + strerror(errno));
     }
     return File::Result::Ok(File(fd));
 }
@@ -34,7 +34,7 @@ File::Result File::open(const char* path, int flags, mode_t mode) {
     int fd = ::open(path, flags, mode);
 
     if (fd == -1) {
-        return File::Result::Err(strerror(errno));
+        return File::Result::Err("\'" + std::string(path) + "\': " + strerror(errno));
     }
     return File::Result::Ok(File(fd));
 }

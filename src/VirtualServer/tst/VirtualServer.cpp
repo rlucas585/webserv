@@ -34,7 +34,7 @@ TEST_F(VirtualServerTests, test) {
         virtual_servers.push_back(result.unwrap());
     }
 
-    EXPECT_EQ(virtual_servers[0].address().to_string(), "127.0.0.1:80");
-    EXPECT_EQ(virtual_servers[1].address().to_string(), "127.0.0.1:4505");
+    EXPECT_EQ(virtual_servers[0].address().to_string(), "0.0.0.0:80");
+    EXPECT_EQ(virtual_servers[1].address().to_string(), "0.0.0.0:4505");
     EXPECT_EQ(virtual_servers[2].address().to_string(), "172.17.154.13:80");
 }

@@ -1,7 +1,3 @@
-set(BINARY ${CMAKE_PROJECT_NAME})
-
-set(SOURCES main.cpp)
-
 add_subdirectory(Utils)
 add_subdirectory(Slice)
 add_subdirectory(Sys)
@@ -29,8 +25,3 @@ include_directories(HTTP)
 include_directories(Config)
 include_directories(VirtualServer)
 
-add_executable(${BINARY}.run ${SOURCES})
-
-target_link_libraries(${BINARY}.run
-    PUBLIC Slice_lib
-	)

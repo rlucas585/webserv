@@ -43,7 +43,9 @@ SocketAddrV4 VirtualServer::address(void) const {
     if (socket_address_result.is_err()) {
         u_int16_t port =
             static_cast<u_int16_t>(Utils::atol_length(host_and_port.raw(), host_and_port.length()));
-        return SocketAddrV4::init(Ipv4Addr::init_from_string("127.0.0.1").unwrap(), port);
+        // If no IP address specified, then bind to 0.0.0.0:
+        // https://stackoverflow.com/questions/20778771/
+        return SocketAddrV4::init(Ipv4Addr::init_from_string("0.0.0.0").unwrap(), port);
     }
     return socket_address_result.unwrap();
 }
@@ -52,7 +54,6 @@ bool VirtualServer::validate_listen(Slice listen) {
     Slice::Split iter = listen.split();
     Slice host_and_port = iter.next();
 
-    // TODO make valid when listen has just a port -> listen on localhost (i think)
     SocketAddrV4::Result socket_address_result = SocketAddrV4::init(host_and_port);
 
     if (socket_address_result.is_err()) {

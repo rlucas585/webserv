@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cd build && ./WebServ_run
+cd build && ./WebServ.run
