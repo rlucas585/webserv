@@ -1,10 +1,10 @@
 #ifndef SOCKETADDR_HPP
 #define SOCKETADDR_HPP
 
-#include "result.hpp"
+#include "IpAddr.hpp"
 #include "Slice.hpp"
 #include "pair.hpp"
-#include "IpAddr.hpp"
+#include "result.hpp"
 #include <arpa/inet.h>
 
 class SocketAddr {

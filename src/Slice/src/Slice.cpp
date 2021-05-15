@@ -6,13 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/13 12:35:13 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:47:53 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Slice.hpp"
 
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
 
 Slice::Split::Split(const char* start)
     : _remainder(start), _delimiter(" \f\n\r\t\v"), length_remaining(-1) {}

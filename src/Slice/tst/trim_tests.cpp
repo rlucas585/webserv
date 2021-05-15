@@ -6,14 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/07 11:58:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/07 12:10:03 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:51:12 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
-#include "../../Utils/src/Utils.hpp"
-#include "../src/Slice.hpp"
+#include "Slice.hpp"
+#include "Utils.hpp"
 
 #include <iostream>
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../src/Slice.hpp"
+#include "Slice.hpp"
 
 #include <iostream>
 #include <vector>

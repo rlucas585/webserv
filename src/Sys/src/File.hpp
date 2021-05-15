@@ -1,10 +1,10 @@
 #ifndef FILE_HPP
 #define FILE_HPP
 
-#include "../../Option/src/optional.hpp"
-#include "../../Result/src/result.hpp"
-#include "../../Slice/src/Slice.hpp"
 #include "FileDesc.hpp"
+#include "Slice.hpp"
+#include "optional.hpp"
+#include "result.hpp"
 
 #include <fcntl.h>
 #include <string>

@@ -5,11 +5,11 @@
 #include <map>
 #include <string>
 
+#include "Slice.hpp"
+#include "State.hpp"
+#include "Utils.hpp"
 #include "optional.hpp"
 #include "result.hpp"
-#include "Slice.hpp"
-#include "Utils.hpp"
-#include "State.hpp"
 
 #define URI_SIZE_LIMIT 2048
 #define HEADER_SIZE_LIMIT 4096

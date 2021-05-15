@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "../src/BufReader.hpp"
-#include "../src/File.hpp"
+#include "BufReader.hpp"
+#include "File.hpp"
 
 #include <fcntl.h>
 

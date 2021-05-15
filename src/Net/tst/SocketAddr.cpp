@@ -12,8 +12,8 @@
 
 #include <gtest/gtest.h>
 
-#include "Utils.hpp"
 #include "SocketAddr.hpp"
+#include "Utils.hpp"
 
 TEST(SocketAddr_tests, creation_test) {
     const char* ip_str = "127.2.1.1";

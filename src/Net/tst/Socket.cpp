@@ -12,8 +12,8 @@
 
 #include <gtest/gtest.h>
 
-#include "Utils.hpp"
 #include "Socket.hpp"
+#include "Utils.hpp"
 #include <algorithm>
 #include <thread>
 #include <vector>

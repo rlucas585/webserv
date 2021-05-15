@@ -6,15 +6,15 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 17:16:36 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/11 14:37:00 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 12:42:43 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef OPTIONAL_HPP
 #define OPTIONAL_HPP
 
-#include "../../Traits/src/type_traits.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
+#include "type_traits.hpp"
 
 namespace Utils {
 

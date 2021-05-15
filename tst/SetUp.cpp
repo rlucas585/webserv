@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "../src/ASyncServer/src/Server.hpp"
-#include "../src/Config/src/Parser.hpp"
-#include "../src/VirtualServer/src/VirtualServer.hpp"
+#include "Parser.hpp"
+#include "Server.hpp"
+#include "VirtualServer.hpp"
 
 // Testing WebServ setup
 

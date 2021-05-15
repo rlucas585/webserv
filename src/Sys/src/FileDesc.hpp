@@ -6,15 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/19 20:00:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 13:19:26 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:52:22 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FILEDESC_HPP
 #define FILEDESC_HPP
 
-#include "../../Result/src/result.hpp"
-#include "../../Utils/src/rvalue.hpp"
+#include "result.hpp"
 #include <string>
 #include <sys/types.h>
 
