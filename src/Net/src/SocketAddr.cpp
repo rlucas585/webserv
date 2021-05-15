@@ -1,5 +1,5 @@
 #include "SocketAddr.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
 
 SocketAddrV4::SocketAddrV4(void) {}
 

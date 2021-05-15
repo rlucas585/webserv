@@ -7,6 +7,15 @@ include_directories(Result)
 
 add_library(${MODULE_NAME}_lib STATIC ${SOURCES})
 
+target_include_directories(${MODULE_NAME}_lib
+    PUBLIC ../../Option/src/
+    PUBLIC ../../Result/src/
+    PUBLIC ../../Utils/src/
+    PUBLIC ../../Slice/src/
+    PUBLIC ../../Net/src/
+    PUBLIC ../../Sys/src/
+    )
+
 target_link_libraries(${MODULE_NAME}_lib
     PUBLIC Utils_lib
     PUBLIC Slice_lib

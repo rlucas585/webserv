@@ -1,7 +1,7 @@
 #ifndef TCPSTREAM_HPP
 #define TCPSTREAM_HPP
 
-#include "../../Result/src/result.hpp"
+#include "result.hpp"
 #include "Socket.hpp"
 
 class TcpStream {

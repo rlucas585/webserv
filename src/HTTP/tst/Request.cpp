@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../src/Request.hpp"
+#include "Request.hpp"
 
 #include <iostream>
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../src/Response.hpp"
+#include "Response.hpp"
 
 #include <iostream>
 

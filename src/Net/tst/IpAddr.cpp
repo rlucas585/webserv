@@ -6,13 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/24 16:18:04 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/11 17:20:15 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 11:59:28 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../src/IpAddr.hpp"
-#include "../../Slice/src/Slice.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "IpAddr.hpp"
+#include "Slice.hpp"
+#include "Utils.hpp"
 #include <arpa/inet.h>
 #include <cstdio>
 #include <gtest/gtest.h>

@@ -41,6 +41,9 @@
 *.vimrc
 *.vim
 
+# Open nVim files
+*.save
+
 # CMake files
 CMakeLists.txt.user
 CMakeCache.txt
@@ -54,3 +57,5 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
+# LSP files
+compile_flags.txt

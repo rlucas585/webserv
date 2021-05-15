@@ -5,10 +5,10 @@
 #include <map>
 #include <string>
 
-#include "../../Option/src/optional.hpp"
-#include "../../Result/src/result.hpp"
-#include "../../Slice/src/Slice.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "optional.hpp"
+#include "result.hpp"
+#include "Slice.hpp"
+#include "Utils.hpp"
 #include "State.hpp"
 
 #define URI_SIZE_LIMIT 2048

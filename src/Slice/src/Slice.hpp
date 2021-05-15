@@ -6,12 +6,12 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:56 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/11 10:35:26 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/13 12:35:12 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STR_HPP
-#define STR_HPP
+#ifndef SLICE_HPP
+#define SLICE_HPP
 
 #include <exception>
 #include <iostream>
@@ -123,7 +123,7 @@ class Slice {
     static Slice newSliceWithOffset(std::string const& str, size_t offset);
     static Slice newSliceWithLengthAndOffset(std::string const& str, size_t len, size_t offset);
     operator std::string() const;
-    std::string toSliceing(void) const;
+    std::string toString(void) const;
 
     ~Slice(void);
     Slice(Slice const& src) { *this = src; }

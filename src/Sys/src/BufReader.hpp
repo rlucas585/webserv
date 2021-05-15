@@ -1,12 +1,12 @@
 #ifndef BUFREADER_HPP
 #define BUFREADER_HPP
 
-#include "../../Option/src/optional.hpp"
-#include "../../Result/src/result.hpp"
-#include "../../Slice/src/Slice.hpp"
+#include "optional.hpp"
+#include "result.hpp"
+#include "Slice.hpp"
 #include "FileDesc.hpp"
 
-#include "../../Net/src/TcpStream.hpp"
+#include "TcpStream.hpp"
 
 // Prototypes
 template <typename R>

@@ -1,5 +1,5 @@
 #include "IpAddr.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
 #include <arpa/inet.h>
 #include <string>
 
@@ -163,7 +163,7 @@ Ipv4Addr::Result Ipv4Addr::init_from_string(Slice const& ip_str) {
         address.s_addr = inet_addr("127.0.0.1");
         return Ipv4Addr::Result::Ok(Ipv4Addr(address));
     }
-    buf = ip_str.toSliceing();
+    buf = ip_str.toString();
     buf.push_back('\0');
     address.s_addr = inet_addr(buf.c_str());
     if (address.s_addr == INADDR_NONE) {

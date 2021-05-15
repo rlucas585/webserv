@@ -1,9 +1,9 @@
 #ifndef SOCKETADDR_HPP
 #define SOCKETADDR_HPP
 
-#include "../../Result/src/result.hpp"
-#include "../../Slice/src/Slice.hpp"
-#include "../../Utils/src/pair.hpp"
+#include "result.hpp"
+#include "Slice.hpp"
+#include "pair.hpp"
 #include "IpAddr.hpp"
 #include <arpa/inet.h>
 

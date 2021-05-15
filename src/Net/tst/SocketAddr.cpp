@@ -6,14 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 13:50:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/11 18:40:23 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 11:59:50 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
-#include "../../Utils/src/Utils.hpp"
-#include "../src/SocketAddr.hpp"
+#include "Utils.hpp"
+#include "SocketAddr.hpp"
 
 TEST(SocketAddr_tests, creation_test) {
     const char* ip_str = "127.2.1.1";

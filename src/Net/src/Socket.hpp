@@ -1,8 +1,8 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
-#include "../../Result/src/result.hpp"
-#include "../../Sys/src/FileDesc.hpp"
+#include "result.hpp"
+#include "FileDesc.hpp"
 #include "SocketAddr.hpp"
 
 class Socket {
