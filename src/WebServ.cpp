@@ -4,6 +4,48 @@
 
 namespace WebServ {
 
+// Anonymous namespace functions
+namespace {
+void handle_client(Client& client);
+}
+
+// Main Program Loop
+
+WebServ::Result run(Config& config) {
+    Server& server = config.server;
+    std::vector<Client*>& clients = config.active_clients;
+
+    while (true) {
+        server.select(config.active_clients);
+
+        for (client_it client = clients.begin(); client != clients.end(); client++) {
+            handle_client(**client);
+        }
+    }
+
+    return WebServ::Result::Ok(0);
+}
+
+// Anonymous namespace functions
+namespace {
+void handle_client(Client& client) {
+    std::string message_received;
+    std::string message_sent;
+
+    if (client.parse_http()) { // True when Request is error, or successfully completed
+        http::Request::Result req_res = client.generate_request();
+
+        if (req_res.is_err()) {
+            std::cout << "Invalid request:" << std::endl;
+            std::cout << req_res.unwrap_err() << std::endl;
+        } else {
+            std::cout << "Valid request: " << std::endl;
+            std::cout << req_res.unwrap();
+        }
+    }
+}
+} // namespace
+
 // Config
 
 Config::Config(void) {}
@@ -105,41 +147,6 @@ Config::ServerResult Config::add_servers_from_http_block(Layer* http,
         }
     }
     return ServerResult::Ok(0); // Success value unused
-}
-
-typedef std::vector<Client*>::iterator client_it;
-
-static void handle_client(Client& client) {
-    std::string message_received;
-    std::string message_sent;
-
-    if (client.parse_http()) { // True when Request is error, or successfully completed
-        http::Request::Result req_res = client.generate_request();
-
-        if (req_res.is_err()) {
-            std::cout << "Invalid request:" << std::endl;
-            std::cout << req_res.unwrap_err() << std::endl;
-        } else {
-            std::cout << "Valid request: " << std::endl;
-            std::cout << req_res.unwrap();
-        }
-    }
-}
-
-// All config is setup - run program
-WebServ::Result run(Config& config) {
-    Server& server = config.server;
-    std::vector<Client*>& clients = config.active_clients;
-
-    while (true) {
-        server.select(config.active_clients);
-
-        for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client(**client);
-        }
-    }
-
-    return WebServ::Result::Ok(0);
 }
 
 } // namespace WebServ

@@ -10,6 +10,10 @@
 namespace WebServ {
 
 typedef Utils::result<int, std::string> Result;
+typedef std::vector<Client*>::iterator client_it;
+struct Config;
+
+Result run(Config& config);
 
 struct Config {
     typedef Utils::result<Config, std::string> Result;
@@ -41,8 +45,6 @@ struct Config {
                                                     std::vector<VirtualServer>& v_servers,
                                                     std::vector<TcpListener>& listeners);
 };
-
-Result run(Config& config);
 
 } // namespace WebServ
 
