@@ -32,16 +32,15 @@ void handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    if (client.parse_http()) { // True when Request is error, or successfully completed
-        http::Request::Result req_res = client.generate_request();
+    client.read();
+    http::Request::Result req_res = client.generate_request();
 
-        if (req_res.is_err()) {
-            std::cout << "Invalid request:" << std::endl;
-            std::cout << req_res.unwrap_err() << std::endl;
-        } else {
-            std::cout << "Valid request: " << std::endl;
-            std::cout << req_res.unwrap();
-        }
+    if (req_res.is_err()) {
+        std::cout << "Invalid request:" << std::endl;
+        std::cout << req_res.unwrap_err() << std::endl;
+    } else {
+        std::cout << "Valid request: " << std::endl;
+        std::cout << req_res.unwrap();
     }
 }
 } // namespace

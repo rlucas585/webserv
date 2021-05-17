@@ -67,7 +67,7 @@ static std::string handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    client.parse_http();
+    client.read();
 
     http::Request::Result req_res = client.generate_request();
 

@@ -98,7 +98,7 @@ TEST(Server, select) {
         connections_received += clients.size();
         // std::cout << "connections_received = " << connections_received << std::endl;
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client((*client)->stream());
+            handle_client((*client)->get_stream());
         }
         if (connections_received >= 3) {
             break;
@@ -140,7 +140,7 @@ TEST(Server, multiple_addresses) {
 
         connections_received += clients.size();
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client((*client)->stream());
+            handle_client((*client)->get_stream());
         }
         if (connections_received >= 3) {
             break;
