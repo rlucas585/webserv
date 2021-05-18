@@ -5,6 +5,7 @@
 #include "Config/src/Parser.hpp"
 #include "Net/src/TcpListener.hpp"
 #include "Result/src/result.hpp"
+#include "ServerLogic/src/ServerLogic.hpp"
 #include "VirtualServer/src/VirtualServer.hpp"
 
 namespace WebServ {

@@ -71,6 +71,7 @@ Server::Result Server::bind(const char* str) {
 Server Server::init(std::vector<TcpListener> tcp_listeners) { return Server(tcp_listeners); }
 
 Server::SelectResult Server::select(std::vector<Client*>& output_clients) {
+    close_erroneous_clients(output_clients);
     output_clients.clear();
 
     // ::select() is destructive - copies required
@@ -89,13 +90,12 @@ Server::SelectResult Server::select(std::vector<Client*>& output_clients) {
                 process_read_client(fd, output_clients);
             }
         } else if (FD_ISSET(fd, &write_sockets)) {
-            // TODO Complete to handle clients that are ready to receive data
             if (fd <= 2) {
                 break;
             }
-            // size_t client_index = client_fd_to_index(fd);
-            // clients[client_index].state = Client::Write;
-            // output_clients.push_back(&clients[client_index]);
+            size_t client_index = client_fd_to_index(fd);
+            clients[client_index].state = Client::Write;
+            output_clients.push_back(&clients[client_index]);
         }
     }
 
@@ -141,6 +141,20 @@ void Server::process_read_client(int client_fd, std::vector<Client*>& output_cli
     } else { // Client has sent information, set as ready to Read, and add to output_clients
         clients[client_index].state = Client::Read;
         output_clients.push_back(&clients[client_index]);
+    }
+}
+
+void Server::close_erroneous_clients(std::vector<Client*>& output_clients) {
+    // For the clients that were just processed, check to see if any of them
+    // are signalled to close (due to erroneous HTTP request), and close them
+    // if required
+    for (size_t i = 0; i < output_clients.size(); i++) {
+        if (output_clients[i]->state == Client::Close) {
+            Client& client = *output_clients[i];
+            size_t client_index = client_fd_to_index(client.fd());
+            FD_CLR(client.fd(), &config.current_sockets);
+            clients[client_index].deactivate_client();
+        }
     }
 }
 

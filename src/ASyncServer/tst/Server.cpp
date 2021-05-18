@@ -30,11 +30,14 @@ static void client_func(int n, const char* address, std::string message) {
 }
 
 // This function is receiving client messages, and handling them appropriately
-void handle_client(TcpStream& client) {
+bool handle_client(TcpStream& client) {
     std::string message_received;
     std::string message_sent;
 
     client.read(message_received);
+
+    if (message_received.size() == 0)
+        return true; // message of 0 signals that client has closed connection
 
     std::cout << "client fd: " << client.fd() << ", message received = " << message_received
               << ", message size: " << message_received.size() << std::endl;
@@ -57,6 +60,7 @@ void handle_client(TcpStream& client) {
     }
 
     client.write(message_sent);
+    return false;
 }
 
 typedef std::vector<Client*>::iterator client_it;
@@ -77,7 +81,7 @@ TEST(Server, select) {
     clients.resize(CLIENT_TOTAL - listeners.size());
 
     Server server = Server::init(listeners);
-    int connections_received = 0;
+    int connections_terminated = 0;
 
     std::thread clients_thread = std::thread([&address_info](void) {
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
@@ -95,12 +99,13 @@ TEST(Server, select) {
     while (true) {
         server.select(clients);
 
-        connections_received += clients.size();
-        // std::cout << "connections_received = " << connections_received << std::endl;
+        // std::cout << "connections_terminated = " << connections_terminated << std::endl;
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client((*client)->get_stream());
+            if (handle_client((*client)->get_stream())) {
+                connections_terminated += 1;
+            }
         }
-        if (connections_received >= 3) {
+        if (connections_terminated >= 3) {
             break;
         }
     }
@@ -120,7 +125,7 @@ TEST(Server, multiple_addresses) {
     clients.resize(CLIENT_TOTAL - listeners.size());
 
     Server server = Server::init(listeners);
-    int connections_received = 0;
+    int connections_terminated = 0;
 
     std::thread clients_thread = std::thread([&](void) {
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
@@ -138,11 +143,12 @@ TEST(Server, multiple_addresses) {
     while (true) {
         server.select(clients);
 
-        connections_received += clients.size();
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client((*client)->get_stream());
+            if (handle_client((*client)->get_stream())) {
+                connections_terminated += 1;
+            }
         }
-        if (connections_received >= 3) {
+        if (connections_terminated >= 3) {
             break;
         }
     }

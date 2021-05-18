@@ -29,6 +29,8 @@ class TcpStream {
     Utils::RwResult write(const char* str);
     Utils::RwResult write(std::string const& str);
 
+    SocketAddrV4 get_sock_name(void) const;
+
     int fd(void) const;
 
   private:

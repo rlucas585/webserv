@@ -28,6 +28,7 @@ class Client {
 
     Utils::RwResult write(std::string const& str);
 
+    bool request_is_complete(void) const;
     http::Request::Result generate_request(void);
 
   public:

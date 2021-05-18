@@ -9,6 +9,7 @@ add_subdirectory(ASyncServer)
 add_subdirectory(HTTP)
 add_subdirectory(Config)
 add_subdirectory(VirtualServer)
+add_subdirectory(ServerLogic)
 
 # Only for testing
 add_subdirectory(Examples)
@@ -24,4 +25,5 @@ include_directories(ASyncServer)
 include_directories(HTTP)
 include_directories(Config)
 include_directories(VirtualServer)
+include_directories(ServerLogic)
 

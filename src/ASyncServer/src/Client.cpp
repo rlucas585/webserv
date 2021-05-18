@@ -36,6 +36,10 @@ int Client::fd(void) const { return stream.fd(); }
 Utils::RwResult Client::read(void) {
     char buf[READ_AMOUNT];
 
+    if (state != Read) {
+        return Utils::RwResult::Err("read called on client not ready to read");
+    }
+
     Utils::RwResult read_result = stream.read(reinterpret_cast<void*>(buf), READ_AMOUNT);
 
     if (read_result.is_ok()) {
@@ -77,6 +81,8 @@ Utils::RwResult Client::read(void) {
 }
 
 Utils::RwResult Client::write(std::string const& str) { return stream.write(str); }
+
+bool Client::request_is_complete(void) const { return parser.is_complete(); }
 
 http::Request::Result Client::generate_request(void) {
     // If there is remaining unread data, read all into the parser

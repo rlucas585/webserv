@@ -171,6 +171,7 @@ class Request {
     Request& operator=(Request const& rhs);
 
     std::string to_string(void) const;
+    Version const& get_version(void) const;
     std::map<std::string, std::string>& get_headers(void);
 
   private:

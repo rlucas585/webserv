@@ -7,7 +7,9 @@ namespace WebServ {
 // Anonymous namespace functions
 namespace {
 void handle_client(Client& client);
-}
+void read_from_client(Client& client);
+void write_to_client(Client& client);
+} // namespace
 
 // Main Program Loop
 
@@ -32,15 +34,35 @@ void handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    client.read();
-    http::Request::Result req_res = client.generate_request();
+    if (client.state == Client::Read) {
+        return read_from_client(client);
+    } else if (client.state == Client::Write && client.request_is_complete()) {
+        // XXX We only write a response to a client if a request is complete - in order
+        // to run effectively with netcat. Potentially there are some issues with
+        // this, e.g. maybe a client will repeatedly trigger select() for no need,
+        // and it should instead just be disconnected if it attempts to read from
+        // server with an incomplete request
+        return write_to_client(client);
+    }
+}
 
-    if (req_res.is_err()) {
-        std::cout << "Invalid request:" << std::endl;
-        std::cout << req_res.unwrap_err() << std::endl;
-    } else {
-        std::cout << "Valid request: " << std::endl;
-        std::cout << req_res.unwrap();
+void read_from_client(Client& client) { client.read(); }
+
+void write_to_client(Client& client) {
+    http::Request::Result req_res = client.generate_request();
+    std::string response_string;
+
+    bool response_status = ServerLogic::generate_response(req_res, response_string);
+
+    std::cout << "Response: " << response_string;
+    Utils::RwResult res = client.write(response_string);
+
+    if (res.is_ok())
+        std::cout << "bytes sent: " << res.unwrap() << std::endl;
+
+    if (response_status == ServerLogic::CONNECTION_CLOSE) {
+        // Client is removed from Server FD_SET before next select() call.
+        client.state = Client::Close;
     }
 }
 } // namespace

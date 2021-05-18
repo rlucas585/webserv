@@ -14,15 +14,18 @@ void handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    client.read();
-    http::Request::Result req_res = client.generate_request();
+    if (client.state == Client::Read) {
+        client.read();
+    } else if (client.state == Client::Write && client.request_is_complete()) {
+        http::Request::Result req_res = client.generate_request();
 
-    if (req_res.is_err()) {
-        std::cout << "Invalid request:" << std::endl;
-        std::cout << req_res.unwrap_err() << std::endl;
-    } else {
-        std::cout << "Valid request: " << std::endl;
-        std::cout << req_res.unwrap();
+        if (req_res.is_err()) {
+            std::cout << "Invalid request:" << std::endl;
+            std::cout << req_res.unwrap_err() << std::endl;
+        } else {
+            std::cout << "Valid request: " << std::endl;
+            std::cout << req_res.unwrap();
+        }
     }
 }
 

@@ -49,6 +49,11 @@ Response::Builder& Response::Builder::header(std::string const& key, std::string
     return *this;
 }
 
+Response::Builder& Response::Builder::state(State new_state) {
+    state_ = new_state;
+    return *this;
+}
+
 Response::Builder& Response::Builder::version(Version new_version) {
     version_ = new_version;
     return *this;
@@ -64,7 +69,13 @@ Response::Builder& Response::Builder::append_to_body(Slice const& slice) {
     return *this;
 }
 
-Response Response::Builder::build(void) { return Response(state_, version_, headers, body_); }
+// Build will implicitly add the Content-Length header
+Response Response::Builder::build(void) {
+    headers.erase("Content-Length");
+    headers.insert(std::make_pair("Content-Length", Utils::to_string(body_.size())));
+
+    return Response(state_, version_, headers, body_);
+}
 
 // http::Response class
 
