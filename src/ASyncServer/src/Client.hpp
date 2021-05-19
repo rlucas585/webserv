@@ -30,6 +30,7 @@ class Client {
 
     bool request_is_complete(void) const;
     http::Request::Result generate_request(void);
+    void set_address(SocketAddrV4 new_address);
 
   public:
     Client::Status state;
@@ -39,6 +40,7 @@ class Client {
     http::Request::Parser parser;
     Layer const* config;
     std::string stored_data;
+    SocketAddrV4 address;
 };
 
 #endif

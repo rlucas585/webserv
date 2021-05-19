@@ -52,6 +52,9 @@ void write_to_client(Client& client) {
     http::Request::Result req_res = client.generate_request();
     std::string response_string;
 
+    // TODO actually write a function for this
+    // Layer const* select_server_configuration()
+
     bool response_status = ServerLogic::generate_response(req_res, response_string);
 
     std::cout << "Response: " << response_string;

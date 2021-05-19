@@ -78,10 +78,10 @@ TEST(Server, select) {
     std::vector<Client*> clients;
 
     listeners.push_back(listener);
-    clients.resize(CLIENT_TOTAL - listeners.size());
+    clients.reserve(CLIENT_TOTAL - listeners.size());
 
     Server server = Server::init(listeners);
-    int connections_terminated = 0;
+    int connections_read = 0;
 
     std::thread clients_thread = std::thread([&address_info](void) {
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
@@ -99,13 +99,12 @@ TEST(Server, select) {
     while (true) {
         server.select(clients);
 
-        // std::cout << "connections_terminated = " << connections_terminated << std::endl;
         for (client_it client = clients.begin(); client != clients.end(); client++) {
             if (handle_client((*client)->get_stream())) {
-                connections_terminated += 1;
+                connections_read += 1;
             }
         }
-        if (connections_terminated >= 3) {
+        if (connections_read >= 3) {
             break;
         }
     }
@@ -122,10 +121,10 @@ TEST(Server, multiple_addresses) {
 
     listeners.push_back(listener1);
     listeners.push_back(listener2);
-    clients.resize(CLIENT_TOTAL - listeners.size());
+    clients.reserve(CLIENT_TOTAL - listeners.size());
 
     Server server = Server::init(listeners);
-    int connections_terminated = 0;
+    int connections_read = 0;
 
     std::thread clients_thread = std::thread([&](void) {
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
@@ -144,11 +143,12 @@ TEST(Server, multiple_addresses) {
         server.select(clients);
 
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            if (handle_client((*client)->get_stream())) {
-                connections_terminated += 1;
+            if ((*client)->state == Client::Read) {
+                handle_client((*client)->get_stream());
+                connections_read += 1;
             }
         }
-        if (connections_terminated >= 3) {
+        if (connections_read >= 3) {
             break;
         }
     }

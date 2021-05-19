@@ -20,9 +20,8 @@ Server::SelectConfig& Server::SelectConfig::operator=(SelectConfig const& rhs) {
 
 Server::Server(void) {}
 
-Server::Server(std::vector<TcpListener>& tcp_listeners)
-    : listeners(tcp_listeners), config(), clients() {
-    // listeners.swap(tcp_listeners); // More efficient than copy
+Server::Server(std::vector<TcpListener>& tcp_listeners) : config(), clients() {
+    listeners.swap(tcp_listeners); // More efficient than copy
     FD_ZERO(&config.current_sockets);
     for (size_t i = 0; i < listeners.size(); i++) {
         FD_SET(listeners[i].socket_fd(), &config.current_sockets);
@@ -121,8 +120,10 @@ Server::AcceptResult Server::accept_new_client(int listener_fd) {
         }
         FD_SET(new_fd, &config.current_sockets);
 
-        // Set backing store client as CONNECTED and create TcpStream
-        clients[client_fd_to_index(new_fd)].activate_client(new_fd);
+        // Set backing store client as READ, and activate internal TcpStream
+        Client& new_client = clients[client_fd_to_index(new_fd)];
+        new_client.activate_client(new_fd);
+        new_client.set_address(listener.get_sock_name());
     } else {
         // print error to stderr and continue, (no need to crash for one failed client)
         std::cerr << "accept_raw() error: " << res.unwrap_err() << std::endl;

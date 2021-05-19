@@ -47,7 +47,7 @@ class RequestTests : public ::testing::Test {
         std::vector<TcpListener> listeners;
 
         listeners.push_back(listener);
-        clients.resize(CLIENT_TOTAL - listeners.size());
+        clients.reserve(CLIENT_TOTAL - listeners.size());
 
         server = Server::init(listeners);
     }

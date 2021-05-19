@@ -1,6 +1,7 @@
 #include "Client.hpp"
 
 Client::Client(void) : state(Client::Inactive), stream(), parser(), config(0) {}
+// Client::Client(void) : state(Client::Inactive), stream(), parser(), config(0), address() {}
 
 Client::~Client(void) {}
 
@@ -10,10 +11,12 @@ Client& Client::operator=(Client const& rhs) {
     if (this == &rhs) {
         return *this;
     }
+    state = rhs.state;
     stream = rhs.stream; // Move semantics
     parser = rhs.parser;
     config = rhs.config;
     stored_data = rhs.stored_data;
+    // address = rhs.address;
     return *this;
 }
 
@@ -65,7 +68,7 @@ Utils::RwResult Client::read(void) {
 
             if (stored_data.length() != 0) {
                 // If we have unparsed data from a previous read, then append new data to
-                // it before parsing
+                // it before parsing the stored_data, then clear
                 stored_data.append(current_line.raw(), current_line.length());
                 parser.parse_line(stored_data);
                 stored_data.clear();
@@ -91,4 +94,8 @@ http::Request::Result Client::generate_request(void) {
         stored_data.clear();
     }
     return parser.generate_request();
+}
+
+void Client::set_address(SocketAddrV4 new_address) {
+  address = new_address;
 }
