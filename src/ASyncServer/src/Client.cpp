@@ -96,6 +96,4 @@ http::Request::Result Client::generate_request(void) {
     return parser.generate_request();
 }
 
-void Client::set_address(SocketAddrV4 new_address) {
-  address = new_address;
-}
+void Client::set_address(SocketAddrV4 new_address) { address = new_address; }
