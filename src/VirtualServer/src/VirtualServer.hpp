@@ -17,6 +17,9 @@ class VirtualServer {
     static Result create(Layer const* server_configuration);
 
     SocketAddrV4 address(void) const;
+    Utils::optional<std::string const*> name(void) const;
+
+    bool operator==(VirtualServer const& other);
 
   private:
     VirtualServer(void);
