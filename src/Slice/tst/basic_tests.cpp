@@ -105,12 +105,12 @@ TEST(Slice_tests, find_test) {
     Utils::optional<Slice> search = haystack.find("string");
 
     ASSERT_TRUE(search.has_value());
-    EXPECT_EQ(search.unwrap(), "string");
+    EXPECT_EQ(search.unwrap(), "string has a lot of needle's to find");
 
     search = haystack.find("of need");
 
     ASSERT_TRUE(search.has_value());
-    EXPECT_EQ(search.unwrap(), "of need");
+    EXPECT_EQ(search.unwrap(), "of needle's to find");
 
     search = haystack.find("spiderman");
 

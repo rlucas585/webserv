@@ -7,6 +7,7 @@
 
 #include "Slice.hpp"
 #include "State.hpp"
+#include "URI.hpp"
 #include "Utils.hpp"
 #include "optional.hpp"
 #include "result.hpp"
@@ -97,14 +98,14 @@ class Request {
         Builder& header(const char* key, const char* val);
         Builder& header(Slice key, Slice val);
         Builder& header(std::string const& key, std::string const& val);
-        Builder& uri(std::string const& new_uri);
+        Builder& uri(URI const& new_uri);
         Builder& version(Version new_version);
         Builder& body(std::string new_body);
         Builder& append_to_body(Slice const& slice);
 
         // TODO remove as many of these as possible, when server is ready
         Method const& get_method(void) const;
-        std::string const& get_uri(void) const;
+        URI const& get_uri(void) const;
         Version const& get_version(void) const;
         Utils::optional<std::string const*> get_header(const char* key) const;
         Utils::optional<std::string const*> get_header(std::string const& key) const;
@@ -114,7 +115,7 @@ class Request {
 
       private:
         Method method_;
-        std::string uri_; // Consider creating URI class
+        URI uri_; // Consider creating URI class
         Version version_;
         std::map<std::string, std::string> headers;
         std::string body_;
@@ -176,13 +177,13 @@ class Request {
 
   private:
     Method method;
-    std::string uri; // Consider creating URI class
+    URI uri;
     Version version;
     std::map<std::string, std::string> headers;
     std::string body;
 
     Request(void);
-    Request(Method new_method, std::string& new_uri, Version new_version,
+    Request(Method new_method, URI& new_uri, Version new_version,
             std::map<std::string, std::string>& new_headers, std::string& new_body);
 
     static std::map<const Slice, Method> create_method_map(void);

@@ -58,4 +58,5 @@ target_link_libraries(${BINARY}.run
   PUBLIC VirtualServer_lib
   PUBLIC Config_lib
   PUBLIC ServerLogic_lib
+  PUBLIC HTTP_lib
   )

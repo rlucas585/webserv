@@ -82,7 +82,7 @@ static std::string handle_client(Client& client) {
 
 TEST_F(RequestTests, basic_message_parse) {
     std::thread client_thread = message_send("GET / HTTP/1.1\r\nHost:example.com\r\n\r\n");
-    expected_request("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n");
+    expected_request("GET http:/// HTTP/1.1\r\nHost: example.com\r\n\r\n");
     client_thread.join();
 }
 
@@ -95,7 +95,7 @@ TEST_F(RequestTests, empty_message_parse) {
 TEST_F(RequestTests, post_message_parse) {
     std::thread client_thread =
         message_send("POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\ndata=hello");
-    expected_request("POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\ndata=hello");
+    expected_request("POST http:/// HTTP/1.1\r\nContent-Length: 10\r\n\r\ndata=hello");
     client_thread.join();
 }
 
@@ -103,7 +103,7 @@ TEST_F(RequestTests, post_message_parse) {
 TEST_F(RequestTests, post_message_too_much_data) {
     std::thread client_thread = message_send(
         "POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\ndata=hello_there\r\nmoredata=goodbye");
-    expected_request("POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\ndata=hello");
+    expected_request("POST http:/// HTTP/1.1\r\nContent-Length: 10\r\n\r\ndata=hello");
     client_thread.join();
 }
 
@@ -119,7 +119,7 @@ TEST_F(RequestTests, post_chunked_parse) {
                                              "data=hello\r\n"
                                              "0\r\n"
                                              "\r\n");
-    expected_request("POST / HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\ndata=hello");
+    expected_request("POST http:/// HTTP/1.1\r\nTransfer-Encoding: chunked\r\n\r\ndata=hello");
     client_thread.join();
 }
 

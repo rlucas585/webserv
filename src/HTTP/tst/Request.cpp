@@ -4,6 +4,9 @@
 
 #include <iostream>
 
+// Tests in this file could be greatly improved with an effective Setup() function,
+// not an important or even necessary task but could always be done.
+
 using namespace http;
 
 // Request::Builder is initialized with a default of "GET / HTTP/1.1"
@@ -11,20 +14,20 @@ using namespace http;
 TEST(Request, default_initialization) {
     Request req = Request::Builder().build();
 
-    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n\r\n");
+    EXPECT_EQ(req.to_string(), "GET http:/// HTTP/1.1\r\n\r\n");
 }
 
 TEST(Request, method) {
     Request req = Request::Builder().method(http::GET).build();
 
-    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n\r\n");
+    EXPECT_EQ(req.to_string(), "GET http:/// HTTP/1.1\r\n\r\n");
 }
 
 TEST(Request, version) {
     Request req =
         Request::Builder().method(http::GET).method(http::POST).version(http::HTTP_09).build();
 
-    EXPECT_EQ(req.to_string(), "POST / HTTP/0.9\r\n\r\n");
+    EXPECT_EQ(req.to_string(), "POST http:/// HTTP/0.9\r\n\r\n");
 }
 
 TEST(Request, with_headers) {
@@ -34,7 +37,7 @@ TEST(Request, with_headers) {
                       .header("Content-Length", "1500")
                       .build();
 
-    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\nContent-Length: 1500\r\n"
+    EXPECT_EQ(req.to_string(), "GET http:/// HTTP/1.1\r\nContent-Length: 1500\r\n"
                                "Host: example.com\r\n\r\n");
 }
 
@@ -47,7 +50,7 @@ TEST(Request, with_body) {
                       .append_to_body("moredata=goodbye")
                       .build();
 
-    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n"
+    EXPECT_EQ(req.to_string(), "GET http:/// HTTP/1.1\r\n"
                                "Content-Length: 27\r\n"
                                "Host: example.com\r\n"
                                "\r\n"
@@ -84,7 +87,7 @@ TEST(RequestParser, method) {
     EXPECT_TRUE(req_res.is_ok());
     Request req = req_res.unwrap();
 
-    EXPECT_EQ(req.to_string(), "GET / HTTP/1.1\r\n\r\n");
+    EXPECT_EQ(req.to_string(), "GET http:/// HTTP/1.1\r\n\r\n");
 }
 
 TEST(RequestParser, invalid_http) {
@@ -160,7 +163,7 @@ TEST(RequestParser, headers) {
     ASSERT_TRUE(req_res.is_ok());
     Request request = req_res.unwrap();
 
-    EXPECT_EQ(request.to_string(), "GET / HTTP/1.1\r\n"
+    EXPECT_EQ(request.to_string(), "GET http:/// HTTP/1.1\r\n"
                                    "Host: example.com\r\n"
                                    "Ipv6: 2001:0DB8:AC10:FE01::\r\n"
                                    "User-Agent: Mozilla FireFox, Internet Explorer\r\n"
@@ -187,7 +190,7 @@ TEST(RequestParser, body) {
     ASSERT_TRUE(req_res.is_ok());
     Request request = req_res.unwrap();
 
-    EXPECT_EQ(request.to_string(), "POST / HTTP/1.1\r\n"
+    EXPECT_EQ(request.to_string(), "POST http:/// HTTP/1.1\r\n"
                                    "Content-Length: 10\r\n"
                                    "Host: example.com\r\n"
                                    "User-Agent: Mozilla Firefox\r\n"
@@ -223,7 +226,7 @@ TEST(RequestParser, body_chunked) {
 
     Request request = req_res.unwrap();
 
-    EXPECT_EQ(request.to_string(), "POST / HTTP/1.1\r\n"
+    EXPECT_EQ(request.to_string(), "POST http:/// HTTP/1.1\r\n"
                                    "Host: example.com\r\n"
                                    "Transfer-Encoding: chunked\r\n"
                                    "User-Agent: Mozilla Firefox\r\n"
@@ -254,4 +257,89 @@ TEST(RequestParser, body_chunked_no_crlf) {
     ASSERT_TRUE(req_res.is_err());
 
     EXPECT_EQ(req_res.unwrap_err(), BadRequest_400);
+}
+
+TEST(URIParsing, test_basic) {
+    Request::Parser parser;
+
+    parser.parse_line("GET http:/// HTTP/1.1\r\n");
+    parser.parse_line("\r\n");
+
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+    ASSERT_TRUE(req_res.is_ok());
+
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(), "GET http:/// HTTP/1.1\r\n"
+                                   "\r\n");
+}
+
+TEST(URIParsing, test_authority) {
+    Request::Parser parser;
+
+    parser.parse_line("GET http://example.com HTTP/1.1\r\n");
+    parser.parse_line("\r\n");
+
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+    ASSERT_TRUE(req_res.is_ok());
+
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(), "GET http://example.com/ HTTP/1.1\r\n"
+                                   "\r\n");
+}
+
+TEST(URIParsing, should_error_with_authority_with_no_scheme) {
+    Request::Parser parser;
+
+    parser.parse_line("GET example.com HTTP/1.1\r\n");
+    parser.parse_line("\r\n");
+
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+    ASSERT_TRUE(req_res.is_err());
+
+    State error = req_res.unwrap_err();
+
+    EXPECT_STREQ(error, "400 Bad Request");
+}
+
+TEST(URIParsing, all_values) {
+    Request::Parser parser;
+
+    parser.parse_line("GET http://example.com/path/to/resource?data=hello#chapter1 HTTP/1.1\r\n");
+    parser.parse_line("\r\n");
+
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+    ASSERT_TRUE(req_res.is_ok());
+
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(),
+              "GET http://example.com/path/to/resource?data=hello#chapter1 HTTP/1.1\r\n"
+              "\r\n");
+}
+
+TEST(URIParsing, fragment_no_query) {
+    Request::Parser parser;
+
+    parser.parse_line("GET http://example.com/path/to/resource#chapter1 HTTP/1.1\r\n");
+    parser.parse_line("\r\n");
+
+    EXPECT_TRUE(parser.is_complete());
+
+    Request::Result req_res = parser.generate_request();
+    ASSERT_TRUE(req_res.is_ok());
+
+    Request request = req_res.unwrap();
+
+    EXPECT_EQ(request.to_string(), "GET http://example.com/path/to/resource#chapter1 HTTP/1.1\r\n"
+                                   "\r\n");
 }
