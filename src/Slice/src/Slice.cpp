@@ -450,7 +450,7 @@ Utils::optional<Slice> Slice::find(Slice needle) {
 
     for (size_t i = 0; i < _len && i + needle.length() < _len; i++) {
         if (Utils::strncmp(_data + i, needle._data, needle.length()) == 0) {
-            ret = Utils::make_optional(Slice::newSliceWithLength(_data + i, needle.length()));
+            ret = Utils::make_optional(Slice::newSliceWithLength(_data + i, _len - i));
             break;
         }
     }

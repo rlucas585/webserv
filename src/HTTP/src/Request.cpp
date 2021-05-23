@@ -67,7 +67,7 @@ std::ostream& operator<<(std::ostream& o, Version const& ver) {
     return o;
 }
 
-Request::Builder::Builder(void) : method_(GET), uri_("/"), version_(HTTP_11), headers() {}
+Request::Builder::Builder(void) : method_(GET), uri_(), version_(HTTP_11), headers() {}
 
 Request::Builder::~Builder(void) {}
 
@@ -79,7 +79,7 @@ Request::Builder& Request::Builder::operator=(Builder const& rhs) {
     }
     Builder& ref = const_cast<Builder&>(rhs); // move semantics
     method_ = rhs.method_;
-    uri_.swap(ref.uri_);
+    uri_ = ref.uri_; // swap() method on URI would be an optimisation
     version_ = rhs.version_;
     headers.swap(ref.headers);
     body_.swap(ref.body_);
@@ -118,7 +118,7 @@ Request::Builder& Request::Builder::header(std::string const& key, std::string c
     return *this;
 }
 
-Request::Builder& Request::Builder::uri(std::string const& new_uri) {
+Request::Builder& Request::Builder::uri(URI const& new_uri) {
     uri_ = new_uri;
     return *this;
 }
@@ -140,7 +140,7 @@ Request::Builder& Request::Builder::append_to_body(Slice const& slice) {
 
 Method const& Request::Builder::get_method(void) const { return method_; }
 
-std::string const& Request::Builder::get_uri(void) const { return uri_; }
+URI const& Request::Builder::get_uri(void) const { return uri_; }
 
 Version const& Request::Builder::get_version(void) const { return version_; }
 
@@ -247,11 +247,11 @@ Request::Result Request::Parser::generate_request(void) {
 void Request::Parser::parse_method(Slice line) {
     Slice::Split iter = line.split();
     Slice method = iter.next();
-    Slice uri = iter.next();
+    Slice uri_slice = iter.next();
     Slice version = iter.next();
 
     // Verify that only three whitespace-separated component have been sent
-    if (!method.isInitialized() || !uri.isInitialized() || !version.isInitialized() ||
+    if (!method.isInitialized() || !uri_slice.isInitialized() || !version.isInitialized() ||
         !iter.is_complete()) {
         return set_parser_state(Error, BadRequest_400);
     }
@@ -263,10 +263,12 @@ void Request::Parser::parse_method(Slice line) {
         return set_parser_state(Error, NotImplemented_501);
     builder.method(search->second);
 
-    // Check that the URI is not too large, set value in Request::Builder if valid
-    if (uri.length() > URI_SIZE_LIMIT)
-        return set_parser_state(Error, URITooLong_414);
-    builder.uri(uri);
+    // Check that the uri_slice is not too large, set value in Request::Builder if valid
+    URI::Result uri_res = URI::parse_uri(uri_slice);
+    if (uri_res.is_err()) {
+        return set_parser_state(Error, uri_res.unwrap_err());
+    }
+    builder.uri(uri_res.unwrap());
 
     // Verify that HTTP version is valid, then set HTTP version in Request::Builder.
     std::map<const Slice, http::Version>::const_iterator search2 =
@@ -397,10 +399,10 @@ Request::Request(void) : method(GET) {}
 
 Request::~Request(void) {}
 
-Request::Request(Method new_method, std::string& new_uri, Version new_version,
+Request::Request(Method new_method, URI& new_uri, Version new_version,
                  std::map<std::string, std::string>& new_headers, std::string& new_body)
     : method(new_method), uri(), version(new_version), headers() {
-    uri.swap(new_uri);
+    uri = new_uri; // TODO Creating swap() on URI would be an optimisation
     headers.swap(new_headers);
     body.swap(new_body);
 }
@@ -413,7 +415,7 @@ Request& Request::operator=(Request const& rhs) {
     }
     Request& ref = const_cast<Request&>(rhs); // move semantics
     method = rhs.method;
-    uri.swap(ref.uri);
+    uri = ref.uri;
     version = rhs.version;
     headers.swap(ref.headers);
     body.swap(ref.body);
@@ -422,7 +424,7 @@ Request& Request::operator=(Request const& rhs) {
 }
 
 std::string Request::to_string(void) const {
-    std::string output = static_cast<std::string>(method) + " " + uri + " " +
+    std::string output = static_cast<std::string>(method) + " " + uri.to_string() + " " +
                          static_cast<std::string>(version) + "\r\n";
 
     for (std::map<std::string, std::string>::const_iterator header = headers.begin();
