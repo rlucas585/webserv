@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/10 18:27:23 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/11 10:50:15 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,43 @@ Slice Slice::Split::next(void) {
     return slice;
 }
 
+size_t Slice::Split::count_remaining(void) const {
+    size_t count = 0;
+
+    const char* local_remainder = _remainder;
+    size_t local_length_remaining = length_remaining;
+    const char* next_delim;
+
+    while (true) {
+        if ((this->is_from_slice() && length_remaining == 0) || local_remainder == 0) {
+            return count;
+        }
+
+        count += 1;
+
+        if (this->is_from_slice())
+            next_delim = Utils::strpbrklen(local_remainder, _delimiter, local_length_remaining);
+        else
+            next_delim = Utils::strpbrk(local_remainder, _delimiter);
+
+        if (this->is_from_slice())
+            local_length_remaining -= (next_delim - local_remainder);
+        local_remainder = next_delim;
+
+        for (; local_remainder && *local_remainder; local_remainder++) {
+            if (!Utils::strchr(_delimiter, *local_remainder))
+                break;
+            if (this->is_from_slice()) {
+                local_length_remaining -= 1;
+                if (local_length_remaining == 0)
+                    break;
+            }
+        }
+        if (local_remainder && *local_remainder == 0)
+            local_remainder = 0;
+    }
+}
+
 bool Slice::Split::is_complete(void) const {
     if (this->is_from_slice()) {
         if (length_remaining == 0)
@@ -79,22 +116,20 @@ bool Slice::Split::is_complete(void) const {
 }
 
 const char* Slice::Split::_findFirstNotOf(const char* s, const char* reject) {
-    size_t i = 0;
-
     if (s == 0)
         return 0;
-    for (; s[i]; s++) {
-        if (!Utils::strchr(reject, s[i]))
+    for (; *s; s++) {
+        if (!Utils::strchr(reject, *s))
             break;
-        if (length_remaining != -1) {
+        if (this->is_from_slice()) {
             length_remaining -= 1;
             if (length_remaining == 0)
                 break;
         }
     }
-    if (s[i] == '\0')
+    if (*s == '\0')
         return 0;
-    if (length_remaining != -1) {
+    if (this->is_from_slice()) {
         if (length_remaining == 0)
             return 0;
     }

@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/01 17:16:36 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 11:49:57 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/11 14:37:00 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ class optional {
     }
     stored_type& operator*() { return *reinterpret_cast<stored_type*>(storage.address()); }
     stored_type const& operator*() const {
-        return *reinterpret_cast<stored_type*>(storage.address());
+        return *reinterpret_cast<stored_type const*>(storage.address());
     }
     stored_type* operator->() { return reinterpret_cast<stored_type*>(storage.address()); }
     const stored_type* operator->() const {

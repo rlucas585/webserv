@@ -188,7 +188,7 @@ class Request {
     static std::map<const Slice, bool> create_header_map(void);
     static std::map<const Slice, Version> create_version_map(void);
 
-  public:
+  private:
     static const std::map<const Slice, Method> valid_methods;
     static const std::map<const Slice, bool> valid_headers;
     static const std::map<const Slice, Version> valid_versions;

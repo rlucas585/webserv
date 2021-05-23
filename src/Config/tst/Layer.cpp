@@ -96,18 +96,31 @@ TEST(Layer, basic_parsing) {
     }
     ASSERT_FALSE(result.is_err());
     Layer config = result.unwrap();
-    // std::cout << config; // TODO change to actual test
-}
 
-TEST(Layer, complex_parsing) {
-    config::Parser parser;
-
-    config::Parser::Result result = parser.generate_config_from_file("nginx_example.txt");
-
-    if (result.is_err()) {
-        std::cout << result.unwrap_err() << std::endl;
+    // Repeated Iterative loops such as this should not be present in production code
+    for (Layer::Iterator block = config.begin_children(); block != config.end_children(); block++) {
+        if (block->get_name() == "http") {
+            for (Layer::Iterator server = block->filter_children("server");
+                 server != block->end_children(); server++) {
+                for (Layer::Iterator server_child = server->filter_children("limit_except");
+                     server_child != server->end_children(); server_child++) {
+                    EXPECT_EQ(*server_child->get_value("allow").value(), "192.168.1.0/32");
+                    EXPECT_EQ(*server_child->get_value("deny").value(), "all");
+                }
+            }
+        }
     }
-    ASSERT_FALSE(result.is_err());
-    Layer config = result.unwrap();
-    std::cout << config;
 }
+
+// TEST(Layer, complex_parsing) {
+//     config::Parser parser;
+//
+//     config::Parser::Result result = parser.generate_config_from_file("nginx_example.txt");
+//
+//     if (result.is_err()) {
+//         std::cout << result.unwrap_err() << std::endl;
+//     }
+//     ASSERT_FALSE(result.is_err());
+//     Layer config = result.unwrap();
+//     std::cout << config;
+// }
