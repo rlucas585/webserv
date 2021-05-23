@@ -31,6 +31,7 @@ class Client {
     bool request_is_complete(void) const;
     http::Request::Result generate_request(void);
     void set_address(SocketAddrV4 new_address);
+    SocketAddrV4 const& get_address(void) const;
 
   public:
     Client::Status state;

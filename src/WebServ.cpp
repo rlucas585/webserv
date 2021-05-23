@@ -6,9 +6,9 @@ namespace WebServ {
 
 // Anonymous namespace functions
 namespace {
-void handle_client(Client& client);
+void handle_client(Client& client, Layer const* global_config);
 void read_from_client(Client& client);
-void write_to_client(Client& client);
+void write_to_client(Client& client, Layer const* global_config);
 } // namespace
 
 // Main Program Loop
@@ -21,7 +21,7 @@ WebServ::Result run(Config& config) {
         server.select(config.active_clients);
 
         for (client_it client = clients.begin(); client != clients.end(); client++) {
-            handle_client(**client);
+            handle_client(**client, &*config.global_config);
         }
     }
 
@@ -30,32 +30,32 @@ WebServ::Result run(Config& config) {
 
 // Anonymous namespace functions
 namespace {
-void handle_client(Client& client) {
+void handle_client(Client& client, Layer const* global_config) {
     std::string message_received;
     std::string message_sent;
 
     if (client.state == Client::Read) {
         return read_from_client(client);
     } else if (client.state == Client::Write && client.request_is_complete()) {
-        // XXX We only write a response to a client if a request is complete - in order
+        // XXX: We only write a response to a client if a request is complete - in order
         // to run effectively with netcat. Potentially there are some issues with
         // this, e.g. maybe a client will repeatedly trigger select() for no need,
         // and it should instead just be disconnected if it attempts to read from
         // server with an incomplete request
-        return write_to_client(client);
+        return write_to_client(client, global_config);
     }
 }
 
 void read_from_client(Client& client) { client.read(); }
 
-void write_to_client(Client& client) {
+void write_to_client(Client& client, Layer const* global_config) {
     http::Request::Result req_res = client.generate_request();
     std::string response_string;
 
-    // TODO actually write a function for this
-    // Layer const* select_server_configuration()
-
-    bool response_status = ServerLogic::generate_response(req_res, response_string);
+    bool response_status =
+        (req_res.is_ok()) ? ServerLogic::generate_response(req_res, client.get_address(),
+                                                           global_config, response_string)
+                          : ServerLogic::serve_error_page(req_res.unwrap_err(), response_string);
 
     std::cout << "Response: " << response_string;
     Utils::RwResult res = client.write(response_string);
@@ -70,7 +70,7 @@ void write_to_client(Client& client) {
 }
 } // namespace
 
-// Config
+// Config TODO: Could do with a better name, to avoid confusion with config file
 
 Config::Config(void) {}
 
@@ -139,6 +139,12 @@ Config::Result Config::create_servers(Utils::unique_ptr<Layer> parsed_config) {
     return Config::Result::Err("No http block found in config file");
 }
 
+static bool server_has_no_root(Layer const* server) {
+    if (!server->get_value("root").has_value())
+        return true;
+    return false;
+}
+
 Config::ServerResult Config::add_servers_from_http_block(Layer* http,
                                                          std::vector<VirtualServer>& v_servers,
                                                          std::vector<TcpListener>& listeners) {
@@ -146,6 +152,9 @@ Config::ServerResult Config::add_servers_from_http_block(Layer* http,
 
     Layer::Iterator server = http->filter_children("server");
     for (; server != http->end_children(); server++) {
+        if (server_has_no_root(&*server)) {
+            return ServerResult::Err("server block without access to a root directive");
+        }
 
         // Create a VirtualServer - that contains a pointer to the configuration
         // it uses. Also performs error checking for the "server" block
@@ -180,6 +189,9 @@ Config::ServerResult Config::add_servers_from_http_block(Layer* http,
             listeners.push_back(new_listener_res.unwrap());
             existing_addresses.push_back(listeners.back().get_sock_name());
         }
+    }
+    if (existing_addresses.size() == 0) {
+        return ServerResult::Err("No server blocks located in config file");
     }
     return ServerResult::Ok(0); // Success value unused
 }

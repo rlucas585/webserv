@@ -100,3 +100,5 @@ http::Request::Result Client::generate_request(void) {
 }
 
 void Client::set_address(SocketAddrV4 new_address) { address = new_address; }
+
+SocketAddrV4 const& Client::get_address(void) const { return address; }

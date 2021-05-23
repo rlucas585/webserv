@@ -238,6 +238,9 @@ Request::Result Request::Parser::generate_request(void) {
         *this = Request::Parser();
         // Message is incomplete, and therefore, badly formed
         return Request::Result::Err(BadRequest_400);
+    } else if (host_is_invalid()) {
+        *this = Request::Parser();
+        return Request::Result::Err(BadRequest_400);
     } else {
         Request request = builder.build();
         *this = Request::Parser();
@@ -264,7 +267,6 @@ void Request::Parser::parse_method(Slice line) {
         return set_parser_state(Error, NotImplemented_501);
     builder.method(search->second);
 
-    // Check that the uri_slice is not too large, set value in Request::Builder if valid
     URI::Result uri_res = URI::parse_uri(uri_slice);
     if (uri_res.is_err()) {
         return set_parser_state(Error, uri_res.unwrap_err());
@@ -394,6 +396,18 @@ bool Request::Parser::line_has_CRLF(Slice const& line) const {
     return line.length() >= 2 && Slice::newSliceWithOffset(line, line.length() - 2) == "\r\n";
 }
 
+bool Request::Parser::host_is_invalid(void) const {
+    if (builder.get_header("Host").has_value()) {
+        if (!builder.get_uri().authority().has_value()) {
+            return false;
+        }
+        if (**(builder.get_uri().authority()) != **(builder.get_header("Host"))) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Request Class
 
 Request::Request(void) : method(GET) {}
@@ -441,6 +455,31 @@ std::string Request::to_string(void) const {
 Version const& Request::get_version(void) const { return version; }
 
 std::map<std::string, std::string>& Request::get_headers(void) { return headers; }
+
+Utils::optional<std::string const*> Request::get_header(const char* key) const {
+    std::map<std::string, std::string>::const_iterator search = headers.find(key);
+    if (search == headers.end()) {
+        return Utils::nullopt;
+    }
+    return &search->second;
+}
+
+Utils::optional<std::string const*> Request::get_header(std::string const& key) const {
+    std::map<std::string, std::string>::const_iterator search = headers.find(key);
+    if (search == headers.end()) {
+        return Utils::nullopt;
+    }
+    return &search->second;
+}
+
+Utils::optional<std::string const*> Request::get_host(void) const {
+    Utils::optional<std::string const*> from_header = get_header("Host");
+
+    if (from_header.has_value()) {
+        return from_header;
+    }
+    return uri.authority();
+}
 
 // Map definitions - used for simple assignation of enums based on parsed values
 

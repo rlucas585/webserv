@@ -115,13 +115,28 @@ URI::Result URI::parse_uri(Slice uri_slice) {
 
 URI::Scheme const& URI::scheme(void) const { return scheme_; }
 
-Utils::optional<std::string> const& URI::authority(void) const { return authority_; }
+Utils::optional<std::string const*> URI::authority(void) const {
+    if (authority_.has_value()) {
+        return Utils::make_optional(&*authority_);
+    }
+    return Utils::nullopt;
+}
 
 std::string const& URI::path(void) const { return path_; }
 
-Utils::optional<std::string> const& URI::query(void) const { return query_; }
+Utils::optional<std::string const*> URI::query(void) const {
+    if (query_.has_value()) {
+        return Utils::make_optional(&*query_);
+    }
+    return Utils::nullopt;
+}
 
-Utils::optional<std::string> const& URI::fragment(void) const { return fragment_; }
+Utils::optional<std::string const*> URI::fragment(void) const {
+    if (fragment_.has_value()) {
+        return Utils::make_optional(&*fragment_);
+    }
+    return Utils::nullopt;
+}
 
 std::string URI::to_string(void) const {
     std::string output;

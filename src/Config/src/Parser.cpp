@@ -301,6 +301,7 @@ std::map<const Slice, Parser::Validator> Parser::create_valid_values_map(void) {
     m["deny"] = Validator::init(IS_KEY, Range().set_min(1));
     m["index"] = Validator::init(IS_KEY, Range().set_min(1));
     m["autoindex"] = Validator::init(IS_KEY, Range().set_min(1).set_max(1));
+    m["error_page"] = Validator::init(IS_KEY, Range().set_min(2));
 
     return m;
 }

@@ -63,6 +63,33 @@ class Layer {
     };
 
   public:
+    class ConstIterator {
+      public:
+        ConstIterator(std::vector<Layer> const& vec);
+        ConstIterator(std::vector<Layer> const& vec, std::string name);
+        ConstIterator(std::vector<Layer>::const_iterator new_it);
+        ~ConstIterator(void);
+        ConstIterator(ConstIterator const& src);
+        ConstIterator& operator=(ConstIterator const& rhs);
+
+        ConstIterator& operator++(void);
+        ConstIterator operator++(int);
+
+        Layer const& operator*();
+        Layer const* operator->();
+
+        bool operator==(ConstIterator const& rhs);
+        bool operator!=(ConstIterator const& rhs);
+
+      private:
+        std::vector<Layer>::const_iterator it;
+        std::vector<Layer>::const_iterator end;
+        Utils::optional<std::string> identifier;
+
+        ConstIterator(void);
+    };
+
+  public:
     typedef Utils::result<Layer*, const char*> Result;
     typedef Utils::result<Location, const char*> LocationRes;
 
@@ -99,8 +126,11 @@ class Layer {
     value_iterator begin_values(void);
     value_iterator end_values(void);
     Iterator begin_children(void);
+    ConstIterator begin_children(void) const;
     Iterator end_children(void);
+    ConstIterator end_children(void) const;
     Iterator filter_children(std::string filter);
+    ConstIterator filter_children(std::string filter) const;
 
     Layer* get_parent(void);
 

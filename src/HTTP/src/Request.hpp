@@ -164,6 +164,8 @@ class Request {
 
         bool line_should_have_CRLF(void) const;
         bool line_has_CRLF(Slice const& line) const;
+
+        bool host_is_invalid(void) const;
     };
 
   public:
@@ -174,6 +176,9 @@ class Request {
     std::string to_string(void) const;
     Version const& get_version(void) const;
     std::map<std::string, std::string>& get_headers(void);
+    Utils::optional<std::string const*> get_header(const char* key) const;
+    Utils::optional<std::string const*> get_header(std::string const& key) const;
+    Utils::optional<std::string const*> get_host(void) const;
 
   private:
     Method method;

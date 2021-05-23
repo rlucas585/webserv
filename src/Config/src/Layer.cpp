@@ -28,7 +28,7 @@ Layer::Iterator::Iterator(std::vector<Layer>& vec)
 
 Layer::Iterator::Iterator(std::vector<Layer>& vec, std::string name)
     : it(vec.begin()), end(vec.end()), identifier(Utils::make_optional(name)) {
-    while (it->uid.name != *identifier && it != end)
+    while (it != end && it->uid.name != *identifier)
         ++it;
 }
 
@@ -74,6 +74,58 @@ Layer* Layer::Iterator::operator->() { return &(*it); }
 bool Layer::Iterator::operator==(Iterator const& rhs) { return it == rhs.it; }
 
 bool Layer::Iterator::operator!=(Iterator const& rhs) { return !(*this == rhs); }
+
+Layer::ConstIterator::ConstIterator(std::vector<Layer> const& vec)
+    : it(vec.begin()), end(vec.end()), identifier(Utils::nullopt) {}
+
+Layer::ConstIterator::ConstIterator(std::vector<Layer> const& vec, std::string name)
+    : it(vec.begin()), end(vec.end()), identifier(Utils::make_optional(name)) {
+    while (it != end && it->uid.name != *identifier)
+        ++it;
+}
+
+Layer::ConstIterator::ConstIterator(std::vector<Layer>::const_iterator new_it)
+    : it(new_it), end(new_it), identifier(Utils::nullopt) {}
+
+Layer::ConstIterator::~ConstIterator(void) {}
+
+Layer::ConstIterator::ConstIterator(ConstIterator const& src)
+    : it(src.it), end(src.end), identifier(src.identifier) {}
+
+Layer::ConstIterator& Layer::ConstIterator::operator=(ConstIterator const& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    it = rhs.it;
+    end = rhs.end;
+    identifier = rhs.identifier;
+    return *this;
+}
+
+Layer::ConstIterator& Layer::ConstIterator::operator++(void) {
+    if (identifier.has_value()) {
+        ++it;
+        while (it != end && it->uid.name != *identifier)
+            ++it;
+    } else {
+        ++it;
+    }
+    return *this;
+}
+
+Layer::ConstIterator Layer::ConstIterator::operator++(int) {
+    ConstIterator tmp(*this);
+    operator++();
+    return tmp;
+}
+
+Layer const& Layer::ConstIterator::operator*() { return *it; }
+
+Layer const* Layer::ConstIterator::operator->() { return &(*it); }
+
+bool Layer::ConstIterator::operator==(ConstIterator const& rhs) { return it == rhs.it; }
+
+bool Layer::ConstIterator::operator!=(ConstIterator const& rhs) { return !(*this == rhs); }
 
 // Layer Class
 
@@ -216,10 +268,20 @@ Layer::value_iterator Layer::end_values(void) { return values.end(); }
 
 Layer::Iterator Layer::begin_children(void) { return Layer::Iterator(children); }
 
+Layer::ConstIterator Layer::begin_children(void) const { return Layer::ConstIterator(children); }
+
 Layer::Iterator Layer::end_children(void) { return Layer::Iterator(children.end()); }
+
+Layer::ConstIterator Layer::end_children(void) const {
+    return Layer::ConstIterator(children.end());
+}
 
 Layer::Iterator Layer::filter_children(std::string filter) {
     return Layer::Iterator(children, filter);
+}
+
+Layer::ConstIterator Layer::filter_children(std::string filter) const {
+    return Layer::ConstIterator(children, filter);
 }
 
 Layer* Layer::get_parent(void) { return parent; }

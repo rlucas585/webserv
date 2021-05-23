@@ -42,10 +42,10 @@ class URI {
     URI& operator=(URI const& rhs);
 
     Scheme const& scheme(void) const;
-    Utils::optional<std::string> const& authority(void) const;
+    Utils::optional<std::string const*> authority(void) const;
     std::string const& path(void) const;
-    Utils::optional<std::string> const& query(void) const;
-    Utils::optional<std::string> const& fragment(void) const;
+    Utils::optional<std::string const*> query(void) const;
+    Utils::optional<std::string const*> fragment(void) const;
 
     friend std::ostream& operator<<(std::ostream& o, URI const& uri);
 
