@@ -78,9 +78,12 @@ Utils::RwResult Client::read(void) {
 
             buf_slice = Slice::newSliceWithOffset(next, 1); // Move buf_slice past \n
         }
+        state = Connected;
+        return Utils::RwResult::Ok(bytes_read);
+    } else {
+        state = Connected;
+        return read_result;
     }
-    state = Connected;
-    return read_result;
 }
 
 Utils::RwResult Client::write(std::string const& str) { return stream.write(str); }

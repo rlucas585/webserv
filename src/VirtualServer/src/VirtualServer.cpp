@@ -50,6 +50,25 @@ SocketAddrV4 VirtualServer::address(void) const {
     return socket_address_result.unwrap();
 }
 
+Utils::optional<std::string const*> VirtualServer::name(void) const {
+    return config->get_local_value("server_name");
+}
+
+bool VirtualServer::operator==(VirtualServer const& other) {
+    if (address() != other.address())
+        return false;
+    Utils::optional<std::string const*> this_name = name();
+    Utils::optional<std::string const*> other_name = other.name();
+    if (!this_name.has_value()) {
+        if (!other_name.has_value())
+            return true;
+        return false;
+    }
+    if (!other_name.has_value())
+        return false;
+    return *this_name == *other_name;
+}
+
 bool VirtualServer::validate_listen(Slice listen) {
     Slice::Split iter = listen.split();
     Slice host_and_port = iter.next();

@@ -102,7 +102,7 @@ WebServ::Config& Config::operator=(Config const& rhs) {
     return *this;
 }
 
-Config::Result Config::parse_config(int argc, char* argv[]) {
+Config::Result Config::parse_config(int argc, const char* const* argv) {
     if (argc > 2) {
         std::string output = std::string(argv[0]) + ": invalid number of arguments\n" +
                              "Usage: " + std::string(argv[0]) + " <config_file>";
@@ -152,7 +152,18 @@ Config::ServerResult Config::add_servers_from_http_block(Layer* http,
         VirtualServer::Result v_server_result = VirtualServer::create(&*server);
         if (v_server_result.is_err())
             return ServerResult::Err(v_server_result.unwrap_err());
-        v_servers.push_back(v_server_result.unwrap());
+
+        VirtualServer new_v_server = v_server_result.unwrap();
+        std::vector<VirtualServer>::iterator v_server_search =
+            std::find(v_servers.begin(), v_servers.end(), new_v_server);
+
+        if (v_server_search != v_servers.end()) {
+            return ServerResult::Err(
+                "Duplicate server block in configuration"); // Could make more explicit error
+                                                            // message
+        }
+
+        v_servers.push_back(new_v_server);
 
         // Check if the address of the new virtual server already has an associated
         // TcpListener

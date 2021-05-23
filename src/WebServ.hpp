@@ -27,7 +27,7 @@ struct Config {
     Config& operator=(Config const& rhs);
 
   public:
-    static Result parse_config(int argc, char* argv[]);
+    static Result parse_config(int argc, const char* const* argv);
 
     Server server;
     std::vector<VirtualServer> virtual_servers;

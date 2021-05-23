@@ -28,16 +28,17 @@ class RequestTests : public ::testing::Test {
     }
 
     void expected_request(const char* expected_request) {
-        size_t connections_received = 0;
         std::string actual;
 
-        while (connections_received < 1) {
+        while (true) {
             server.select(clients);
 
-            connections_received += clients.size();
             for (client_it client = clients.begin(); client != clients.end(); client++) {
-                actual = handle_client(**client);
-                EXPECT_EQ(actual, expected_request);
+                if ((*client)->state == Client::Read) {
+                    actual = handle_client(**client);
+                    EXPECT_EQ(actual, expected_request);
+                    return;
+                }
             }
         }
     }
@@ -67,7 +68,7 @@ static std::string handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    client.read();
+    Utils::RwResult result = client.read();
 
     http::Request::Result req_res = client.generate_request();
 

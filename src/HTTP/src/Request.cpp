@@ -187,6 +187,7 @@ Request::Parser& Request::Parser::operator=(Parser const& rhs) {
 }
 
 void Request::Parser::parse_line(Slice line) {
+
     // HTTP Request is invalid without \r\n at the end of each line, unless reading the Body
     if (line_should_have_CRLF() && !line_has_CRLF(line)) {
         return set_parser_state(Error, BadRequest_400);
