@@ -10,7 +10,7 @@
 // Prototypes
 typedef std::vector<Client*>::iterator client_it;
 static std::string handle_client(Client& client);
-static void client_func(const char* address, const char* message);
+static void client_func(SocketAddrV4 address, const char* message);
 
 // Mock class (I think that's the term?)
 
@@ -18,32 +18,37 @@ class RequestTests : public ::testing::Test {
   public:
     Server server;
     std::vector<Client*> clients;
-    static constexpr const char* address_info = "localhost:4250";
+    // static constexpr const char* address_info = "localhost:4250";
+	static uint16_t port;
 
     std::thread message_send(const char* request_message) {
         return std::thread([request_message](void) {
+				Ipv4Addr ip_addr = Ipv4Addr::init_from_string("localhost").unwrap();
             std::this_thread::sleep_for(std::chrono::milliseconds(30));
+			SocketAddrV4 address_info = SocketAddrV4::init(ip_addr, port++);
             client_func(address_info, request_message);
         });
     }
 
     void expected_request(const char* expected_request) {
-        size_t connections_received = 0;
         std::string actual;
 
-        while (connections_received < 1) {
+        while (true) {
             server.select(clients);
 
-            connections_received += clients.size();
             for (client_it client = clients.begin(); client != clients.end(); client++) {
-                actual = handle_client(**client);
-                EXPECT_EQ(actual, expected_request);
+				if ((*client)->state == Client::Read) {
+					actual = handle_client(**client);
+					EXPECT_EQ(actual, expected_request);
+					return ;
+				}
             }
         }
     }
 
     void SetUp(void) override {
-        TcpListener listener = TcpListener::bind(address_info).unwrap();
+		Ipv4Addr ip_addr = Ipv4Addr::init_from_string("localhost").unwrap();
+        TcpListener listener = TcpListener::bind(SocketAddrV4::init(ip_addr, port)).unwrap();
         std::vector<TcpListener> listeners;
 
         listeners.push_back(listener);
@@ -53,8 +58,10 @@ class RequestTests : public ::testing::Test {
     }
 };
 
+uint16_t RequestTests::port = 4250;
+
 // client_func() represents an external client
-static void client_func(const char* address, const char* message) {
+static void client_func(SocketAddrV4 address, const char* message) {
     TcpStream client =
         TcpStream::connect(address).expect("Unable to contact TcpListener from client thread");
     client.write(message);
@@ -67,7 +74,13 @@ static std::string handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    client.read();
+	Utils::RwResult result = client.read();
+	// if (result.is_err()) {
+	// 	// Bug Fix for MacOs: I think that clients from separate tests can
+	// 	// sometimes communicate with different servers, when sending their
+	// 	// null connection close message
+	// 	return result.unwrap_err();
+	// }
 
     http::Request::Result req_res = client.generate_request();
 

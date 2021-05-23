@@ -187,6 +187,7 @@ Request::Parser& Request::Parser::operator=(Parser const& rhs) {
 }
 
 void Request::Parser::parse_line(Slice line) {
+
     // HTTP Request is invalid without \r\n at the end of each line, unless reading the Body
     if (line_should_have_CRLF() && !line_has_CRLF(line)) {
         return set_parser_state(Error, BadRequest_400);
@@ -197,6 +198,7 @@ void Request::Parser::parse_line(Slice line) {
         else if (step == Method) // Ignore leading CRLF's
             return;
     }
+
 
     switch (step) {
     case Method:
@@ -250,11 +252,13 @@ void Request::Parser::parse_method(Slice line) {
     Slice uri_slice = iter.next();
     Slice version = iter.next();
 
+
     // Verify that only three whitespace-separated component have been sent
     if (!method.isInitialized() || !uri_slice.isInitialized() || !version.isInitialized() ||
         !iter.is_complete()) {
         return set_parser_state(Error, BadRequest_400);
     }
+
 
     // Check that 'method' is valid, then add to the Request::Builder
     std::map<const Slice, http::Method>::const_iterator search =
