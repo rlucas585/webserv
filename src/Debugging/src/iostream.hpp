@@ -12,4 +12,4 @@ struct Cout : public std::ostream {
 #else
 extern std::ostream& cout;
 #endif
-} // namespace Extra
+} // namespace Debug

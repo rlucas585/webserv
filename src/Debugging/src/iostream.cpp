@@ -4,4 +4,4 @@ namespace Debug {
 #ifndef NDEBUG
 std::ostream& cout = std::cout;
 #endif
-} // namespace Extra
+} // namespace Debug
