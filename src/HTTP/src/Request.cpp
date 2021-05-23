@@ -199,7 +199,6 @@ void Request::Parser::parse_line(Slice line) {
             return;
     }
 
-
     switch (step) {
     case Method:
         return parse_method(line);
@@ -252,13 +251,11 @@ void Request::Parser::parse_method(Slice line) {
     Slice uri_slice = iter.next();
     Slice version = iter.next();
 
-
     // Verify that only three whitespace-separated component have been sent
     if (!method.isInitialized() || !uri_slice.isInitialized() || !version.isInitialized() ||
         !iter.is_complete()) {
         return set_parser_state(Error, BadRequest_400);
     }
-
 
     // Check that 'method' is valid, then add to the Request::Builder
     std::map<const Slice, http::Method>::const_iterator search =
