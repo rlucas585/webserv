@@ -296,6 +296,11 @@ void Request::Parser::parse_header(Slice line) {
     if (!header_name.isInitialized() || !header_value.isInitialized() || !iter.is_complete())
         return set_parser_state(Error, BadRequest_400);
 
+    if (builder.get_header(header_name).has_value() &&
+        single_value_header_map.find(header_name) != single_value_header_map.end()) {
+        return set_parser_state(Error, BadRequest_400);
+    }
+
     builder.header(header_name.trim(), header_value.trim());
 }
 
@@ -407,6 +412,14 @@ bool Request::Parser::host_is_invalid(void) const {
     }
     return false;
 }
+
+std::map<const Slice, bool> Request::Parser::create_single_value_header_map(void) {
+    std::map<const Slice, bool> m;
+    m["Host"] = true;
+    return m;
+}
+const std::map<const Slice, bool> Request::Parser::single_value_header_map =
+    Request::Parser::create_single_value_header_map();
 
 // Request Class
 

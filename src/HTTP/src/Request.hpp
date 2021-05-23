@@ -166,6 +166,10 @@ class Request {
         bool line_has_CRLF(Slice const& line) const;
 
         bool host_is_invalid(void) const;
+
+        static std::map<const Slice, bool> create_single_value_header_map(void);
+
+        static const std::map<const Slice, bool> single_value_header_map;
     };
 
   public:
