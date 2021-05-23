@@ -1,8 +1,8 @@
 #ifndef TCPSTREAM_HPP
 #define TCPSTREAM_HPP
 
-#include "../../Result/src/result.hpp"
 #include "Socket.hpp"
+#include "result.hpp"
 
 class TcpStream {
   public:
@@ -28,6 +28,8 @@ class TcpStream {
     Utils::RwResult write(const void* buf, size_t len);
     Utils::RwResult write(const char* str);
     Utils::RwResult write(std::string const& str);
+
+    SocketAddrV4 get_sock_name(void) const;
 
     int fd(void) const;
 

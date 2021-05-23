@@ -6,12 +6,12 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/17 19:05:37 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/12 12:50:57 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:54:36 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Utils.hpp"
-#include "../../Slice/src/Slice.hpp"
+#include "Slice.hpp"
 
 // Uncomment to show src files are compiled with std=c++98
 // #include <array>

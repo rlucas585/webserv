@@ -5,19 +5,16 @@ set(SOURCES ${SOURCES})
 add_library(${MODULE_NAME}_lib STATIC ${SOURCES})
 
 target_include_directories(${MODULE_NAME}_lib
-  PUBLIC ../../HTTP/src
-  PUBLIC ../../Config/src
+  PUBLIC ../../Result/src/
   PUBLIC ../../Utils/src
-  PUBLIC ../../Net/src
-  PUBLIC ../../Slice/src
-  PUBLIC ../../Sys/src
+  PUBLIC ../../Slice/src/
+  PUBLIC ../../Sys/src/
+  PUBLIC ../../HTTP/src/
   )
 
 target_link_libraries(${MODULE_NAME}_lib
-  PUBLIC Slice_lib
-  PUBLIC Utils_lib
-  PUBLIC Sys_lib
-  PUBLIC Net_lib
-  PUBLIC HTTP_lib
-  PUBLIC Config_lib
-  )
+    PUBLIC Slice_lib
+    PUBLIC Utils_lib
+    PUBLIC Sys_lib
+    PUBLIC HTTP_lib
+    )

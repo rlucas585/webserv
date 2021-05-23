@@ -42,6 +42,7 @@ add_subdirectory(tst)
 include_directories(src)
 include_directories(external/googletest)
 
+# Compile the WebServ.run executable
 set(BINARY ${CMAKE_PROJECT_NAME})
 
 set(SOURCES src/main.cpp src/WebServ.cpp)
@@ -56,4 +57,5 @@ target_link_libraries(${BINARY}.run
   PUBLIC ASyncServer_lib
   PUBLIC VirtualServer_lib
   PUBLIC Config_lib
+  PUBLIC ServerLogic_lib
   )

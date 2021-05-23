@@ -6,14 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/31 10:22:41 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/11 17:36:02 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 11:59:59 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
-#include "../../Utils/src/Utils.hpp"
-#include "../src/TcpListener.hpp"
+#include "TcpListener.hpp"
+#include "Utils.hpp"
 #include <algorithm>
 #include <thread>
 #include <vector>

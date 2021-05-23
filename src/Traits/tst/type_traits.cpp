@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/04/02 12:12:53 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/02 22:35:41 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:53:23 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <iostream>
 #include <type_traits>
 
-#include "../src/type_traits.hpp"
+#include "type_traits.hpp"
 
 TEST(Traits, integral_constant_int) {
     size_t actual = meta::integral_constant<int, 2>::value;

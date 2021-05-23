@@ -435,6 +435,8 @@ std::string Request::to_string(void) const {
     return output;
 }
 
+Version const& Request::get_version(void) const { return version; }
+
 std::map<std::string, std::string>& Request::get_headers(void) { return headers; }
 
 // Map definitions - used for simple assignation of enums based on parsed values

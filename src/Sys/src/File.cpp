@@ -1,5 +1,5 @@
 #include "File.hpp"
-#include "../../Slice/src/Slice.hpp"
+#include "Slice.hpp"
 
 #include <cerrno>
 #include <cstring>

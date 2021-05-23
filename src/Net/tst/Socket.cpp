@@ -6,14 +6,14 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/27 13:18:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/06 13:17:22 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 11:59:39 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 
-#include "../../Utils/src/Utils.hpp"
-#include "../src/Socket.hpp"
+#include "Socket.hpp"
+#include "Utils.hpp"
 #include <algorithm>
 #include <thread>
 #include <vector>

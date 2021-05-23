@@ -7,6 +7,7 @@
 
 #include "Request.hpp"
 #include "State.hpp"
+#include "Utils.hpp"
 
 namespace http {
 
@@ -39,6 +40,7 @@ class Response {
         Builder& header(const char* key, const char* val);
         Builder& header(Slice key, Slice val);
         Builder& header(std::string const& key, std::string const& val);
+        Builder& state(State new_state);
         Builder& version(Version new_version);
         Builder& body(std::string new_body);
         Builder& append_to_body(Slice const& slice);

@@ -1,5 +1,5 @@
 #include "TcpStream.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
 #include <cerrno>
 #include <cstring>
 #include <fcntl.h>
@@ -86,6 +86,16 @@ Utils::RwResult TcpStream::write(const char* str) {
 
 Utils::RwResult TcpStream::write(std::string const& str) {
     return inner.send(reinterpret_cast<const void*>(str.c_str()), str.size());
+}
+
+SocketAddrV4 TcpStream::get_sock_name(void) const {
+    struct sockaddr_in server_address;
+    socklen_t len = sizeof(sockaddr_in);
+
+    Utils::memset(&server_address, '\0', sizeof(sockaddr_in));
+
+    ::getsockname(inner.into_inner(), reinterpret_cast<sockaddr*>(&server_address), &len);
+    return SocketAddrV4::init(server_address);
 }
 
 int TcpStream::fd(void) const { return inner.into_inner(); }

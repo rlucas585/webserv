@@ -1,9 +1,9 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
-#include "../../Result/src/result.hpp"
-#include "../../Sys/src/FileDesc.hpp"
+#include "FileDesc.hpp"
 #include "SocketAddr.hpp"
+#include "result.hpp"
 
 class Socket {
   public:

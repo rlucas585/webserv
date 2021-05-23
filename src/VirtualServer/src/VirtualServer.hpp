@@ -1,8 +1,8 @@
 #ifndef VIRTUALSERVER_HPP
 #define VIRTUALSERVER_HPP
 
-#include "../../Config/src/Layer.hpp"
-#include "../../Net/src/TcpListener.hpp"
+#include "Layer.hpp"
+#include "TcpListener.hpp"
 
 class VirtualServer {
   public:

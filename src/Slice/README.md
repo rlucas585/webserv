@@ -1,4 +1,4 @@
-# A 'Sliceing Slice' C++ class 'Slice'
+# A 'String Slice' C++ class 'Slice'
 
 `Slice` is a C++ class roughly based on the 'string slice' from Rust, with
 similarities to the std::basic\_string\_view of C++17.

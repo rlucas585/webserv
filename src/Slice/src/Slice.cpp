@@ -6,13 +6,13 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 20:48:54 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/05/11 10:50:15 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:47:53 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Slice.hpp"
 
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
 
 Slice::Split::Split(const char* start)
     : _remainder(start), _delimiter(" \f\n\r\t\v"), length_remaining(-1) {}
@@ -336,7 +336,7 @@ Slice Slice::newSliceWithLengthAndOffset(std::string const& str, size_t len, siz
 
 Slice::operator std::string() const { return std::string(_data, _len); }
 
-std::string Slice::toSliceing(void) const { return std::string(_data, _len); }
+std::string Slice::toString(void) const { return std::string(_data, _len); }
 
 bool operator==(std::string lhs, Slice const& rhs) { return rhs == lhs; }
 bool operator!=(std::string lhs, Slice const& rhs) { return rhs != lhs; }

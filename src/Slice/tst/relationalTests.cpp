@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "../../Utils/src/Utils.hpp"
-#include "../src/Slice.hpp"
+#include "Slice.hpp"
+#include "Utils.hpp"
 
 #include <cstring>
 #include <iostream>

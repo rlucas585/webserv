@@ -1,6 +1,12 @@
 // An example of how to use the Server class, to asynchronously handle
 // multiple clients.
 
+// Note: This Example used to read lines one by one using a Client, before
+// HTTP parsing was implemented. Now Client reading is handled internally,
+// and this example doesn't provide much. In future this test could be
+// resurrected - potentially by using a different type of Client, and
+// either templating the Server or implementing dynamic dispatch.
+
 #include <iostream>
 
 #include "../../ASyncServer/src/Server.hpp"
@@ -13,13 +19,16 @@ void handle_client(Client& client) {
     std::string message_sent;
 
     std::cout << "Message from client " << client.fd() << ": " << std::endl;
-    while (!client.eof()) {
-        client.read_line(message_received);
-        std::cout << message_received;
-        message_received.clear();
-    }
-    message_sent = "hello from the serverside\n";
+    client.read();
+    http::Request::Result req_res = client.generate_request();
 
+    if (req_res.is_err()) {
+        std::cout << "Invalid request:" << std::endl;
+        std::cout << req_res.unwrap_err() << std::endl;
+    } else {
+        std::cout << "Valid request: " << std::endl;
+        std::cout << req_res.unwrap();
+    }
     client.write(message_sent);
 }
 

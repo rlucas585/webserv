@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/20 16:02:15 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/21 13:27:42 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/15 13:52:59 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "../../Utils/src/Utils.hpp"
-#include "../src/FileDesc.hpp"
+#include "FileDesc.hpp"
+#include "Utils.hpp"
 
 TEST(FileDesc_tests, read_and_write_strings) {
     // Writing to a file

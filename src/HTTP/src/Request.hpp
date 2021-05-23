@@ -5,11 +5,11 @@
 #include <map>
 #include <string>
 
-#include "../../Option/src/optional.hpp"
-#include "../../Result/src/result.hpp"
-#include "../../Slice/src/Slice.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "Slice.hpp"
 #include "State.hpp"
+#include "Utils.hpp"
+#include "optional.hpp"
+#include "result.hpp"
 
 #define URI_SIZE_LIMIT 2048
 #define HEADER_SIZE_LIMIT 4096
@@ -171,6 +171,7 @@ class Request {
     Request& operator=(Request const& rhs);
 
     std::string to_string(void) const;
+    Version const& get_version(void) const;
     std::map<std::string, std::string>& get_headers(void);
 
   private:

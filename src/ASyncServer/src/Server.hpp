@@ -47,6 +47,7 @@ class Server {
 
     AcceptResult accept_new_client(int listener_fd);
     void process_read_client(int client_fd, std::vector<Client*>& output_clients);
+    void close_erroneous_clients(std::vector<Client*>& output_clients);
 
     bool incoming_client(int fd);
     AcceptResult get_listener(int listener_fd);

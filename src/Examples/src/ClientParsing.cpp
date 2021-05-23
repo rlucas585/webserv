@@ -14,7 +14,9 @@ void handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    if (client.parse_http()) { // True when Request is error, or successfully completed
+    if (client.state == Client::Read) {
+        client.read();
+    } else if (client.state == Client::Write && client.request_is_complete()) {
         http::Request::Result req_res = client.generate_request();
 
         if (req_res.is_err()) {

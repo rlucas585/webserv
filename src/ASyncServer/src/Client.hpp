@@ -1,9 +1,12 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "../../HTTP/src/Request.hpp"
-#include "../../Net/src/TcpStream.hpp"
-#include "../../Sys/src/BufReader.hpp"
+#include "BufReader.hpp"
+#include "Layer.hpp"
+#include "Request.hpp"
+#include "TcpStream.hpp"
+
+#define READ_AMOUNT 1024
 
 class Client {
   public:
@@ -18,25 +21,25 @@ class Client {
     void activate_client(int fd);
     void deactivate_client(void);
 
-    TcpStream& stream(void);
+    TcpStream& get_stream(void);
     int fd(void) const;
 
-    Utils::RwResult read_line(std::string& buf);
-    Utils::RwResult read_until(char delimiter, std::string& buf);
+    Utils::RwResult read(void);
 
     Utils::RwResult write(std::string const& str);
 
-    bool eof(void);
-
-    bool parse_http(void);
+    bool request_is_complete(void) const;
     http::Request::Result generate_request(void);
+    void set_address(SocketAddrV4 new_address);
 
   public:
     Client::Status state;
 
   private:
-    BufReader<TcpStream> reader;
+    TcpStream stream;
     http::Request::Parser parser;
+    Layer const* config;
+    std::string stored_data;
     SocketAddrV4 address;
 };
 

@@ -1,5 +1,5 @@
 #include "TcpListener.hpp"
-#include "../../Utils/src/Utils.hpp"
+#include "Utils.hpp"
 #include <cerrno>
 #include <cstring>
 #include <sys/select.h>
@@ -96,7 +96,6 @@ Utils::result<int, std::string> TcpListener::accept_raw(void) const {
     return Utils::result<int, std::string>::Ok(fd);
 }
 
-// TODO Unit test
 SocketAddrV4 TcpListener::get_sock_name(void) const {
     struct sockaddr_in server_address;
     socklen_t len = sizeof(sockaddr_in);

@@ -47,7 +47,7 @@ class RequestTests : public ::testing::Test {
         std::vector<TcpListener> listeners;
 
         listeners.push_back(listener);
-        clients.resize(CLIENT_TOTAL - listeners.size());
+        clients.reserve(CLIENT_TOTAL - listeners.size());
 
         server = Server::init(listeners);
     }
@@ -67,7 +67,7 @@ static std::string handle_client(Client& client) {
     std::string message_received;
     std::string message_sent;
 
-    client.parse_http();
+    client.read();
 
     http::Request::Result req_res = client.generate_request();
 

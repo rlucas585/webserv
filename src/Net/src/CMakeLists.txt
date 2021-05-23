@@ -4,6 +4,12 @@ set(SOURCES ${SOURCES})
 
 add_library(${MODULE_NAME}_lib STATIC ${SOURCES})
 
+target_include_directories(${MODULE_NAME}_lib
+  PUBLIC ../../Result/src/
+  PUBLIC ../../Slice/src/
+  PUBLIC ../../Sys/src/
+  )
+
 target_link_libraries(${MODULE_NAME}_lib
     PUBLIC Slice_lib
     PUBLIC Utils_lib

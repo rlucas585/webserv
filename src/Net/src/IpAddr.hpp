@@ -1,8 +1,8 @@
 #ifndef IPADDR_HPP
 #define IPADDR_HPP
 
-#include "../../Result/src/result.hpp"
-#include "../../Slice/src/Slice.hpp"
+#include "Slice.hpp"
+#include "result.hpp"
 #include <netinet/in.h>
 
 class IpAddr {

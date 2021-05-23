@@ -20,9 +20,8 @@ Server::SelectConfig& Server::SelectConfig::operator=(SelectConfig const& rhs) {
 
 Server::Server(void) {}
 
-Server::Server(std::vector<TcpListener>& tcp_listeners)
-    : listeners(tcp_listeners), config(), clients() {
-    // listeners.swap(tcp_listeners); // More efficient than copy
+Server::Server(std::vector<TcpListener>& tcp_listeners) : config(), clients() {
+    listeners.swap(tcp_listeners); // More efficient than copy
     FD_ZERO(&config.current_sockets);
     for (size_t i = 0; i < listeners.size(); i++) {
         FD_SET(listeners[i].socket_fd(), &config.current_sockets);
@@ -71,6 +70,7 @@ Server::Result Server::bind(const char* str) {
 Server Server::init(std::vector<TcpListener> tcp_listeners) { return Server(tcp_listeners); }
 
 Server::SelectResult Server::select(std::vector<Client*>& output_clients) {
+    close_erroneous_clients(output_clients);
     output_clients.clear();
 
     // ::select() is destructive - copies required
@@ -89,13 +89,12 @@ Server::SelectResult Server::select(std::vector<Client*>& output_clients) {
                 process_read_client(fd, output_clients);
             }
         } else if (FD_ISSET(fd, &write_sockets)) {
-            // TODO Complete to handle clients that are ready to receive data
             if (fd <= 2) {
                 break;
             }
-            // size_t client_index = client_fd_to_index(fd);
-            // clients[client_index].state = Client::Write;
-            // output_clients.push_back(&clients[client_index]);
+            size_t client_index = client_fd_to_index(fd);
+            clients[client_index].state = Client::Write;
+            output_clients.push_back(&clients[client_index]);
         }
     }
 
@@ -121,8 +120,10 @@ Server::AcceptResult Server::accept_new_client(int listener_fd) {
         }
         FD_SET(new_fd, &config.current_sockets);
 
-        // Set backing store client as CONNECTED and create TcpStream
-        clients[client_fd_to_index(new_fd)].activate_client(new_fd);
+        // Set backing store client as READ, and activate internal TcpStream
+        Client& new_client = clients[client_fd_to_index(new_fd)];
+        new_client.activate_client(new_fd);
+        new_client.set_address(listener.get_sock_name());
     } else {
         // print error to stderr and continue, (no need to crash for one failed client)
         std::cerr << "accept_raw() error: " << res.unwrap_err() << std::endl;
@@ -141,6 +142,20 @@ void Server::process_read_client(int client_fd, std::vector<Client*>& output_cli
     } else { // Client has sent information, set as ready to Read, and add to output_clients
         clients[client_index].state = Client::Read;
         output_clients.push_back(&clients[client_index]);
+    }
+}
+
+void Server::close_erroneous_clients(std::vector<Client*>& output_clients) {
+    // For the clients that were just processed, check to see if any of them
+    // are signalled to close (due to erroneous HTTP request), and close them
+    // if required
+    for (size_t i = 0; i < output_clients.size(); i++) {
+        if (output_clients[i]->state == Client::Close) {
+            Client& client = *output_clients[i];
+            size_t client_index = client_fd_to_index(client.fd());
+            FD_CLR(client.fd(), &config.current_sockets);
+            clients[client_index].deactivate_client();
+        }
     }
 }
 
