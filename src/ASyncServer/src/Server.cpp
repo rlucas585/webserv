@@ -22,12 +22,13 @@ Server::Server(void) {}
 
 Server::Server(std::vector<TcpListener>& tcp_listeners)
     : listeners(tcp_listeners), config(), clients() {
+    // listeners.swap(tcp_listeners); // More efficient than copy
     FD_ZERO(&config.current_sockets);
     for (size_t i = 0; i < listeners.size(); i++) {
         FD_SET(listeners[i].socket_fd(), &config.current_sockets);
     }
     config.max_fd = listeners.back().socket_fd();
-    // Default construct all Clients
+    // Default construct all Clients - XXX Memory intensive
     for (size_t i = 0; i < CLIENT_TOTAL - listeners.size(); i++) {
         clients.push_back(Client());
     }
@@ -35,8 +36,12 @@ Server::Server(std::vector<TcpListener>& tcp_listeners)
 
 Server::~Server(void) {}
 
-Server::Server(Server const& other)
-    : listeners(other.listeners), config(other.config), clients(other.clients) {}
+Server::Server(Server const& other) {
+    Server& mut_ref = const_cast<Server&>(other); // Hacky move semantics
+    listeners.swap(mut_ref.listeners);
+    config = other.config;
+    clients.swap(mut_ref.clients);
+}
 
 Server& Server::operator=(Server const& rhs) {
     if (this == &rhs) {
@@ -122,7 +127,7 @@ Server::AcceptResult Server::accept_new_client(int listener_fd) {
         // print error to stderr and continue, (no need to crash for one failed client)
         std::cerr << "accept_raw() error: " << res.unwrap_err() << std::endl;
     }
-    return Server::AcceptResult::Ok(0); // Return value unused, would be () if in C++
+    return Server::AcceptResult::Ok(0); // Return value unused
 }
 
 void Server::process_read_client(int client_fd, std::vector<Client*>& output_clients) {

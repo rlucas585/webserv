@@ -15,6 +15,7 @@ class IpAddr {
     static u_int16_t network_to_host_short(u_int16_t netshort);
     static u_int32_t host_to_network_long(u_int32_t hostlong);
     static u_int16_t host_to_network_short(u_int16_t hostshort);
+    static std::string network_to_presentation(const void* src);
 
     static bool host_is_little_endian(void);
     static bool host_is_big_endian(void);

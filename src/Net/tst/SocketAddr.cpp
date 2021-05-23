@@ -6,7 +6,7 @@
 /*   By: rlucas <marvin@codam.nl>                     +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/03/26 13:50:51 by rlucas        #+#    #+#                 */
-/*   Updated: 2021/04/03 21:52:56 by rlucas        ########   odam.nl         */
+/*   Updated: 2021/05/11 18:40:23 by rlucas        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,4 +149,10 @@ TEST(SocketAddr_tests, into_inner_test) {
         reinterpret_cast<const sockaddr_in*>(socket_addr.into_inner().first);
 
     EXPECT_EQ(*actual_addr, expected_addr);
+}
+
+TEST(SocketAddr_tests, to_string) {
+    SocketAddrV4 socket_addr = SocketAddrV4::init("172.45.178.240:4242").unwrap();
+
+    EXPECT_EQ(socket_addr.to_string(), "172.45.178.240:4242");
 }

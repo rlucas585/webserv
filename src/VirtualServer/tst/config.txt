@@ -1,0 +1,20 @@
+# WebServ configuration file (multiple server blocks)
+
+http {
+  root /tmp/www;
+
+  autoindex off;
+
+  server {
+    listen 80;
+  }
+
+  server {
+    listen 4505 default_server;
+  }
+
+  server {
+    listen 172.17.154.13:80;
+  }
+}
+

@@ -11,7 +11,7 @@
 
 class File {
   public:
-    typedef Utils::result<File, const char*> Result;
+    typedef Utils::result<File, std::string> Result;
 
   public:
     File(void);

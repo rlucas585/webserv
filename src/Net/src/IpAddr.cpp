@@ -87,6 +87,22 @@ u_int16_t IpAddr::host_to_network_short(u_int16_t hostshort) {
     return u16_convert_to_big_endian(bytes);
 }
 
+// Only valid for IpV4 currently
+std::string IpAddr::network_to_presentation(const void* src) {
+    std::string output;
+    u_int8_t const* bytes = reinterpret_cast<u_int8_t const*>(src);
+
+    output.reserve(16);
+    output += Utils::to_string(bytes[0]);
+    output += ".";
+    output += Utils::to_string(bytes[1]);
+    output += ".";
+    output += Utils::to_string(bytes[2]);
+    output += ".";
+    output += Utils::to_string(bytes[3]);
+    return output;
+}
+
 bool IpAddr::host_is_little_endian(void) {
     static bool set = false;
     static bool status = false;

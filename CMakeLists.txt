@@ -39,6 +39,21 @@ add_subdirectory(external/googletest)
 add_subdirectory(src)
 add_subdirectory(tst)
 
-# include_directories(src)
-# include_directories(tst)
+include_directories(src)
 include_directories(external/googletest)
+
+set(BINARY ${CMAKE_PROJECT_NAME})
+
+set(SOURCES src/main.cpp src/WebServ.cpp)
+
+add_executable(${BINARY}.run ${SOURCES})
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/default.conf
+  ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
+target_link_libraries(${BINARY}.run
+  PUBLIC Slice_lib
+  PUBLIC ASyncServer_lib
+  PUBLIC VirtualServer_lib
+  PUBLIC Config_lib
+  )

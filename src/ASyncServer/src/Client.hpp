@@ -37,6 +37,7 @@ class Client {
   private:
     BufReader<TcpStream> reader;
     http::Request::Parser parser;
+    SocketAddrV4 address;
 };
 
 #endif
