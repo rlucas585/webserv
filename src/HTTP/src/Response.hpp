@@ -12,17 +12,22 @@
 namespace http {
 
 // Required Response Headers
+// - Accept-Language
 // - Allow (Valid methods for specified resource - use with err 405) (Allow: GET, HEAD)
+// - Authorization
 // - Content-Language
 // - Content-Length
 // - Content-Location
 // - Content-Type
 // - Date (In HTTP-date format)
+// - Host
 // - Last-Modified
 // - Location
+// - Referer
 // - Retry-After
 // - Server
 // - Transfer-Encoding
+// - User-Agent
 // - WWW-Authenticate
 
 class Response {
