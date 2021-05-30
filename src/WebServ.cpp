@@ -1,4 +1,5 @@
 #include "WebServ.hpp"
+#include "Debugging/src/iostream.hpp"
 
 #include <algorithm>
 
@@ -57,11 +58,11 @@ void write_to_client(Client& client) {
 
     bool response_status = ServerLogic::generate_response(req_res, response_string);
 
-    std::cout << "Response: " << response_string;
+    Debug::cout << "Response: " << response_string;
     Utils::RwResult res = client.write(response_string);
 
     if (res.is_ok())
-        std::cout << "bytes sent: " << res.unwrap() << std::endl;
+        Debug::cout << "bytes sent: " << res.unwrap() << std::endl;
 
     if (response_status == ServerLogic::CONNECTION_CLOSE) {
         // Client is removed from Server FD_SET before next select() call.

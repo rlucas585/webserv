@@ -59,4 +59,5 @@ target_link_libraries(${BINARY}.run
   PUBLIC Config_lib
   PUBLIC ServerLogic_lib
   PUBLIC HTTP_lib
-  )
+  PUBLIC Debugging_lib
+)

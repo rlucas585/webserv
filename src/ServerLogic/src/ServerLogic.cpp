@@ -1,4 +1,5 @@
 #include "ServerLogic.hpp"
+#include "../../Debugging/src/iostream.hpp"
 
 namespace ServerLogic {
 
@@ -13,7 +14,7 @@ bool generate_response(http::Request::Result& request_result, std::string& outpu
     http::Response::Builder response_builder =
         http::Response::Builder().version(request.get_version()).state(http::OK_200);
 
-    std::cout << "Request: \n" << request;
+    Debug::cout << "Request: \n" << request;
     response_builder.body("<html>\n"
                           "<h1>WELCOME TO WEBSERV</h1>\n"
                           "</html>\n");

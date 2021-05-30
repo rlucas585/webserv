@@ -16,8 +16,6 @@
 // Uncomment to show src files are compiled with std=c++98
 // #include <array>
 
-#include <iostream>
-
 namespace Utils {
 // Uncomment to show src files are compiled with std=c++98
 // void failMe(void) {
@@ -260,7 +258,7 @@ std::string Time::to_string(void) {
 
     timeinfo = localtime(&inner);
     asctime_r(timeinfo, buf);
-    std::cout << buf << std::endl;
+    // std::cout << buf << std::endl;
     for (size_t i = 0; i < 26; i++) {
         if (buf[i])
             output += buf[i];
